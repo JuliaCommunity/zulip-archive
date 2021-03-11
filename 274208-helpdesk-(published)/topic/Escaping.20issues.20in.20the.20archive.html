@@ -1,0 +1,71 @@
+---
+layout: archive
+title: Zulip Chat Archive
+permalink: /stream/274208-helpdesk-(published)/topic/Escaping.20issues.20in.20the.20archive.html
+---
+
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Escaping.20issues.20in.20the.20archive.html">Escaping issues in the archive</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="/style.css" rel="stylesheet"></head>
+
+{% raw %}
+
+<a name="229212726"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Escaping%20issues%20in%20the%20archive/near/229212726" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Brian Chen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Escaping.20issues.20in.20the.20archive.html#229212726">(Mar 07 2021 at 19:45)</a>:</h4>
+<p><a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.60eachline(.3A.3AIOBuffer).60.20for.20other.20delimiters.html">https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.60eachline(.3A.3AIOBuffer).60.20for.20other.20delimiters.html</a><br>
+Looks like the archiver is balking on ` backticks. Is there a reason dots are used instead of url encoding?</p>
+
+
+
+<a name="229213202"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Escaping%20issues%20in%20the%20archive/near/229213202" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Brian Chen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Escaping.20issues.20in.20the.20archive.html#229213202">(Mar 07 2021 at 19:53)</a>:</h4>
+<p><a href="https://github.com/JuliaCommunity/zulip-archive/blob/master/274208-helpdesk-(published)/topic/.60eachline(.3A.3AIOBuffer).60.20for.20other.20delimiters.html">https://github.com/JuliaCommunity/zulip-archive/blob/master/274208-helpdesk-(published)/topic/.60eachline(.3A.3AIOBuffer).60.20for.20other.20delimiters.html</a> looks correct too, is GH pages freaking out somehow?</p>
+
+
+
+<a name="229213473"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Escaping%20issues%20in%20the%20archive/near/229213473" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Escaping.20issues.20in.20the.20archive.html#229213473">(Mar 07 2021 at 19:57)</a>:</h4>
+<p>Hmm. That is problematic</p>
+
+
+
+<a name="229213995"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Escaping%20issues%20in%20the%20archive/near/229213995" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Sascha Mann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Escaping.20issues.20in.20the.20archive.html#229213995">(Mar 07 2021 at 20:05)</a>:</h4>
+<p>On first glance this seems to be where the dots are introduced after the URL encoding: <a href="https://github.com/zulip/zulip-archive/blob/bcd29a173500de778e70a304fc40cdffaec78803/lib/url.py#L62-L64">https://github.com/zulip/zulip-archive/blob/bcd29a173500de778e70a304fc40cdffaec78803/lib/url.py#L62-L64</a></p>
+<p>Could you open an issue in that repo, please?</p>
+
+
+
+<a name="229216417"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Escaping%20issues%20in%20the%20archive/near/229216417" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Brian Chen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Escaping.20issues.20in.20the.20archive.html#229216417">(Mar 07 2021 at 20:43)</a>:</h4>
+<p>Hmm, the encoding looks fine/consistent but the link itself 404s despite that. Is it because of the leading <code>.</code>?</p>
+
+
+
+<a name="229220275"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Escaping%20issues%20in%20the%20archive/near/229220275" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Sascha Mann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Escaping.20issues.20in.20the.20archive.html#229220275">(Mar 07 2021 at 21:45)</a>:</h4>
+<p>Apparently jekyll ignores those and zulip-archive doesn't have a nojekyll file by default: <a href="https://stackoverflow.com/questions/20893913/does-pages-github-com-support-directory-names-with-a-preceeding-dot/20910276#20910276">https://stackoverflow.com/questions/20893913/does-pages-github-com-support-directory-names-with-a-preceeding-dot/20910276#20910276</a></p>
+<p>Still worth opening an issue in the repo. I'll see if I can manually fix it somehow (the archive tool overwrites the repo contents which makes it a bit tricky to customise)</p>
+
+
+
+<a name="229220600"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Escaping%20issues%20in%20the%20archive/near/229220600" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Brian Chen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Escaping.20issues.20in.20the.20archive.html#229220600">(Mar 07 2021 at 21:50)</a>:</h4>
+<p>If you haven't seen it yet, issue is at <a href="https://github.com/zulip/zulip-archive/issues/51">https://github.com/zulip/zulip-archive/issues/51</a>. If indeed the repo is being completely overwritten at every iteration, would it be easier to change the slug generation logic and wait for it to propogate? I'm certainly in no rush to browse the archive.</p>
+
+
+
+<a name="229734393"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Escaping%20issues%20in%20the%20archive/near/229734393" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Escaping.20issues.20in.20the.20archive.html#229734393">(Mar 10 2021 at 20:10)</a>:</h4>
+<p>This topic was moved by <span class="user-mention silent" data-user-id="269150">Mason Protter</span> to <a class="stream-topic" data-stream-id="137793" href="/#narrow/stream/137793-zulip-bridged/topic/Escaping.20issues.20in.20the.20archive">#zulip-bridged &gt; Escaping issues in the archive</a></p>
+
+
+
+{% endraw %}
+
+<hr><p>Last updated: Mar 11 2021 at 13:06 UTC</p>

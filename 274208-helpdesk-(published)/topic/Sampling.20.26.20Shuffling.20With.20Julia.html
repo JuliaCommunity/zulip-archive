@@ -1,0 +1,45 @@
+---
+layout: archive
+title: Zulip Chat Archive
+permalink: /stream/274208-helpdesk-(published)/topic/Sampling.20.26.20Shuffling.20With.20Julia.html
+---
+
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Sampling.20.26.20Shuffling.20With.20Julia.html">Sampling & Shuffling With Julia</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="/style.css" rel="stylesheet"></head>
+
+{% raw %}
+
+<a name="229028325"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Sampling%20%26%20Shuffling%20With%20Julia/near/229028325" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> qu bit <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Sampling.20.26.20Shuffling.20With.20Julia.html#229028325">(Mar 05 2021 at 21:32)</a>:</h4>
+<p>Hello: </p>
+<p>I was able to find a solution to a related<br>
+problem, but was wondering if someone<br>
+could help me here. </p>
+<p><a href="http://url">(https://stackoverflow.com/questions/64603475/julia-sample-n-groups-from-a-grouped-dataframe)</a></p>
+<p>For fixed sampling of a row by  an elemental group: </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="nd">@pipe</span> <span class="n">df</span> <span class="o">|&gt;</span>
+      <span class="n">groupby</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="o">:</span><span class="n">item</span><span class="p">)</span> <span class="o">|&gt;</span>
+      <span class="n">_</span><span class="p">[</span><span class="n">sample</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">length</span><span class="p">(</span><span class="n">_</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">false</span><span class="p">)]</span> <span class="o">|&gt;</span>
+      <span class="n">DataFrame</span>
+</code></pre></div>
+<p>For random sampling of a row by an elemental group: </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="nd">@pipe</span> <span class="n">df</span> <span class="o">|&gt;</span>
+      <span class="n">groupby</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="o">:</span><span class="n">item</span><span class="p">)</span> <span class="o">|&gt;</span>
+      <span class="n">combine</span><span class="p">(</span><span class="n">sdf</span> <span class="o">-&gt;</span> <span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">q</span> <span class="o">?</span> <span class="n">sdf</span> <span class="o">:</span> <span class="n">DataFrame</span><span class="p">(),</span> <span class="n">_</span><span class="p">)</span>
+</code></pre></div>
+<p>This is the first step. From here, how might <br>
+I replace those sampled elements in-situ<br>
+with the word 'missing'? </p>
+<p>Thank you,</p>
+
+
+
+{% endraw %}
+
+<hr><p>Last updated: Mar 11 2021 at 13:06 UTC</p>

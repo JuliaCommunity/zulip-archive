@@ -1,0 +1,40 @@
+---
+layout: archive
+title: Zulip Chat Archive
+permalink: /stream/274208-helpdesk-(published)/topic/Groupby.20.2B.20Combine().20Duplicating.20Column.20Values.html
+---
+
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Groupby.20.2B.20Combine().20Duplicating.20Column.20Values.html">Groupby + Combine() Duplicating Column Values</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="/style.css" rel="stylesheet"></head>
+
+{% raw %}
+
+<a name="228933604"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Groupby%20%2B%20Combine%28%29%20Duplicating%20Column%20Values/near/228933604" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> qu bit <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Groupby.20.2B.20Combine().20Duplicating.20Column.20Values.html#228933604">(Mar 05 2021 at 10:53)</a>:</h4>
+<p>Hello Coders: </p>
+<p>This one is a softball, but when I am <br>
+running the groupby clause on a data<br>
+frame, I am returning unique values <br>
+for all column values except one. </p>
+<p>The output is similar to the following: </p>
+<p>City | Value1_median | Value 2_median<br>
+B | 11.2 | 20.1<br>
+A | 9.8 | 20.1 <br>
+C | 3.4 | 20.1<br>
+D | 65.2 | 20.1</p>
+<p>I am using a formula similar to: </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">Out1</span> <span class="o">=</span>  <span class="n">combine</span><span class="p">(</span><span class="n">GroupedDF</span><span class="p">,</span> <span class="o">:</span><span class="n">Value1</span> <span class="o">=&gt;</span> <span class="n">median</span><span class="p">,</span> <span class="o">:</span><span class="n">Value2</span> <span class="o">=&gt;</span> <span class="n">median</span><span class="p">)</span>
+</code></pre></div>
+<p>Any suggestions?</p>
+
+
+
+{% endraw %}
+
+<hr><p>Last updated: Mar 11 2021 at 13:06 UTC</p>

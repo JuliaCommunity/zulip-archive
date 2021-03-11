@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p>I have to columns in a DataFrame that I would <br>\nlike to calculate the difference in time between. </p>\n<p>It contains values similar to the following: </p>\n<p>ID | StartTime |EndTime<br>\n1 | 11:30 | 11:45<br>\n2 | 12:30 | 14:30<br>\n3 | 13:47 | 16:22</p>\n<p>I could add a column to this existing dataframe<br>\nwith the difference in time (in minutes). Could<br>\nyou point me to the documentation also? </p>\n<p>attempting something similar to:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">using</span> <span class=\"n\">Dates</span>\n<span class=\"n\">DF</span><span class=\"o\">.</span><span class=\"n\">SessionTime</span> <span class=\"o\">=</span>  <span class=\"n\">minute</span><span class=\"o\">.</span><span class=\"p\">(</span><span class=\"n\">DF</span><span class=\"o\">.</span><span class=\"n\">StartTime</span> <span class=\"o\">-</span> <span class=\"n\">DF</span><span class=\"o\">.</span><span class=\"n\">EndTime</span><span class=\"p\">)</span>\n</code></pre></div>\n<p>Thank you,</p>",
+        "id": 229205391,
+        "sender_full_name": "qu bit",
+        "timestamp": 1615139879
+    }
+]

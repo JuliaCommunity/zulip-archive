@@ -1,0 +1,50 @@
+[
+    {
+        "content": "<p><a href=\"https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.60eachline(.3A.3AIOBuffer).60.20for.20other.20delimiters.html\">https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.60eachline(.3A.3AIOBuffer).60.20for.20other.20delimiters.html</a><br>\nLooks like the archiver is balking on ` backticks. Is there a reason dots are used instead of url encoding?</p>",
+        "id": 229212726,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1615146347
+    },
+    {
+        "content": "<p><a href=\"https://github.com/JuliaCommunity/zulip-archive/blob/master/274208-helpdesk-(published)/topic/.60eachline(.3A.3AIOBuffer).60.20for.20other.20delimiters.html\">https://github.com/JuliaCommunity/zulip-archive/blob/master/274208-helpdesk-(published)/topic/.60eachline(.3A.3AIOBuffer).60.20for.20other.20delimiters.html</a> looks correct too, is GH pages freaking out somehow?</p>",
+        "id": 229213202,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1615146807
+    },
+    {
+        "content": "<p>Hmm. That is problematic</p>",
+        "id": 229213473,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1615147072
+    },
+    {
+        "content": "<p>On first glance this seems to be where the dots are introduced after the URL encoding: <a href=\"https://github.com/zulip/zulip-archive/blob/bcd29a173500de778e70a304fc40cdffaec78803/lib/url.py#L62-L64\">https://github.com/zulip/zulip-archive/blob/bcd29a173500de778e70a304fc40cdffaec78803/lib/url.py#L62-L64</a></p>\n<p>Could you open an issue in that repo, please?</p>",
+        "id": 229213995,
+        "sender_full_name": "Sascha Mann",
+        "timestamp": 1615147529
+    },
+    {
+        "content": "<p>Hmm, the encoding looks fine/consistent but the link itself 404s despite that. Is it because of the leading <code>.</code>?</p>",
+        "id": 229216417,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1615149787
+    },
+    {
+        "content": "<p>Apparently jekyll ignores those and zulip-archive doesn't have a nojekyll file by default: <a href=\"https://stackoverflow.com/questions/20893913/does-pages-github-com-support-directory-names-with-a-preceeding-dot/20910276#20910276\">https://stackoverflow.com/questions/20893913/does-pages-github-com-support-directory-names-with-a-preceeding-dot/20910276#20910276</a></p>\n<p>Still worth opening an issue in the repo. I'll see if I can manually fix it somehow (the archive tool overwrites the repo contents which makes it a bit tricky to customise)</p>",
+        "id": 229220275,
+        "sender_full_name": "Sascha Mann",
+        "timestamp": 1615153529
+    },
+    {
+        "content": "<p>If you haven't seen it yet, issue is at <a href=\"https://github.com/zulip/zulip-archive/issues/51\">https://github.com/zulip/zulip-archive/issues/51</a>. If indeed the repo is being completely overwritten at every iteration, would it be easier to change the slug generation logic and wait for it to propogate? I'm certainly in no rush to browse the archive.</p>",
+        "id": 229220600,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1615153827
+    },
+    {
+        "content": "<p>This topic was moved by <span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> to <a class=\"stream-topic\" data-stream-id=\"137793\" href=\"/#narrow/stream/137793-zulip-bridged/topic/Escaping.20issues.20in.20the.20archive\">#zulip-bridged &gt; Escaping issues in the archive</a></p>",
+        "id": 229734393,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1615407015
+    }
+]

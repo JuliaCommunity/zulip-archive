@@ -1,0 +1,128 @@
+---
+layout: archive
+title: Zulip Chat Archive
+permalink: /stream/274208-helpdesk-(published)/topic/Function.20faster.20than.20Python.20only.20for.20small.20arrays.html
+---
+
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Function.20faster.20than.20Python.20only.20for.20small.20arrays.html">Function faster than Python only for small arrays</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="/style.css" rel="stylesheet"></head>
+
+{% raw %}
+
+<a name="228019597"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Function%20faster%20than%20Python%20only%20for%20small%20arrays/near/228019597" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Dale Black <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Function.20faster.20than.20Python.20only.20for.20small.20arrays.html#228019597">(Feb 27 2021 at 00:54)</a>:</h4>
+<p>Any idea why this function is ~100x faster than Python for small arrays but the same for larger arrays?</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span> <span class="n">hd_loss</span><span class="p">(</span><span class="n">ŷ</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ŷ_dtm</span><span class="p">,</span> <span class="n">y_dtm</span><span class="p">)</span>
+    <span class="n">Δ</span> <span class="o">=</span> <span class="p">(</span><span class="n">ŷ</span> <span class="o">.-</span> <span class="n">y</span><span class="p">)</span> <span class="o">.^</span> <span class="mi">2</span>
+    <span class="n">dtm</span> <span class="o">=</span> <span class="p">(</span><span class="n">ŷ_dtm</span> <span class="o">.^</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">y_dtm</span> <span class="o">.^</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="nd">@tullio</span> <span class="n">M</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span> <span class="o">:=</span> <span class="n">Δ</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span> <span class="o">*</span> <span class="n">dtm</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
+    <span class="n">hd_loss</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>When I time it for small arrays <code>size = (4, 4, 2)</code> I get results ~100 faster than Python</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="nd">@btime</span> <span class="n">hd_loss</span><span class="p">(</span><span class="n">ŷ</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ŷ_dtm</span><span class="p">,</span> <span class="n">y_dtm</span><span class="p">)</span>
+
+<span class="c"># 495.728 ns (6 allocations: 1.66 KiB)</span>
+</code></pre></div>
+<p>Compared to Python </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="o">%</span><span class="n">timeit</span> <span class="n">hd_loss</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">gt_dtm</span><span class="p">,</span> <span class="n">seg_dtm</span><span class="p">)</span>
+
+<span class="c"># (36.6 µs ± 260 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each))</span>
+</code></pre></div>
+<p>When I time for larger arrays <code>size = (96, 96, 96)</code> I get results on par with Python</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="nd">@btime</span> <span class="n">hd_loss</span><span class="p">(</span><span class="n">Ŷ</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Ŷ_dtm</span><span class="p">,</span> <span class="n">Y_dtm</span><span class="p">)</span>
+
+<span class="c"># 2.395 ms (55 allocations: 33.75 MiB)</span>
+</code></pre></div>
+<p>Compared to Python </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="o">%</span><span class="n">timeit</span> <span class="n">hd_loss</span><span class="p">(</span><span class="n">large_y</span><span class="p">,</span> <span class="n">large_y_hat</span><span class="p">,</span> <span class="n">large_gt_dtm</span><span class="p">,</span> <span class="n">large_seg_dtm</span><span class="p">)</span>
+
+<span class="c"># 2.99 ms ± 130 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)</span>
+</code></pre></div>
+
+
+
+<a name="228019798"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Function%20faster%20than%20Python%20only%20for%20small%20arrays/near/228019798" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Dale Black <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Function.20faster.20than.20Python.20only.20for.20small.20arrays.html#228019798">(Feb 27 2021 at 00:57)</a>:</h4>
+<p>Here is the Python function</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">def</span> <span class="n">hd_loss</span><span class="p">(</span><span class="n">seg_soft</span><span class="p">,</span> <span class="n">gt</span><span class="p">,</span> <span class="n">seg_dtm</span><span class="p">,</span> <span class="n">gt_dtm</span><span class="p">)</span><span class="o">:</span>
+    <span class="s">"""</span>
+<span class="s">    compute hausdorff distance loss for binary segmentation</span>
+<span class="s">    """</span>
+
+    <span class="n">delta_s</span> <span class="o">=</span> <span class="p">(</span><span class="n">seg_soft</span> <span class="o">-</span> <span class="n">gt</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">s_dtm</span> <span class="o">=</span> <span class="n">seg_dtm</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">g_dtm</span> <span class="o">=</span> <span class="n">gt_dtm</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">dtm</span> <span class="o">=</span> <span class="n">s_dtm</span> <span class="o">+</span> <span class="n">g_dtm</span>
+    <span class="n">multipled</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s">"xyz, xyz-&gt;xyz"</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">delta_s</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">dtm</span><span class="p">))</span>
+    <span class="n">hd_loss</span> <span class="o">=</span> <span class="n">multipled</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">hd_loss</span>
+</code></pre></div>
+
+
+
+<a name="228020355"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Function%20faster%20than%20Python%20only%20for%20small%20arrays/near/228020355" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Mark Kittisopikul <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Function.20faster.20than.20Python.20only.20for.20small.20arrays.html#228020355">(Feb 27 2021 at 01:04)</a>:</h4>
+<p>Python incurs an initial penalty because the code needs to be interpreted first. However, by the time you get to large matrices the initial overhead is now dominated by the calculation itself. In both languages most of that computation is actually being done in native code</p>
+
+
+
+<a name="228020854"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Function%20faster%20than%20Python%20only%20for%20small%20arrays/near/228020854" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Dale Black <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Function.20faster.20than.20Python.20only.20for.20small.20arrays.html#228020854">(Feb 27 2021 at 01:10)</a>:</h4>
+<p>Ahh, okay thanks for clearing that up!</p>
+
+
+
+<a name="228021034"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Function%20faster%20than%20Python%20only%20for%20small%20arrays/near/228021034" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Mark Kittisopikul <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Function.20faster.20than.20Python.20only.20for.20small.20arrays.html#228021034">(Feb 27 2021 at 01:12)</a>:</h4>
+<p>If you had tried to implement that <code>einsum</code> in Python itself, it would be painfully slow. Instead though, you call torch 's <code>einsum</code> which is implemented in C++</p>
+
+
+
+<a name="228029075"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Function%20faster%20than%20Python%20only%20for%20small%20arrays/near/228029075" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Andrey Oskin <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Function.20faster.20than.20Python.20only.20for.20small.20arrays.html#228029075">(Feb 27 2021 at 03:28)</a>:</h4>
+<p>Also, you shouldn't benchmark in global scope, instead you should use something like</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="nd">@btime</span> <span class="n">hd_loss</span><span class="p">(</span><span class="o">$</span><span class="n">Ŷ</span><span class="p">,</span> <span class="o">$</span><span class="n">Y</span><span class="p">,</span> <span class="o">$</span><span class="n">Ŷ_dtm</span><span class="p">,</span> <span class="o">$</span><span class="n">Y_dtm</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<a name="228043229"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Function%20faster%20than%20Python%20only%20for%20small%20arrays/near/228043229" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Function.20faster.20than.20Python.20only.20for.20small.20arrays.html#228043229">(Feb 27 2021 at 08:23)</a>:</h4>
+<p>Hm, if you use views where applicable and in-place dotted functions, Julia should still be faster than Python.</p>
+
+
+
+<a name="228230329"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Function%20faster%20than%20Python%20only%20for%20small%20arrays/near/228230329" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Michael Abbott <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Function.20faster.20than.20Python.20only.20for.20small.20arrays.html#228230329">(Mar 01 2021 at 13:37)</a>:</h4>
+<p>I haven't tried these, but I think you can avoid allocating 3 temporary arrays here, like so: </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span> <span class="n">hd_loss_2</span><span class="p">(</span><span class="n">ŷ</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ŷ_dtm</span><span class="p">,</span> <span class="n">y_dtm</span><span class="p">)</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="p">(</span><span class="n">ŷ</span> <span class="o">.-</span> <span class="n">y</span><span class="p">)</span> <span class="o">.^</span> <span class="mi">2</span> <span class="o">.*</span> <span class="p">((</span><span class="n">ŷ_dtm</span> <span class="o">.^</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">y_dtm</span> <span class="o">.^</span> <span class="mi">2</span><span class="p">))</span>  <span class="c"># allocates just one array</span>
+    <span class="n">mean</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="n">hd_loss_3</span><span class="p">(</span><span class="n">ŷ</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ŷ_dtm</span><span class="p">,</span> <span class="n">y_dtm</span><span class="p">)</span>
+    <span class="nd">@tullio</span> <span class="n">tot</span> <span class="o">:=</span> <span class="p">(</span><span class="n">ŷ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">.-</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">])</span><span class="o">^</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">ŷ_dtm</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">^</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y_dtm</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">^</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">hd_loss</span> <span class="o">=</span> <span class="n">tot</span> <span class="o">/</span> <span class="n">length</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="228256814"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Function%20faster%20than%20Python%20only%20for%20small%20arrays/near/228256814" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Dale Black <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Function.20faster.20than.20Python.20only.20for.20small.20arrays.html#228256814">(Mar 01 2021 at 16:09)</a>:</h4>
+<p>Thank you! That is much faster and easier to read</p>
+
+
+
+{% endraw %}
+
+<hr><p>Last updated: Mar 11 2021 at 13:06 UTC</p>

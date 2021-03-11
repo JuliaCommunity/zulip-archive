@@ -1,0 +1,41 @@
+---
+layout: archive
+title: Zulip Chat Archive
+permalink: /stream/274208-helpdesk-(published)/topic/Error.20installing.20Package.html
+---
+
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Error.20installing.20Package.html">Error installing Package</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="/style.css" rel="stylesheet"></head>
+
+{% raw %}
+
+<a name="223919653"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Error%20installing%20Package/near/223919653" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Gaurav Wasnik <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Error.20installing.20Package.html#223919653">(Jan 25 2021 at 16:12)</a>:</h4>
+<p>I'm trying to install <a href="https://github.com/search?q=DFTK.jl&amp;type=Repositories">DFTK.jl</a> package in JuliaPro.<br>
+The error I'm getting is</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span> <span class="n">pkg</span><span class="o">&gt;</span> <span class="n">add</span> <span class="n">DFTK</span>
+<span class="n">ERROR</span><span class="o">:</span> <span class="n">The</span> <span class="n">following</span> <span class="n">package</span> <span class="n">names</span> <span class="n">could</span> <span class="n">not</span> <span class="n">be</span> <span class="n">resolved</span><span class="o">:</span>
+ <span class="o">*</span> <span class="n">DFTK</span> <span class="p">(</span><span class="n">not</span> <span class="n">found</span> <span class="kp">in</span> <span class="n">project</span><span class="p">,</span> <span class="n">manifest</span> <span class="n">or</span> <span class="n">registry</span><span class="p">)</span>
+<span class="n">Please</span> <span class="n">specify</span> <span class="n">by</span> <span class="n">known</span> <span class="sb">`name=uuid`</span><span class="o">.</span>
+</code></pre></div>
+<p>However, earlier while using the REPL only, that is, the basic(?) Julia version, I faced no difficulty installing <a href="https://github.com/search?q=DFTK.jl&amp;type=Repositories">DFTK.jl</a> and it worked fine.<br>
+Sorry if this is a very newbie question <span aria-label="sweat smile" class="emoji emoji-1f605" role="img" title="sweat smile">:sweat_smile:</span></p>
+
+
+
+<a name="223921714"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Error%20installing%20Package/near/223921714" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Kevin Bonham <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Error.20installing.20Package.html#223921714">(Jan 25 2021 at 16:25)</a>:</h4>
+<p>When you say "Basic" julia version, do you mean Julia version 1.0 as opposed to another version? Looking at that package's <a href="https://github.com/JuliaMolSim/DFTK.jl/blob/master/Project.toml#L68"><code>Project.toml</code></a>, I notice that it lists compatibility only with julia version 1.4 and above, and it looks like you're on julia version 1.0. It's possible there are no versions of the package that are known to work with julia v1.0</p>
+<p>Is there some reason to be on julia v1.0? If you're able, I'd suggest using the most recent stable version (currently v1.5)</p>
+
+
+
+{% endraw %}
+
+<hr><p>Last updated: Mar 11 2021 at 13:06 UTC</p>

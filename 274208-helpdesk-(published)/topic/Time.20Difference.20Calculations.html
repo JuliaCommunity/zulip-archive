@@ -1,0 +1,40 @@
+---
+layout: archive
+title: Zulip Chat Archive
+permalink: /stream/274208-helpdesk-(published)/topic/Time.20Difference.20Calculations.html
+---
+
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Time.20Difference.20Calculations.html">Time Difference Calculations</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="/style.css" rel="stylesheet"></head>
+
+{% raw %}
+
+<a name="229205391"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Time%20Difference%20Calculations/near/229205391" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> qu bit <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Time.20Difference.20Calculations.html#229205391">(Mar 07 2021 at 17:57)</a>:</h4>
+<p>I have to columns in a DataFrame that I would <br>
+like to calculate the difference in time between. </p>
+<p>It contains values similar to the following: </p>
+<p>ID | StartTime |EndTime<br>
+1 | 11:30 | 11:45<br>
+2 | 12:30 | 14:30<br>
+3 | 13:47 | 16:22</p>
+<p>I could add a column to this existing dataframe<br>
+with the difference in time (in minutes). Could<br>
+you point me to the documentation also? </p>
+<p>attempting something similar to:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">using</span> <span class="n">Dates</span>
+<span class="n">DF</span><span class="o">.</span><span class="n">SessionTime</span> <span class="o">=</span>  <span class="n">minute</span><span class="o">.</span><span class="p">(</span><span class="n">DF</span><span class="o">.</span><span class="n">StartTime</span> <span class="o">-</span> <span class="n">DF</span><span class="o">.</span><span class="n">EndTime</span><span class="p">)</span>
+</code></pre></div>
+<p>Thank you,</p>
+
+
+
+{% endraw %}
+
+<hr><p>Last updated: Mar 11 2021 at 13:06 UTC</p>

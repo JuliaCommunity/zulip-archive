@@ -1,0 +1,405 @@
+{
+    "streams": {
+        "helpdesk (archived)": {
+            "id": 274208,
+            "latest_id": 223352720,
+            "topic_data": {
+                "Test question": {
+                    "latest_date": 1611137362,
+                    "size": 1
+                },
+                "stream events": {
+                    "latest_date": 1611135385,
+                    "size": 1
+                }
+            }
+        },
+        "helpdesk (published)": {
+            "id": 274208,
+            "latest_id": 229761713,
+            "topic_data": {
+                "....testing leading dots": {
+                    "latest_date": 1615150224,
+                    "size": 1
+                },
+                "2pi as Float32": {
+                    "latest_date": 1611164740,
+                    "size": 3
+                },
+                "@where to filter strings": {
+                    "latest_date": 1614856893,
+                    "size": 1
+                },
+                "Adding processes and workers": {
+                    "latest_date": 1614932961,
+                    "size": 17
+                },
+                "Annotation to elide function call if return value is unused": {
+                    "latest_date": 1614214232,
+                    "size": 8
+                },
+                "Broadcasting generlizability": {
+                    "latest_date": 1615194105,
+                    "size": 10
+                },
+                "Build error (on Plots) when running tests": {
+                    "latest_date": 1614609060,
+                    "size": 1
+                },
+                "CSV -> StructArray": {
+                    "latest_date": 1612322932,
+                    "size": 13
+                },
+                "Cloud computing with Julia": {
+                    "latest_date": 1611880606,
+                    "size": 14
+                },
+                "Combining multiple Weave.jl (.jmd) files.": {
+                    "latest_date": 1612705043,
+                    "size": 1
+                },
+                "Consistent API for dense and sparse arrays": {
+                    "latest_date": 1611437283,
+                    "size": 3
+                },
+                "Converting Columnar DataTypes": {
+                    "latest_date": 1614684095,
+                    "size": 4
+                },
+                "Coverting Array{Any,1} Column Data Types": {
+                    "latest_date": 1614789392,
+                    "size": 18
+                },
+                "Customize printing inside a stacktrace?": {
+                    "latest_date": 1614632745,
+                    "size": 2
+                },
+                "DataFrame subtraction": {
+                    "latest_date": 1614693988,
+                    "size": 16
+                },
+                "DataFrames Transformation": {
+                    "latest_date": 1613637196,
+                    "size": 25
+                },
+                "Dealing with inner constructors in Setfield.jl": {
+                    "latest_date": 1614836628,
+                    "size": 3
+                },
+                "Differences between ==, ===, isequal": {
+                    "latest_date": 1612230947,
+                    "size": 15
+                },
+                "Dropping Rows By Condition": {
+                    "latest_date": 1614584013,
+                    "size": 4
+                },
+                "Effective Way of Plotting Multiple Polygons": {
+                    "latest_date": 1611186353,
+                    "size": 2
+                },
+                "Error installing Package": {
+                    "latest_date": 1611591927,
+                    "size": 2
+                },
+                "Escaping issues in the archive": {
+                    "latest_date": 1615407015,
+                    "size": 8
+                },
+                "Expand Int in macro": {
+                    "latest_date": 1614281294,
+                    "size": 8
+                },
+                "FileWatching": {
+                    "latest_date": 1611318225,
+                    "size": 11
+                },
+                "Function faster than Python only for small arrays": {
+                    "latest_date": 1614614987,
+                    "size": 9
+                },
+                "Getting code lowered with only the function type": {
+                    "latest_date": 1614986226,
+                    "size": 10
+                },
+                "Groupby + Combine() Duplicating Column Values": {
+                    "latest_date": 1614941582,
+                    "size": 1
+                },
+                "How to check if a method is defined for an instance?": {
+                    "latest_date": 1613600673,
+                    "size": 10
+                },
+                "How to create temporary environments?": {
+                    "latest_date": 1611155718,
+                    "size": 10
+                },
+                "How to describe(df) skipping NaN": {
+                    "latest_date": 1614616812,
+                    "size": 1
+                },
+                "How to use containers without losing speed": {
+                    "latest_date": 1612912301,
+                    "size": 7
+                },
+                "How to view a Vector with a NTuple?": {
+                    "latest_date": 1612803942,
+                    "size": 4
+                },
+                "Index Matching + List Comprehension": {
+                    "latest_date": 1615228098,
+                    "size": 11
+                },
+                "Infiltrator.jl in VS Code": {
+                    "latest_date": 1612704134,
+                    "size": 3
+                },
+                "Iterating Replacements Over Rows": {
+                    "latest_date": 1614591517,
+                    "size": 7
+                },
+                "Jupyter kernel not starting": {
+                    "latest_date": 1613002825,
+                    "size": 4
+                },
+                "LoadError: too many parameters for type": {
+                    "latest_date": 1614152399,
+                    "size": 11
+                },
+                "Logical index DataFrames.jl": {
+                    "latest_date": 1613380493,
+                    "size": 3
+                },
+                "Make a struct act like a Tuple under iteration": {
+                    "latest_date": 1611395473,
+                    "size": 12
+                },
+                "Number of Occurrences By Time Range:  CountMember?": {
+                    "latest_date": 1615238632,
+                    "size": 1
+                },
+                "Pluto.jl": {
+                    "latest_date": 1614833245,
+                    "size": 3
+                },
+                "PrettyPrint/PrettyPrinting and structs": {
+                    "latest_date": 1613156596,
+                    "size": 1
+                },
+                "PrettyTables warmup": {
+                    "latest_date": 1612710983,
+                    "size": 2
+                },
+                "Progress Bar in Terminal with DifferentialEquations.jl": {
+                    "latest_date": 1614110623,
+                    "size": 8
+                },
+                "Random Sampling of a column by elemental group": {
+                    "latest_date": 1615041890,
+                    "size": 16
+                },
+                "Random Selection From Within An Array Of Elements": {
+                    "latest_date": 1615303134,
+                    "size": 8
+                },
+                "Record animation to avi": {
+                    "latest_date": 1614012898,
+                    "size": 19
+                },
+                "Reminder?": {
+                    "latest_date": 1614533003,
+                    "size": 5
+                },
+                "Replacing 'nothing' with NaN": {
+                    "latest_date": 1614644567,
+                    "size": 11
+                },
+                "Rotate a 3D point around another": {
+                    "latest_date": 1611667649,
+                    "size": 20
+                },
+                "Rounding Entire Columns": {
+                    "latest_date": 1614941124,
+                    "size": 3
+                },
+                "Sampling & Shuffling With Julia": {
+                    "latest_date": 1614979959,
+                    "size": 1
+                },
+                "Sandbox Julia?": {
+                    "latest_date": 1614534595,
+                    "size": 36
+                },
+                "Shift indices": {
+                    "latest_date": 1615310088,
+                    "size": 5
+                },
+                "Shortcut to test specific testset": {
+                    "latest_date": 1611252457,
+                    "size": 6
+                },
+                "Suppressing status output on Pkg.test()": {
+                    "latest_date": 1614705628,
+                    "size": 6
+                },
+                "Testing issues": {
+                    "latest_date": 1614691074,
+                    "size": 8
+                },
+                "Three bytes to UInt32": {
+                    "latest_date": 1614355253,
+                    "size": 7
+                },
+                "Time Difference Calculations": {
+                    "latest_date": 1615139879,
+                    "size": 1
+                },
+                "Time Series for Non-Random Values": {
+                    "latest_date": 1614177716,
+                    "size": 2
+                },
+                "Tricks for solving an ODE with a large derivative?": {
+                    "latest_date": 1614966780,
+                    "size": 16
+                },
+                "Tullio square elements": {
+                    "latest_date": 1614299172,
+                    "size": 5
+                },
+                "Unable to install package on earlier julia version": {
+                    "latest_date": 1611695164,
+                    "size": 21
+                },
+                "VS Code fuzzy autocomplete": {
+                    "latest_date": 1611951978,
+                    "size": 1
+                },
+                "Vector of concrete types only": {
+                    "latest_date": 1614774101,
+                    "size": 3
+                },
+                "Which variable needs to be escaped in quoted expression": {
+                    "latest_date": 1613599413,
+                    "size": 8
+                },
+                "Why does this generated function segfault?": {
+                    "latest_date": 1613688791,
+                    "size": 12
+                },
+                "[Tangent] (Un)Structured concurrency": {
+                    "latest_date": 1615404282,
+                    "size": 17
+                },
+                "`Symbol(::Type)` and `Symbol(::Module)`": {
+                    "latest_date": 1611707191,
+                    "size": 2
+                },
+                "`eachline(::IOBuffer)` for other delimiters": {
+                    "latest_date": 1613592887,
+                    "size": 2
+                },
+                "`show` methods": {
+                    "latest_date": 1614049164,
+                    "size": 13
+                },
+                "`take!` from `IOBuffer` copies": {
+                    "latest_date": 1615249617,
+                    "size": 7
+                },
+                "absolute simplest way to add a simple CSS to my HTML": {
+                    "latest_date": 1611849560,
+                    "size": 22
+                },
+                "broadcast without length": {
+                    "latest_date": 1615228229,
+                    "size": 9
+                },
+                "delete columns SparseMatrixCSC": {
+                    "latest_date": 1611439047,
+                    "size": 1
+                },
+                "display() with indent": {
+                    "latest_date": 1612289979,
+                    "size": 2
+                },
+                "efficient bulk insert for dictionary": {
+                    "latest_date": 1612696379,
+                    "size": 5
+                },
+                "filter dict with anonymous function": {
+                    "latest_date": 1613180395,
+                    "size": 4
+                },
+                "filtering backtraces": {
+                    "latest_date": 1612006417,
+                    "size": 8
+                },
+                "first and last of range": {
+                    "latest_date": 1614386866,
+                    "size": 16
+                },
+                "get nth pair from `OrderedDict`": {
+                    "latest_date": 1613329815,
+                    "size": 4
+                },
+                "getproperty for a wrapper": {
+                    "latest_date": 1612471235,
+                    "size": 5
+                },
+                "how does `Threads.Condition` work?": {
+                    "latest_date": 1615155330,
+                    "size": 10
+                },
+                "iswritable": {
+                    "latest_date": 1612019707,
+                    "size": 11
+                },
+                "keyward argument macro hidden in base": {
+                    "latest_date": 1612481844,
+                    "size": 4
+                },
+                "logging with extra levels": {
+                    "latest_date": 1614124370,
+                    "size": 7
+                },
+                "nonallocating multiarg `any`": {
+                    "latest_date": 1615416650,
+                    "size": 73
+                },
+                "number of bytes remaining in IO": {
+                    "latest_date": 1613339259,
+                    "size": 44
+                },
+                "package for \"bit packing\"?": {
+                    "latest_date": 1613331202,
+                    "size": 12
+                },
+                "profiling": {
+                    "latest_date": 1614351269,
+                    "size": 1
+                },
+                "range() with two equal Int32s": {
+                    "latest_date": 1614159713,
+                    "size": 16
+                },
+                "read from IOBuffer without seekstart": {
+                    "latest_date": 1612037955,
+                    "size": 4
+                },
+                "stream events": {
+                    "latest_date": 1611139057,
+                    "size": 2
+                },
+                "using .ji files": {
+                    "latest_date": 1614607811,
+                    "size": 1
+                },
+                "why is Optim.jl so slow?": {
+                    "latest_date": 1614684963,
+                    "size": 94
+                }
+            }
+        }
+    },
+    "time": 1615468003.7371216
+}

@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Hello Coders: </p>\n<p>original_DF  = <br>\nID  | Animal | Date | CumSum_Dose <br>\n  1  |  Cat | 02-20-18| 0.45<br>\n  2  | Cat | 07-13-14| 0.67<br>\n  3  | Cat | 08-19-16| 1.22<br>\n  4  | Bear| 03-12-16 | 1.78<br>\n  5  | Bear | 09-06-21| 1.85<br>\n  6 |  Bear | 01-17-18 | 2.01</p>\n<p>The CumSum_Dose values are cumulative<br>\nand can represent the total dosage for the <br>\ncalendar quarter they occupy. </p>\n<p>date_array =  collect(Date(2016,1,1)-Month(3):today()))</p>\n<p>My goal: <br>\nI would like to apply a proportion to each 'Dose' and<br>\nassign the result to a quarter of the year in the 'data_array'. <br>\nFor example, if I have 1.0 dosage, I would assign the <br>\nindividual values for each quarter as: </p>\n<p>Year 1:  2016<br>\nQ1:: 0.25 * 1 == 0.25<br>\nQ2:: 0.30 *1 == 0.30<br>\nQ3:: 0.20 * 1 == 0.20<br>\nQ4:: 0.25 *1== 0.25</p>\n<p>Year 2: 2017<br>\nQ1:: 0.55 * 1 == 0.55<br>\nQ2:: 0.10 *1 == 0.10<br>\nQ3:: 0.15 * 1 == 0.15<br>\nQ4:: 0.20 *1== 0.20</p>\n<p>The proportions can vary by year, and I would like to change<br>\nthem as necessary for each subsequent year. Any suggestions?</p>",
+        "id": 227318545,
+        "sender_full_name": "qu bit",
+        "timestamp": 1614020273
+    },
+    {
+        "content": "<p>Not clear: \"The CumSum_Dose values are cumulative and can represent the total dosage for the calendar quarter they occupy\" vs: \"I would like to apply a proportion to each 'Dose' and assign the result to a quarter of the year...\"</p>\n<p>What now, are these already per quarter or per year? And do you want a <code>data_array</code> per animal or over all.</p>",
+        "id": 227608196,
+        "sender_full_name": "Florian Große",
+        "timestamp": 1614177716
+    }
+]

@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p>How does one describe(df) without including NaN cells?</p>\n<p>When I run describe(df) for the fields including NaN values, <br>\nthey are returning as values for min, mean, and max. </p>\n<p>Thank you,</p>",
+        "id": 228262281,
+        "sender_full_name": "qu bit",
+        "timestamp": 1614616812
+    }
+]

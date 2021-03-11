@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p>Hello Coders: </p>\n<p>This one is a softball, but when I am <br>\nrunning the groupby clause on a data<br>\nframe, I am returning unique values <br>\nfor all column values except one. </p>\n<p>The output is similar to the following: </p>\n<p>City | Value1_median | Value 2_median<br>\nB | 11.2 | 20.1<br>\nA | 9.8 | 20.1 <br>\nC | 3.4 | 20.1<br>\nD | 65.2 | 20.1</p>\n<p>I am using a formula similar to: </p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">Out1</span> <span class=\"o\">=</span>  <span class=\"n\">combine</span><span class=\"p\">(</span><span class=\"n\">GroupedDF</span><span class=\"p\">,</span> <span class=\"o\">:</span><span class=\"n\">Value1</span> <span class=\"o\">=&gt;</span> <span class=\"n\">median</span><span class=\"p\">,</span> <span class=\"o\">:</span><span class=\"n\">Value2</span> <span class=\"o\">=&gt;</span> <span class=\"n\">median</span><span class=\"p\">)</span>\n</code></pre></div>\n<p>Any suggestions?</p>",
+        "id": 228933604,
+        "sender_full_name": "qu bit",
+        "timestamp": 1614941582
+    }
+]

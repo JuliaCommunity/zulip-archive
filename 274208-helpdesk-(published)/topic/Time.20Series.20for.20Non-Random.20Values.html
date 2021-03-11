@@ -1,0 +1,62 @@
+---
+layout: archive
+title: Zulip Chat Archive
+permalink: /stream/274208-helpdesk-(published)/topic/Time.20Series.20for.20Non-Random.20Values.html
+---
+
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Time.20Series.20for.20Non-Random.20Values.html">Time Series for Non-Random Values</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="/style.css" rel="stylesheet"></head>
+
+{% raw %}
+
+<a name="227318545"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Time%20Series%20for%20Non-Random%20Values/near/227318545" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> qu bit <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Time.20Series.20for.20Non-Random.20Values.html#227318545">(Feb 22 2021 at 18:57)</a>:</h4>
+<p>Hello Coders: </p>
+<p>original_DF  = <br>
+ID  | Animal | Date | CumSum_Dose <br>
+  1  |  Cat | 02-20-18| 0.45<br>
+  2  | Cat | 07-13-14| 0.67<br>
+  3  | Cat | 08-19-16| 1.22<br>
+  4  | Bear| 03-12-16 | 1.78<br>
+  5  | Bear | 09-06-21| 1.85<br>
+  6 |  Bear | 01-17-18 | 2.01</p>
+<p>The CumSum_Dose values are cumulative<br>
+and can represent the total dosage for the <br>
+calendar quarter they occupy. </p>
+<p>date_array =  collect(Date(2016,1,1)-Month(3):today()))</p>
+<p>My goal: <br>
+I would like to apply a proportion to each 'Dose' and<br>
+assign the result to a quarter of the year in the 'data_array'. <br>
+For example, if I have 1.0 dosage, I would assign the <br>
+individual values for each quarter as: </p>
+<p>Year 1:  2016<br>
+Q1:: 0.25 * 1 == 0.25<br>
+Q2:: 0.30 *1 == 0.30<br>
+Q3:: 0.20 * 1 == 0.20<br>
+Q4:: 0.25 *1== 0.25</p>
+<p>Year 2: 2017<br>
+Q1:: 0.55 * 1 == 0.55<br>
+Q2:: 0.10 *1 == 0.10<br>
+Q3:: 0.15 * 1 == 0.15<br>
+Q4:: 0.20 *1== 0.20</p>
+<p>The proportions can vary by year, and I would like to change<br>
+them as necessary for each subsequent year. Any suggestions?</p>
+
+
+
+<a name="227608196"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Time%20Series%20for%20Non-Random%20Values/near/227608196" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip2.png" alt="view this post on Zulip"></a> Florian Große <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Time.20Series.20for.20Non-Random.20Values.html#227608196">(Feb 24 2021 at 14:41)</a>:</h4>
+<p>Not clear: "The CumSum_Dose values are cumulative and can represent the total dosage for the calendar quarter they occupy" vs: "I would like to apply a proportion to each 'Dose' and assign the result to a quarter of the year..."</p>
+<p>What now, are these already per quarter or per year? And do you want a <code>data_array</code> per animal or over all.</p>
+
+
+
+{% endraw %}
+
+<hr><p>Last updated: Mar 11 2021 at 13:06 UTC</p>

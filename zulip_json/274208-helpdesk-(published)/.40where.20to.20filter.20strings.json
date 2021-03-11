@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p>Hello: </p>\n<p>I am using</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">begin</span>\n<span class=\"n\">Pkg</span><span class=\"o\">.</span><span class=\"n\">add</span><span class=\"p\">(</span><span class=\"s\">\"Query\"</span><span class=\"p\">)</span>\n<span class=\"k\">using</span> <span class=\"n\">Query</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>I would like to filter a dataframe <br>\nso that: </p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">FINAL</span> <span class=\"o\">=</span> <span class=\"nd\">@from</span> <span class=\"n\">Table</span>\n               <span class=\"nd\">@select</span> <span class=\"n\">i</span>\n               <span class=\"nd\">@where</span> <span class=\"n\">i</span><span class=\"o\">.</span><span class=\"n\">a</span> <span class=\"o\">!</span><span class=\"n\">contains</span> <span class=\"s\">\"Ducks\"</span>\n               <span class=\"nd\">@collect</span> <span class=\"n\">DataFrame</span>\n</code></pre></div>\n<p>Is there an operator similar to contains (such<br>\nas NOT LIKE)  that could help me filter out strings <br>\nin a column containing the word 'Ducks', regardless <br>\nof the case? </p>\n<p><span class=\"user-mention\" data-user-id=\"269318\">@Nils</span> <br>\n<span class=\"user-mention\" data-user-id=\"269446\">@Expanding Man</span> <br>\n<span class=\"user-mention\" data-user-id=\"272536\">@David Anthoff</span> </p>\n<p>Thank you,</p>",
+        "id": 228754591,
+        "sender_full_name": "qu bit",
+        "timestamp": 1614856893
+    }
+]
