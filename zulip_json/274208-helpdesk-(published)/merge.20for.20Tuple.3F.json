@@ -1,0 +1,110 @@
+[
+    {
+        "content": "<p>You can copy a NamedTuple with modifications using the merge function. Is there any similar facility for a unnamed Tuple, merging by index?</p>",
+        "id": 234327028,
+        "sender_full_name": "Timothy Larson",
+        "timestamp": 1618321396
+    },
+    {
+        "content": "<p>There is <code>union</code>, but I don't know if it performs the kind on merge you want.</p>",
+        "id": 234327667,
+        "sender_full_name": "mbaz",
+        "timestamp": 1618321631
+    },
+    {
+        "content": "<p><code>union</code> assumes a set, which is too strong an assumption for a Tuple.</p>",
+        "id": 234329677,
+        "sender_full_name": "Timothy Larson",
+        "timestamp": 1618322313
+    },
+    {
+        "content": "<p>You can do this:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">a</span> <span class=\"o\">=</span> <span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">,</span> <span class=\"o\">:</span><span class=\"n\">b</span><span class=\"p\">,</span> <span class=\"mi\">3</span><span class=\"p\">)</span>\n<span class=\"kt\">Tuple</span><span class=\"p\">((</span><span class=\"n\">x</span> <span class=\"o\">=</span> <span class=\"n\">collect</span><span class=\"p\">(</span><span class=\"n\">a</span><span class=\"p\">);</span> <span class=\"n\">x</span><span class=\"p\">[</span><span class=\"mi\">3</span><span class=\"p\">]</span> <span class=\"o\">=</span> <span class=\"o\">:</span><span class=\"n\">c</span><span class=\"p\">;</span> <span class=\"n\">x</span><span class=\"p\">))</span>\n</code></pre></div>\n<p>Just wondering if there was something more idiomatic.</p>",
+        "id": 234330504,
+        "sender_full_name": "Timothy Larson",
+        "timestamp": 1618322564
+    },
+    {
+        "content": "<p>Now I see what you mean. I don't know of any function in <code>Base</code> to do this.<br>\nI think the difficulty is how to specify precedence; with named tuples, the last key \"wins\". An adhoc way to do it might be to write a <code>merge</code> method such that <code>merge( (1,2,3), (nothing, 10, nothing, 11) == (1, 10, 3, 11)</code>.</p>",
+        "id": 234333258,
+        "sender_full_name": "mbaz",
+        "timestamp": 1618323513
+    },
+    {
+        "content": "<p>Do you want <code>Base.setindex</code>?</p>",
+        "id": 234364403,
+        "sender_full_name": "Simeon Schaub",
+        "timestamp": 1618333509
+    },
+    {
+        "content": "<p>I would, if it were defined for Tuple, but it is not.</p>",
+        "id": 234366953,
+        "sender_full_name": "Timothy Larson",
+        "timestamp": 1618334436
+    },
+    {
+        "content": "<p>it isn't?</p>",
+        "id": 234367149,
+        "sender_full_name": "Maarten",
+        "timestamp": 1618334523
+    },
+    {
+        "content": "<p>It is only defined as Base.setindex! (note the !) as a mutation to an array. It is not defined for Tuple because they are not mutable. Perhaps Base.setindex (without a !) could be added to Julia for \"setting\" a value in an immutable via copy-with-modification?</p>",
+        "id": 234368139,
+        "sender_full_name": "Timothy Larson",
+        "timestamp": 1618334889
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">julia</span><span class=\"o\">&gt;</span> <span class=\"n\">a</span> <span class=\"o\">=</span> <span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"mi\">2</span><span class=\"p\">,</span><span class=\"mi\">3</span><span class=\"p\">);</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span> <span class=\"n\">b</span> <span class=\"o\">=</span> <span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"n\">setindex</span><span class=\"p\">(</span><span class=\"n\">a</span><span class=\"p\">,</span><span class=\"mi\">10</span><span class=\"p\">,</span><span class=\"mi\">2</span><span class=\"p\">);</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span> <span class=\"n\">b</span>\n<span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">,</span> <span class=\"mi\">10</span><span class=\"p\">,</span> <span class=\"mi\">3</span><span class=\"p\">)</span>\n</code></pre></div>",
+        "id": 234368255,
+        "sender_full_name": "Maarten",
+        "timestamp": 1618334935
+    },
+    {
+        "content": "<p>Nice :)  Did it not get in the docs, or am I just not searching well?</p>",
+        "id": 234368715,
+        "sender_full_name": "Timothy Larson",
+        "timestamp": 1618335107
+    },
+    {
+        "content": "<p>I remember seeing something like that used in tupletools.jl, but I've also never seen it documented</p>",
+        "id": 234368879,
+        "sender_full_name": "Maarten",
+        "timestamp": 1618335164
+    },
+    {
+        "content": "<p>There is a docstring though, so it probably is find-able in the documentation:<br>\n  setindex(c::Tuple, v, i::Integer)</p>\n<p>Creates a new tuple similar to x with the value at index i set to v. Throws a BoundsError when out of bounds.</p>",
+        "id": 234369020,
+        "sender_full_name": "Maarten",
+        "timestamp": 1618335224
+    },
+    {
+        "content": "<p>Thank you for finding that.</p>",
+        "id": 234369214,
+        "sender_full_name": "Timothy Larson",
+        "timestamp": 1618335269
+    },
+    {
+        "content": "<p>no problem :)</p>",
+        "id": 234369391,
+        "sender_full_name": "Maarten",
+        "timestamp": 1618335344
+    },
+    {
+        "content": "<p>It works on NamedTuple also.</p>",
+        "id": 234369547,
+        "sender_full_name": "Timothy Larson",
+        "timestamp": 1618335397
+    },
+    {
+        "content": "<p>There is also setindex!! from <a href=\"https://github.com/search?q=BangBang.jl&amp;type=Repositories\">BangBang.jl</a></p>",
+        "id": 234389734,
+        "sender_full_name": "Timothy Larson",
+        "timestamp": 1618343544
+    },
+    {
+        "content": "<p>See <a href=\"https://github.com/search?q=TupleTools.jl&amp;type=Repositories\">TupleTools.jl</a></p>",
+        "id": 234644981,
+        "sender_full_name": "Jeffrey Sarnoff",
+        "timestamp": 1618479370
+    }
+]
