@@ -1,0 +1,859 @@
+{
+    "streams": {
+        "helpdesk (published)": {
+            "id": 274208,
+            "latest_id": 244035622,
+            "topic_data": {
+                "....testing leading dots": {
+                    "latest_date": 1615150224,
+                    "size": 1
+                },
+                "2 decimals numbers": {
+                    "latest_date": 1623704930,
+                    "size": 6
+                },
+                "2pi as Float32": {
+                    "latest_date": 1611164740,
+                    "size": 12
+                },
+                "@cfunction and Ref arguments": {
+                    "latest_date": 1622232205,
+                    "size": 1
+                },
+                "@where to filter strings": {
+                    "latest_date": 1614856893,
+                    "size": 1
+                },
+                "Add Values to Dict Arrays": {
+                    "latest_date": 1622743645,
+                    "size": 10
+                },
+                "Add more types to Tuple": {
+                    "latest_date": 1617792324,
+                    "size": 6
+                },
+                "Adding processes and workers": {
+                    "latest_date": 1614932961,
+                    "size": 17
+                },
+                "Annotation to elide function call if return value is unused": {
+                    "latest_date": 1615484510,
+                    "size": 9
+                },
+                "Appending empty string to `String[]`": {
+                    "latest_date": 1622552702,
+                    "size": 6
+                },
+                "Arrays and custom arrays": {
+                    "latest_date": 1621953295,
+                    "size": 6
+                },
+                "Assign Table variable name in Furncition": {
+                    "latest_date": 1622339533,
+                    "size": 12
+                },
+                "Auto-downloading unregistered packages": {
+                    "latest_date": 1623704023,
+                    "size": 7
+                },
+                "Back Fill vs Forward Fill?": {
+                    "latest_date": 1616265205,
+                    "size": 9
+                },
+                "Bitwise and": {
+                    "latest_date": 1624329063,
+                    "size": 15
+                },
+                "Broadcasting generlizability": {
+                    "latest_date": 1615194105,
+                    "size": 10
+                },
+                "Broadcasting over string": {
+                    "latest_date": 1620924709,
+                    "size": 5
+                },
+                "Build error (on Plots) when running tests": {
+                    "latest_date": 1614609060,
+                    "size": 1
+                },
+                "CSV -> StructArray": {
+                    "latest_date": 1612322932,
+                    "size": 13
+                },
+                "CSV causing install problems": {
+                    "latest_date": 1620763019,
+                    "size": 14
+                },
+                "Can't figune out what is wrong with dataframe": {
+                    "latest_date": 1622408747,
+                    "size": 1
+                },
+                "Capture and print error as it appears in the repl": {
+                    "latest_date": 1619467944,
+                    "size": 8
+                },
+                "Case/When Logic with Time Ranges": {
+                    "latest_date": 1615238632,
+                    "size": 1
+                },
+                "Checking for code inefficiencies": {
+                    "latest_date": 1622231283,
+                    "size": 26
+                },
+                "Cleaning Data in DF & Removing Columns": {
+                    "latest_date": 1622371050,
+                    "size": 2
+                },
+                "Cloud computing with Julia": {
+                    "latest_date": 1611880606,
+                    "size": 14
+                },
+                "Combining multiple Weave.jl (.jmd) files.": {
+                    "latest_date": 1612705043,
+                    "size": 1
+                },
+                "Compilation/Inference time": {
+                    "latest_date": 1619131338,
+                    "size": 32
+                },
+                "Confusion with MIME types as function arguments": {
+                    "latest_date": 1617223417,
+                    "size": 6
+                },
+                "Consistent API for dense and sparse arrays": {
+                    "latest_date": 1611437283,
+                    "size": 3
+                },
+                "Converting Columnar DataTypes": {
+                    "latest_date": 1614621800,
+                    "size": 2
+                },
+                "Coverting Array{Any,1} Column Data Types": {
+                    "latest_date": 1614789392,
+                    "size": 16
+                },
+                "Custom Type 'Resource'": {
+                    "latest_date": 1617537875,
+                    "size": 3
+                },
+                "Customize printing inside a stacktrace?": {
+                    "latest_date": 1614632745,
+                    "size": 2
+                },
+                "DICOM.jl loading directory": {
+                    "latest_date": 1622253320,
+                    "size": 1
+                },
+                "DataFrame delete last row": {
+                    "latest_date": 1622402911,
+                    "size": 6
+                },
+                "DataFrame subtraction": {
+                    "latest_date": 1614693988,
+                    "size": 13
+                },
+                "DataFrames Transformation": {
+                    "latest_date": 1613637196,
+                    "size": 18
+                },
+                "Dealing with inner constructors in Setfield.jl": {
+                    "latest_date": 1614836628,
+                    "size": 3
+                },
+                "Denser storage in StructArrays": {
+                    "latest_date": 1615735113,
+                    "size": 1
+                },
+                "Destructure a Pair": {
+                    "latest_date": 1624441303,
+                    "size": 11
+                },
+                "Dictionary-based Priority Queues": {
+                    "latest_date": 1624225402,
+                    "size": 4
+                },
+                "Differences between ==, ===, isequal": {
+                    "latest_date": 1612230947,
+                    "size": 15
+                },
+                "Dispatch on same type but different type parameters?": {
+                    "latest_date": 1623870244,
+                    "size": 12
+                },
+                "Documentation": {
+                    "latest_date": 1618899006,
+                    "size": 3
+                },
+                "Does Symbolics avoid repeat computation?": {
+                    "latest_date": 1623998443,
+                    "size": 2
+                },
+                "Download all files in a URL": {
+                    "latest_date": 1617728988,
+                    "size": 5
+                },
+                "Dropping Rows By Condition": {
+                    "latest_date": 1614584013,
+                    "size": 3
+                },
+                "Effective Way of Plotting Multiple Polygons": {
+                    "latest_date": 1611186353,
+                    "size": 2
+                },
+                "Enabling @debug": {
+                    "latest_date": 1622207388,
+                    "size": 23
+                },
+                "Errors compiling julia": {
+                    "latest_date": 1624062804,
+                    "size": 26
+                },
+                "Escaping issues in the archive": {
+                    "latest_date": 1615407015,
+                    "size": 1
+                },
+                "Expand Int in macro": {
+                    "latest_date": 1614281294,
+                    "size": 8
+                },
+                "FileWatching": {
+                    "latest_date": 1611318225,
+                    "size": 11
+                },
+                "Find the definition of an anonymous function from the REPL": {
+                    "latest_date": 1619617141,
+                    "size": 3
+                },
+                "FortranFiles write file size": {
+                    "latest_date": 1623191355,
+                    "size": 1
+                },
+                "Function faster than Python only for small arrays": {
+                    "latest_date": 1614614987,
+                    "size": 9
+                },
+                "Functions of abstract parametric types": {
+                    "latest_date": 1623925070,
+                    "size": 6
+                },
+                "Getting code lowered with only the function type": {
+                    "latest_date": 1614986226,
+                    "size": 10
+                },
+                "Heisenbug from hell": {
+                    "latest_date": 1623096190,
+                    "size": 7
+                },
+                "How to check if a method is defined for an instance?": {
+                    "latest_date": 1613600673,
+                    "size": 10
+                },
+                "How to create temporary environments?": {
+                    "latest_date": 1611155718,
+                    "size": 10
+                },
+                "How to display html in Jupyter with Julia?": {
+                    "latest_date": 1618052133,
+                    "size": 13
+                },
+                "How to properly define a function as argument?": {
+                    "latest_date": 1620927414,
+                    "size": 3
+                },
+                "How to see errors  in julia 1.6 Pkg?": {
+                    "latest_date": 1618595789,
+                    "size": 4
+                },
+                "How to use containers without losing speed": {
+                    "latest_date": 1612912301,
+                    "size": 7
+                },
+                "How to view a Vector with a NTuple?": {
+                    "latest_date": 1612803942,
+                    "size": 4
+                },
+                "Index Matching + List Comprehension": {
+                    "latest_date": 1615228098,
+                    "size": 11
+                },
+                "Infiltrator.jl in VS Code": {
+                    "latest_date": 1612704134,
+                    "size": 3
+                },
+                "Iterating Replacements Over Rows": {
+                    "latest_date": 1614591517,
+                    "size": 7
+                },
+                "Julia grammar definition": {
+                    "latest_date": 1616520985,
+                    "size": 6
+                },
+                "Julia version of instbw": {
+                    "latest_date": 1621197662,
+                    "size": 1
+                },
+                "Juniper tuning": {
+                    "latest_date": 1622388778,
+                    "size": 9
+                },
+                "Jupyter kernel not starting": {
+                    "latest_date": 1613002825,
+                    "size": 4
+                },
+                "Large dynamically sized arrays stack allocated?": {
+                    "latest_date": 1624549975,
+                    "size": 14
+                },
+                "Lazy concatenation of iterators": {
+                    "latest_date": 1617121324,
+                    "size": 2
+                },
+                "Library reload": {
+                    "latest_date": 1621848535,
+                    "size": 4
+                },
+                "LinearAlgebra.svd() with identity matrix": {
+                    "latest_date": 1622438952,
+                    "size": 10
+                },
+                "List submodules in Base": {
+                    "latest_date": 1619642696,
+                    "size": 5
+                },
+                "LoadError: too many parameters for type": {
+                    "latest_date": 1614152399,
+                    "size": 11
+                },
+                "Logical index DataFrames.jl": {
+                    "latest_date": 1613380493,
+                    "size": 3
+                },
+                "LoopVectorization silently failing": {
+                    "latest_date": 1620927081,
+                    "size": 14
+                },
+                "LoopVectorization staggered iteration": {
+                    "latest_date": 1621286150,
+                    "size": 4
+                },
+                "Macro changing interpretation of number literals": {
+                    "latest_date": 1621629417,
+                    "size": 4
+                },
+                "Make a struct act like a Tuple under iteration": {
+                    "latest_date": 1611395473,
+                    "size": 12
+                },
+                "Makie plots with mirrored axes": {
+                    "latest_date": 1619423105,
+                    "size": 1
+                },
+                "Multiple val types with @eval (maybe?)": {
+                    "latest_date": 1621638591,
+                    "size": 7
+                },
+                "Multivariate Newton's method": {
+                    "latest_date": 1619746497,
+                    "size": 4
+                },
+                "Nonallocating shuffle": {
+                    "latest_date": 1624540816,
+                    "size": 33
+                },
+                "None = Union{}": {
+                    "latest_date": 1618925847,
+                    "size": 14
+                },
+                "Not abusing import X as Y": {
+                    "latest_date": 1620094586,
+                    "size": 9
+                },
+                "Optimizing a weird loop with an \"output buffer\"": {
+                    "latest_date": 1617105027,
+                    "size": 1
+                },
+                "Outlier Removal": {
+                    "latest_date": 1616631031,
+                    "size": 4
+                },
+                "Outlier Removal Using IQR": {
+                    "latest_date": 1615818061,
+                    "size": 1
+                },
+                "Outlier Removal via @filter": {
+                    "latest_date": 1616667714,
+                    "size": 5
+                },
+                "Package for paths": {
+                    "latest_date": 1619530430,
+                    "size": 2
+                },
+                "Parametrization of Parametric type": {
+                    "latest_date": 1623855007,
+                    "size": 5
+                },
+                "Partially parallel problems": {
+                    "latest_date": 1623924021,
+                    "size": 16
+                },
+                "Path to Project.toml file": {
+                    "latest_date": 1619261420,
+                    "size": 3
+                },
+                "Pkg writing: use pkg and export their namespace": {
+                    "latest_date": 1624635652,
+                    "size": 4
+                },
+                "Plotting values with units with Makie": {
+                    "latest_date": 1620824108,
+                    "size": 3
+                },
+                "Pluto.jl": {
+                    "latest_date": 1614833245,
+                    "size": 3
+                },
+                "Pluto.jl and Symbolics.jl": {
+                    "latest_date": 1620230555,
+                    "size": 3
+                },
+                "PrettyPrint/PrettyPrinting and structs": {
+                    "latest_date": 1613156596,
+                    "size": 1
+                },
+                "PrettyTables warmup": {
+                    "latest_date": 1612710983,
+                    "size": 2
+                },
+                "Problems with Flux precompilation": {
+                    "latest_date": 1621719183,
+                    "size": 1
+                },
+                "Profiling calls to a specific function inside another call": {
+                    "latest_date": 1620827323,
+                    "size": 2
+                },
+                "Progress Bar in Terminal with DifferentialEquations.jl": {
+                    "latest_date": 1614110623,
+                    "size": 8
+                },
+                "ProgressUnknown and ProgressThresh (ProgressMeter.jl)": {
+                    "latest_date": 1622034793,
+                    "size": 6
+                },
+                "Provably optimal Needleman-Wunch": {
+                    "latest_date": 1623928473,
+                    "size": 6
+                },
+                "Question marks while precompiling": {
+                    "latest_date": 1617914595,
+                    "size": 6
+                },
+                "Random Sampling of a column by elemental group": {
+                    "latest_date": 1615041890,
+                    "size": 16
+                },
+                "Random Selection From Within An Array Of Elements": {
+                    "latest_date": 1615303134,
+                    "size": 8
+                },
+                "Reading tsv file with multiple comment chars": {
+                    "latest_date": 1616600798,
+                    "size": 2
+                },
+                "Record animation to avi": {
+                    "latest_date": 1614012898,
+                    "size": 19
+                },
+                "Registered package not found in testing": {
+                    "latest_date": 1623141626,
+                    "size": 4
+                },
+                "Reminder?": {
+                    "latest_date": 1616182818,
+                    "size": 9
+                },
+                "Repeating a variable number of times": {
+                    "latest_date": 1624540458,
+                    "size": 7
+                },
+                "Replacing 'nothing' with NaN": {
+                    "latest_date": 1614644567,
+                    "size": 11
+                },
+                "Return type of division": {
+                    "latest_date": 1621041453,
+                    "size": 5
+                },
+                "Rotate a 3D point around another": {
+                    "latest_date": 1611667649,
+                    "size": 20
+                },
+                "Rounding Entire Columns": {
+                    "latest_date": 1614941124,
+                    "size": 3
+                },
+                "Safety of local variables inside `@spawn`": {
+                    "latest_date": 1622154547,
+                    "size": 4
+                },
+                "Sampling & Shuffling With Julia": {
+                    "latest_date": 1614979959,
+                    "size": 1
+                },
+                "Sandbox Julia?": {
+                    "latest_date": 1614534595,
+                    "size": 36
+                },
+                "Scopeless functions OR manipulate the stack": {
+                    "latest_date": 1617011361,
+                    "size": 18
+                },
+                "Searching A Tree": {
+                    "latest_date": 1624380475,
+                    "size": 5
+                },
+                "Shift indices": {
+                    "latest_date": 1615918038,
+                    "size": 7
+                },
+                "Shortcut to test specific testset": {
+                    "latest_date": 1611252457,
+                    "size": 6
+                },
+                "Simultaneous Package Imports": {
+                    "latest_date": 1617695817,
+                    "size": 2
+                },
+                "String macro for rationals?": {
+                    "latest_date": 1618345534,
+                    "size": 19
+                },
+                "Strings in if statements": {
+                    "latest_date": 1622334262,
+                    "size": 3
+                },
+                "Suppressing status output on Pkg.test()": {
+                    "latest_date": 1614705628,
+                    "size": 6
+                },
+                "Symbolics.jl  vs SymPy.jl": {
+                    "latest_date": 1619531418,
+                    "size": 2
+                },
+                "Symbolics.jl derivative cot(x)": {
+                    "latest_date": 1616200367,
+                    "size": 19
+                },
+                "Task and Channel for Batch Scheduling": {
+                    "latest_date": 1621142307,
+                    "size": 27
+                },
+                "Testing issues": {
+                    "latest_date": 1614691074,
+                    "size": 8
+                },
+                "Three bytes to UInt32": {
+                    "latest_date": 1614355253,
+                    "size": 7
+                },
+                "Time Series for Non-Random Values": {
+                    "latest_date": 1614177716,
+                    "size": 1
+                },
+                "Transpose matrix": {
+                    "latest_date": 1620856547,
+                    "size": 12
+                },
+                "Tricks for solving an ODE with a large derivative?": {
+                    "latest_date": 1614966780,
+                    "size": 16
+                },
+                "Tullio square elements": {
+                    "latest_date": 1614299172,
+                    "size": 5
+                },
+                "Type Instability for GPU only using zygote": {
+                    "latest_date": 1622486846,
+                    "size": 2
+                },
+                "Type uncertainty from wrapper functions?": {
+                    "latest_date": 1615823067,
+                    "size": 17
+                },
+                "Unable to install package on earlier julia version": {
+                    "latest_date": 1611695164,
+                    "size": 23
+                },
+                "Understanding Type Instability": {
+                    "latest_date": 1623673880,
+                    "size": 43
+                },
+                "Unit test that specific method is called": {
+                    "latest_date": 1623000328,
+                    "size": 7
+                },
+                "VS Code fuzzy autocomplete": {
+                    "latest_date": 1611951978,
+                    "size": 1
+                },
+                "Vector of concrete types only": {
+                    "latest_date": 1614774101,
+                    "size": 3
+                },
+                "When to use views, when to not use them": {
+                    "latest_date": 1622054795,
+                    "size": 5
+                },
+                "Which variable needs to be escaped in quoted expression": {
+                    "latest_date": 1613599413,
+                    "size": 8
+                },
+                "Why does `new` not infer its argument types?": {
+                    "latest_date": 1615667283,
+                    "size": 9
+                },
+                "Why does this generated function segfault?": {
+                    "latest_date": 1613688791,
+                    "size": 12
+                },
+                "Woes with `esc` and non-recursive `macroexpand`": {
+                    "latest_date": 1620651080,
+                    "size": 4
+                },
+                "Working with Huge Matrices": {
+                    "latest_date": 1622590282,
+                    "size": 13
+                },
+                "[Tangent] (Un)Structured concurrency": {
+                    "latest_date": 1615404282,
+                    "size": 17
+                },
+                "`Symbol(::Type)` and `Symbol(::Module)`": {
+                    "latest_date": 1611707191,
+                    "size": 2
+                },
+                "`distance_transform` from ImageMorphology?": {
+                    "latest_date": 1624743450,
+                    "size": 1
+                },
+                "`eachline(::IOBuffer)` for other delimiters": {
+                    "latest_date": 1613592887,
+                    "size": 2
+                },
+                "`isinteractive()` and `.julia/config/startup.jl`": {
+                    "latest_date": 1616749316,
+                    "size": 17
+                },
+                "`show` methods": {
+                    "latest_date": 1614049164,
+                    "size": 13
+                },
+                "`take!` from `IOBuffer` copies": {
+                    "latest_date": 1615249617,
+                    "size": 7
+                },
+                "absolute simplest way to add a simple CSS to my HTML": {
+                    "latest_date": 1611849560,
+                    "size": 22
+                },
+                "addprocs hangs over ssh": {
+                    "latest_date": 1619213427,
+                    "size": 2
+                },
+                "all but one function?": {
+                    "latest_date": 1621594596,
+                    "size": 11
+                },
+                "are `OnlineStats` thread safe?": {
+                    "latest_date": 1621650781,
+                    "size": 3
+                },
+                "broadcast without length": {
+                    "latest_date": 1615228229,
+                    "size": 9
+                },
+                "convert eltype in generic way": {
+                    "latest_date": 1618282303,
+                    "size": 1
+                },
+                "delete columns SparseMatrixCSC": {
+                    "latest_date": 1611439047,
+                    "size": 1
+                },
+                "display() with indent": {
+                    "latest_date": 1612289979,
+                    "size": 2
+                },
+                "efficient bulk insert for dictionary": {
+                    "latest_date": 1612696379,
+                    "size": 5
+                },
+                "embedding julia 1.6.0": {
+                    "latest_date": 1617795315,
+                    "size": 1
+                },
+                "filter dict with anonymous function": {
+                    "latest_date": 1613180395,
+                    "size": 4
+                },
+                "filtering backtraces": {
+                    "latest_date": 1612006417,
+                    "size": 8
+                },
+                "first and last of range": {
+                    "latest_date": 1614386866,
+                    "size": 16
+                },
+                "functions and singletons as functions": {
+                    "latest_date": 1621145754,
+                    "size": 4
+                },
+                "get nth pair from `OrderedDict`": {
+                    "latest_date": 1613329815,
+                    "size": 4
+                },
+                "getproperty for a wrapper": {
+                    "latest_date": 1612471235,
+                    "size": 5
+                },
+                "getting Ref object in pyjulia": {
+                    "latest_date": 1622803208,
+                    "size": 1
+                },
+                "how does `Threads.Condition` work?": {
+                    "latest_date": 1615155330,
+                    "size": 10
+                },
+                "how to animate sine wave in pluto": {
+                    "latest_date": 1621047731,
+                    "size": 5
+                },
+                "how to define: learner_dict": {
+                    "latest_date": 1617118973,
+                    "size": 1
+                },
+                "isdir || mkdir": {
+                    "latest_date": 1621831976,
+                    "size": 7
+                },
+                "iswritable": {
+                    "latest_date": 1612019707,
+                    "size": 11
+                },
+                "keyward argument macro hidden in base": {
+                    "latest_date": 1612481844,
+                    "size": 4
+                },
+                "kronecker products with a vector of only one non-zero ele...": {
+                    "latest_date": 1620540053,
+                    "size": 9
+                },
+                "list standard library packages": {
+                    "latest_date": 1618903415,
+                    "size": 2
+                },
+                "logging with extra levels": {
+                    "latest_date": 1614124370,
+                    "size": 7
+                },
+                "makie updating vline for slider value": {
+                    "latest_date": 1620730808,
+                    "size": 3
+                },
+                "managing background task": {
+                    "latest_date": 1621391524,
+                    "size": 23
+                },
+                "markdown and latex": {
+                    "latest_date": 1619143233,
+                    "size": 4
+                },
+                "merge for Tuple?": {
+                    "latest_date": 1618479370,
+                    "size": 18
+                },
+                "nonallocating multiarg `any`": {
+                    "latest_date": 1615416650,
+                    "size": 80
+                },
+                "number of bytes remaining in IO": {
+                    "latest_date": 1613339259,
+                    "size": 44
+                },
+                "one(x) != oneunit(x) where typeof(x) <: Integer": {
+                    "latest_date": 1618352157,
+                    "size": 7
+                },
+                "package for \"bit packing\"?": {
+                    "latest_date": 1613331202,
+                    "size": 12
+                },
+                "parallel seeds for Distributions.jl": {
+                    "latest_date": 1622119763,
+                    "size": 4
+                },
+                "plotly interactive hover date formatting issue": {
+                    "latest_date": 1617723155,
+                    "size": 2
+                },
+                "profiling": {
+                    "latest_date": 1614351269,
+                    "size": 1
+                },
+                "pycall + conda + miniforge erroring": {
+                    "latest_date": 1620329905,
+                    "size": 1
+                },
+                "range() with two equal Int32s": {
+                    "latest_date": 1614159713,
+                    "size": 16
+                },
+                "read from IOBuffer without seekstart": {
+                    "latest_date": 1612037955,
+                    "size": 4
+                },
+                "reading a file with header with CSV.jl": {
+                    "latest_date": 1622223078,
+                    "size": 7
+                },
+                "realmin function": {
+                    "latest_date": 1622265232,
+                    "size": 2
+                },
+                "skoperator()": {
+                    "latest_date": 1617113026,
+                    "size": 1
+                },
+                "solve SDEProblem with same driving noise": {
+                    "latest_date": 1617711268,
+                    "size": 4
+                },
+                "stream events": {
+                    "latest_date": 1611139057,
+                    "size": 2
+                },
+                "telling code coverage to skip naked throw": {
+                    "latest_date": 1617645962,
+                    "size": 4
+                },
+                "thread safe caches": {
+                    "latest_date": 1622546165,
+                    "size": 1
+                },
+                "using .ji files": {
+                    "latest_date": 1614607811,
+                    "size": 1
+                },
+                "using PyCall object in threads": {
+                    "latest_date": 1623926190,
+                    "size": 19
+                },
+                "why is Optim.jl so slow?": {
+                    "latest_date": 1614684963,
+                    "size": 94
+                }
+            }
+        }
+    },
+    "time": 1624791675.3692374
+}
