@@ -1,0 +1,26 @@
+[
+    {
+        "content": "<p>the <code>begin</code> comes from the <code>quote</code> you're pushing being a <code>begin</code></p>",
+        "id": 352335910,
+        "sender_full_name": "Sukera",
+        "timestamp": 1682355842
+    },
+    {
+        "content": "<p>I think you want <code>append!(code.args, (quote a + b; c + d end).args)</code></p>",
+        "id": 352336200,
+        "sender_full_name": "Sukera",
+        "timestamp": 1682355910
+    },
+    {
+        "content": "<p>aaaah, <code>append!</code>!  I did try that, but with <code>push!</code>, and got garbage, because <code>push!</code> iterates over the elements to push.  thanks!</p>",
+        "id": 352336782,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1682356079
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269186\">Mosè Giordano</span> has marked this topic as resolved.</p>",
+        "id": 352336783,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1682356080
+    }
+]

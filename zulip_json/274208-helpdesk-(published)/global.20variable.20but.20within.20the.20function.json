@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Is there a way to make a variable inside a function a \"semi\" global variable? Not sure that I am using the right wording, but for example, inside a function I have</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code>    <span class=\"k\">try</span>\n        <span class=\"n\">pixel_size</span> <span class=\"o\">=</span> <span class=\"n\">header</span><span class=\"p\">[(</span><span class=\"mh\">0x0028</span><span class=\"p\">,</span> <span class=\"mh\">0x0030</span><span class=\"p\">)]</span>\n    <span class=\"k\">catch</span>\n        <span class=\"n\">FOV</span> <span class=\"o\">=</span> <span class=\"n\">header</span><span class=\"p\">[(</span><span class=\"mh\">0x0018</span><span class=\"p\">,</span> <span class=\"mh\">0x1100</span><span class=\"p\">)]</span>\n        <span class=\"n\">matrix_size</span> <span class=\"o\">=</span> <span class=\"n\">header</span><span class=\"p\">[(</span><span class=\"mh\">0x0028</span><span class=\"p\">,</span> <span class=\"mh\">0x0010</span><span class=\"p\">)]</span>\n\n        <span class=\"n\">pixel_size</span> <span class=\"o\">=</span> <span class=\"n\">FOV</span> <span class=\"o\">/</span> <span class=\"n\">matrix_size</span>\n    <span class=\"k\">end</span>\n</code></pre></div>\n<p>and I want to make <code>pixel_size</code> available to the rest of the function but not necessarily globally. Is there a way to do this?</p>",
+        "id": 262849213,
+        "sender_full_name": "Dale Black",
+        "timestamp": 1637980749
+    },
+    {
+        "content": "<p>You should be able to just do</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code>    <span class=\"k\">local</span> <span class=\"n\">pixel_size</span>\n    <span class=\"k\">try</span>\n        <span class=\"n\">pixel_size</span> <span class=\"o\">=</span> <span class=\"n\">header</span><span class=\"p\">[(</span><span class=\"mh\">0x0028</span><span class=\"p\">,</span> <span class=\"mh\">0x0030</span><span class=\"p\">)]</span>\n    <span class=\"k\">catch</span>\n        <span class=\"n\">FOV</span> <span class=\"o\">=</span> <span class=\"n\">header</span><span class=\"p\">[(</span><span class=\"mh\">0x0018</span><span class=\"p\">,</span> <span class=\"mh\">0x1100</span><span class=\"p\">)]</span>\n        <span class=\"n\">matrix_size</span> <span class=\"o\">=</span> <span class=\"n\">header</span><span class=\"p\">[(</span><span class=\"mh\">0x0028</span><span class=\"p\">,</span> <span class=\"mh\">0x0010</span><span class=\"p\">)]</span>\n\n        <span class=\"n\">pixel_size</span> <span class=\"o\">=</span> <span class=\"n\">FOV</span> <span class=\"o\">/</span> <span class=\"n\">matrix_size</span>\n    <span class=\"k\">end</span>\n</code></pre></div>",
+        "id": 262851493,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1637984652
+    }
+]

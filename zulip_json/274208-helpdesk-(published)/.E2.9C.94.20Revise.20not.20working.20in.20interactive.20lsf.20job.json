@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Turns out this section in the docs was the answer: <a href=\"https://timholy.github.io/Revise.jl/stable/config/#Polling-and-NFS-mounted-code-directories:-JULIA_REVISE_POLL-1\">https://timholy.github.io/Revise.jl/stable/config/#Polling-and-NFS-mounted-code-directories:-JULIA_REVISE_POLL-1</a></p>\n<p>It is a bit unreliable as the network seems slow and sometimes it takes up towards 30 seconds before Revise notices that the file is changed and in the meantime the old definition is used. Most likely can't blame this on Revise though.</p>",
+        "id": 259374347,
+        "sender_full_name": "DrChainsaw",
+        "timestamp": 1635420840
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"300483\">DrChainsaw</span> has marked this topic as resolved.</p>",
+        "id": 259374404,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1635420854
+    }
+]

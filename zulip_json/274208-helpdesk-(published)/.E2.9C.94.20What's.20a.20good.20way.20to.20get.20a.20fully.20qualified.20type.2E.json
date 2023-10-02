@@ -1,0 +1,32 @@
+[
+    {
+        "content": "<p>The documentation seems to indicate they unwrap unionall for us.</p>",
+        "id": 277853775,
+        "sender_full_name": "Timothy",
+        "timestamp": 1649153055
+    },
+    {
+        "content": "<p>yes</p>",
+        "id": 277853788,
+        "sender_full_name": "Sebastian Pfitzner",
+        "timestamp": 1649153065
+    },
+    {
+        "content": "<p>those two are public API (I think) and should be used over manually accessing the type's internals</p>",
+        "id": 277853812,
+        "sender_full_name": "Sebastian Pfitzner",
+        "timestamp": 1649153083
+    },
+    {
+        "content": "<p>Looks like I'm sorted then.</p>",
+        "id": 277854115,
+        "sender_full_name": "Timothy",
+        "timestamp": 1649153242
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"400021\">Timothy</span> has marked this topic as resolved.</p>",
+        "id": 277854117,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1649153244
+    }
+]

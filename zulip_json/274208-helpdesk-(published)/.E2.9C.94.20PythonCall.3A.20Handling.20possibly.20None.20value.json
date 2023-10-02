@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"432905\">Jesper Stemann Andersen</span> has marked this topic as resolved.</p>",
+        "id": 350987423,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1681895936
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"598897\">Santtu</span> <a href=\"#narrow/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20PythonCall.3A.20Handling.20possibly.20None.20value/near/350936350\">said</a>:</p>\n<blockquote>\n<p>Also, you should probably be using the <code>pyis</code> function from the PythonCall library instead of <code>==</code>, to compare <code>x</code> to <code>None</code> (<a href=\"https://cjdoris.github.io/PythonCall.jl/v0.2/pythoncall/#PythonCall.pyis\">link</a>).</p>\n</blockquote>\n<p>Thanks - this was what I was looking for.</p>",
+        "id": 350987562,
+        "sender_full_name": "Jesper Stemann Andersen",
+        "timestamp": 1681895971
+    }
+]

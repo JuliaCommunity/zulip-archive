@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Do we have any eigensolvers laying around that are specialized for hermitian tridiagonal arrays?</p>",
+        "id": 352936976,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1682539485
+    },
+    {
+        "content": "<p>We have <code>eigen(::SymTridiagonal)</code> but <code>SymTridiagonal</code> only seems to support being symmetric but not Hermitian which is a really weird choice because symmetric, non-hermitian matrices are quite rare in linear algebra</p>",
+        "id": 352937140,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1682539554
+    }
+]

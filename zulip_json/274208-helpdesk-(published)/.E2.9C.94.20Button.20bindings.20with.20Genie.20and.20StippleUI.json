@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Turns out I had to do it through <code>v-on:click=\"button_pressed=!button_pressed\"</code> in HTML<br>\nTaken from <a href=\"https://github.com/GenieFramework/StippleUI.jl\">Stipple GitHub</a><br>\nIf only docs said anything about it…</p>\n<p>Question resolved</p>",
+        "id": 390797927,
+        "sender_full_name": "Ivan Selin",
+        "timestamp": 1694637076
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"599222\">Ivan Selin</span> has marked this topic as resolved.</p>",
+        "id": 390797966,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1694637085
+    }
+]

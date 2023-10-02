@@ -1,0 +1,152 @@
+[
+    {
+        "content": "<p>Perhaps that is unavoidable, but boy would it be nice to have the compiler synthesize an appropriate type like <a href=\"https://github.com/apple/swift/blob/main/docs/DifferentiableProgramming.md#synthesis-conditions\">https://github.com/apple/swift/blob/main/docs/DifferentiableProgramming.md#synthesis-conditions</a>.</p>",
+        "id": 328876116,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1676853344
+    },
+    {
+        "content": "<p>Hm, well it does at least do the right thing for isbits types at least:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">let</span><span class=\"w\"> </span><span class=\"n\">s</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">AdjointStruct</span><span class=\"p\">{</span><span class=\"kt\">Complex</span><span class=\"p\">{</span><span class=\"kt\">Int</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"ss\">:re</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"ss\">:im</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"kt\">Tuple</span><span class=\"p\">{</span><span class=\"kt\">Int</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int</span><span class=\"p\">}}((;</span><span class=\"n\">re</span><span class=\"o\">=</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"nb\">im</span><span class=\"o\">=</span><span class=\"mi\">2</span><span class=\"p\">))</span>\n<span class=\"w\">           </span><span class=\"n\">code_llvm</span><span class=\"p\">((</span><span class=\"n\">typeof</span><span class=\"p\">(</span><span class=\"n\">s</span><span class=\"p\">),))</span><span class=\"w\"> </span><span class=\"k\">do</span><span class=\"w\"> </span><span class=\"n\">s</span>\n<span class=\"w\">               </span><span class=\"n\">s</span><span class=\"o\">.</span><span class=\"n\">re</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">           </span><span class=\"k\">end</span>\n\n<span class=\"go\">       end</span>\n<span class=\"go\">;  @ REPL[31]:3 within `#7`</span>\n<span class=\"go\">define i64 @\"julia_#7_731\"({}* noundef nonnull align 8 dereferenceable(16) %0) #0 {</span>\n<span class=\"go\">top:</span>\n<span class=\"go\">; ┌ @ REPL[27]:4 within `setproperty!`</span>\n<span class=\"go\">   %1 = bitcast {}* %0 to i64*</span>\n<span class=\"go\">   store i64 2, i64* %1, align 8</span>\n<span class=\"go\">; └</span>\n<span class=\"go\">  ret i64 2</span>\n<span class=\"go\">}</span>\n</code></pre></div>",
+        "id": 328876536,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1676853633
+    },
+    {
+        "content": "<p>I think unpacking and repacking should be relatively cheap compared to <code>O(N)</code> allocations</p>",
+        "id": 328876769,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1676853817
+    },
+    {
+        "content": "<p>Are you on nightly? This is what I see on 1.8.5:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">let</span><span class=\"w\"> </span><span class=\"n\">s3</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">AdjointStruct</span><span class=\"p\">{</span><span class=\"kt\">Complex</span><span class=\"p\">{</span><span class=\"kt\">Int</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"ss\">:re</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"ss\">:im</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"kt\">Tuple</span><span class=\"p\">{</span><span class=\"kt\">Int</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int</span><span class=\"p\">}}((;</span><span class=\"n\">re</span><span class=\"o\">=</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"nb\">im</span><span class=\"o\">=</span><span class=\"mi\">2</span><span class=\"p\">))</span>\n<span class=\"w\">                  </span><span class=\"n\">code_llvm</span><span class=\"p\">((</span><span class=\"n\">typeof</span><span class=\"p\">(</span><span class=\"n\">s3</span><span class=\"p\">),))</span><span class=\"w\"> </span><span class=\"k\">do</span><span class=\"w\"> </span><span class=\"n\">s</span>\n<span class=\"w\">                      </span><span class=\"n\">s</span><span class=\"o\">.</span><span class=\"n\">re</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">                  </span><span class=\"k\">end</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">;  @ REPL[34]:3 within `#5`</span>\n<span class=\"go\">define i64 @\"julia_#5_1177\"({}* nonnull align 8 dereferenceable(16) %0) #0 {</span>\n<span class=\"go\">top:</span>\n<span class=\"go\">; ┌ @ REPL[32]:2 within `setproperty!`</span>\n<span class=\"go\">; │┌ @ Base.jl:38 within `getproperty`</span>\n<span class=\"go\">    %1 = bitcast {}* %0 to [2 x i64]*</span>\n<span class=\"go\">    %.elt3 = getelementptr inbounds [2 x i64], [2 x i64]* %1, i64 0, i64 1</span>\n<span class=\"go\">    %.unpack4 = load i64, i64* %.elt3, align 8</span>\n<span class=\"go\">; │└</span>\n<span class=\"go\">; │ @ REPL[32]:4 within `setproperty!`</span>\n<span class=\"go\">   %.repack = bitcast {}* %0 to i64*</span>\n<span class=\"go\">   store i64 2, i64* %.repack, align 8</span>\n<span class=\"go\">   %.repack5 = getelementptr inbounds [2 x i64], [2 x i64]* %1, i64 0, i64 1</span>\n<span class=\"go\">   store i64 %.unpack4, i64* %.repack5, align 8</span>\n<span class=\"go\">; └</span>\n<span class=\"go\">  ret i64 2</span>\n<span class=\"go\">}</span>\n</code></pre></div>",
+        "id": 328878318,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1676855055
+    },
+    {
+        "content": "<p>that was 1.9.0-beta4</p>",
+        "id": 328878478,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1676855245
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> <a href=\"#narrow/stream/274208-helpdesk-.28published.29/topic/Check.20if.20a.20struct.20type.20is.20.22fully.20generic.22/near/328876769\">said</a>:</p>\n<blockquote>\n<p>I think unpacking and repacking should be relatively cheap compared to <code>O(N)</code> allocations</p>\n</blockquote>\n<p>Most likely, though I've seen some monster types out of e.g. certain SciML libraries. At the very least it wouldn't be any worse than the status quo, but I was really hoping to be greedy here and find a way to write directly into fields of the tangent type :)</p>",
+        "id": 328878502,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1676855280
+    },
+    {
+        "content": "<p>It'd be nice if we had <code>@generated struct</code>s or something.</p>",
+        "id": 328878587,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1676855344
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"278065\">Brian Chen</span> has marked this topic as resolved.</p>",
+        "id": 328878731,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1676855471
+    },
+    {
+        "content": "<p>Very much so! For now, looks like compiler smarts are enough here.</p>",
+        "id": 328878749,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1676855504
+    },
+    {
+        "content": "<p>I think also, if we're talking about performance sensitive applications, then probably people aren't putting non-isbits types inside of mutable containers (at least I'd hope so)</p>",
+        "id": 328885533,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1676861267
+    },
+    {
+        "content": "<p>I see you're not acquainted with <code>Flux.Recur</code> and <code>Flux.BatchNorm</code> <span aria-label=\"laughter tears\" class=\"emoji emoji-1f602\" role=\"img\" title=\"laughter tears\">:laughter_tears:</span>. But yes, the main objective here is to try to improve type stability (which directly affects TTFG in Zygote) while not regressing anywhere else.</p>",
+        "id": 329008779,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1676906829
+    },
+    {
+        "content": "<p><span class=\"user-mention\" data-user-id=\"278065\">@Brian Chen</span>  are you still thinking about this?</p>",
+        "id": 343542765,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1679443108
+    },
+    {
+        "content": "<p>Every once in a while, though it's not as high on my priority list as I'd like :)</p>",
+        "id": 343543109,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1679443229
+    },
+    {
+        "content": "<p>I was playing with something related, and realized there's a nice way to update many fields without unpacking and repacking multiple times at least. Basically just</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"nd\">@generated</span><span class=\"w\"> </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">copy_with_changes</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"o\">::</span><span class=\"kt\">T</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">vals</span><span class=\"o\">::</span><span class=\"kt\">NamedTuple</span><span class=\"p\">{</span><span class=\"kt\">keys</span><span class=\"p\">})</span><span class=\"w\"> </span><span class=\"k\">where</span><span class=\"w\"> </span><span class=\"p\">{</span><span class=\"kt\">T</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">keys</span><span class=\"p\">}</span>\n<span class=\"w\">    </span><span class=\"n\">args</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">map</span><span class=\"p\">(</span><span class=\"n\">fieldnames</span><span class=\"p\">(</span><span class=\"n\">T</span><span class=\"p\">))</span><span class=\"w\"> </span><span class=\"k\">do</span><span class=\"w\"> </span><span class=\"n\">key</span>\n<span class=\"w\">        </span><span class=\"n\">key</span><span class=\"w\"> </span><span class=\"o\">∈</span><span class=\"w\"> </span><span class=\"n\">keys</span><span class=\"w\"> </span><span class=\"o\">?</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"n\">vals</span><span class=\"p\">[</span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"kt\">QuoteNode</span><span class=\"p\">(</span><span class=\"n\">key</span><span class=\"p\">))])</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"n\">getfield</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"kt\">QuoteNode</span><span class=\"p\">(</span><span class=\"n\">key</span><span class=\"p\">))))</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"w\">    </span><span class=\"kt\">Expr</span><span class=\"p\">(</span><span class=\"ss\">:new</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">T</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">args</span><span class=\"o\">...</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n</code></pre></div>",
+        "id": 343543210,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1679443255
+    },
+    {
+        "content": "<p>Interesting. Is this more or less identical to <code>merge</code> when <code>x</code> is a NamedTuple?</p>",
+        "id": 343543849,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1679443490
+    },
+    {
+        "content": "<p>E.g.</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">struct</span> <span class=\"kt\">Foo</span>\n<span class=\"w\">           </span><span class=\"n\">a</span><span class=\"o\">::</span><span class=\"kt\">Int</span>\n<span class=\"w\">           </span><span class=\"n\">b</span><span class=\"o\">::</span><span class=\"kt\">Any</span>\n<span class=\"w\">           </span><span class=\"n\">c</span><span class=\"o\">::</span><span class=\"kt\">String</span>\n<span class=\"w\">           </span><span class=\"n\">d</span><span class=\"o\">::</span><span class=\"kt\">Float64</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">code_llvm</span><span class=\"p\">((</span><span class=\"n\">Foo</span><span class=\"p\">,))</span><span class=\"w\"> </span><span class=\"k\">do</span><span class=\"w\"> </span><span class=\"n\">x</span>\n<span class=\"w\">           </span><span class=\"n\">copy_with_changes</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"n\">a</span><span class=\"o\">=</span><span class=\"mi\">2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">d</span><span class=\"o\">=</span><span class=\"mf\">3.0</span><span class=\"p\">))</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">;  @ REPL[11]:2 within `#10`</span>\n<span class=\"go\">define void @\"julia_#10_981\"({ i64, {}*, {}*, double }* noalias nocapture sret({ i64, {}*, {}*, double }) %0, [2 x {}*]* noalias nocapture %1, { i64, {}*, {}*, double }* nocapture nonnull readonly align 8 dereferenceable(32) %2) #0 {</span>\n<span class=\"go\">top:</span>\n<span class=\"go\">; ┌ @ REPL[2]:1 within `copy_with_changes`</span>\n<span class=\"go\">; │┌ @ REPL[2]:1 within `macro expansion`</span>\n<span class=\"go\">    %3 = getelementptr inbounds { i64, {}*, {}*, double }, { i64, {}*, {}*, double }* %2, i64 0, i32 1</span>\n<span class=\"go\">    %4 = load atomic {}*, {}** %3 unordered, align 8</span>\n<span class=\"go\">    %5 = getelementptr inbounds { i64, {}*, {}*, double }, { i64, {}*, {}*, double }* %2, i64 0, i32 2</span>\n<span class=\"go\">    %6 = load atomic {}*, {}** %5 unordered, align 8</span>\n<span class=\"go\">; └└</span>\n<span class=\"go\">  %7 = getelementptr inbounds [2 x {}*], [2 x {}*]* %1, i64 0, i64 0</span>\n<span class=\"go\">  store {}* %4, {}** %7, align 8</span>\n<span class=\"go\">  %8 = getelementptr inbounds [2 x {}*], [2 x {}*]* %1, i64 0, i64 1</span>\n<span class=\"go\">  store {}* %6, {}** %8, align 8</span>\n<span class=\"go\">  %.repack = getelementptr inbounds { i64, {}*, {}*, double }, { i64, {}*, {}*, double }* %0, i64 0, i32 0</span>\n<span class=\"go\">  store i64 2, i64* %.repack, align 8</span>\n<span class=\"go\">  %.repack1 = getelementptr inbounds { i64, {}*, {}*, double }, { i64, {}*, {}*, double }* %0, i64 0, i32 1</span>\n<span class=\"go\">  store {}* %4, {}** %.repack1, align 8</span>\n<span class=\"go\">  %.repack3 = getelementptr inbounds { i64, {}*, {}*, double }, { i64, {}*, {}*, double }* %0, i64 0, i32 2</span>\n<span class=\"go\">  store {}* %6, {}** %.repack3, align 8</span>\n<span class=\"go\">  %.repack5 = getelementptr inbounds { i64, {}*, {}*, double }, { i64, {}*, {}*, double }* %0, i64 0, i32 3</span>\n<span class=\"go\">  store double 3.000000e+00, double* %.repack5, align 8</span>\n<span class=\"go\">  ret void</span>\n<span class=\"go\">}</span>\n</code></pre></div>\n<p>Unfortunately, in the presence of non-isbits stuff you still need to repack the whole struct, but this would avoid doing it multiple times if you need to change multiple fields</p>",
+        "id": 343543982,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1679443518
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"278065\">Brian Chen</span> <a href=\"#narrow/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Check.20if.20a.20struct.20type.20is.20.22fully.20generic.22/near/343543849\">said</a>:</p>\n<blockquote>\n<p>Interesting. Is this more or less identical to <code>merge</code> when <code>x</code> is a NamedTuple?</p>\n</blockquote>\n<p>Yep</p>",
+        "id": 343544120,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1679443554
+    },
+    {
+        "content": "<p>The repacking is quite fast: </p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">let</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Foo</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"s\">\"hi\"</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">4</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Ref</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"n\">d</span><span class=\"o\">=</span><span class=\"kt\">Ref</span><span class=\"p\">(</span><span class=\"mf\">3.0</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">copy_with_changes</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">f</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"p\">(;</span><span class=\"n\">a</span><span class=\"o\">=$</span><span class=\"n\">a</span><span class=\"p\">[],</span><span class=\"w\"> </span><span class=\"n\">d</span><span class=\"o\">=$</span><span class=\"n\">d</span><span class=\"p\">[]))</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">  2.478 ns (0 allocations: 0 bytes)</span>\n<span class=\"go\">Foo(1, 2, \"hi\", 3.0)</span>\n</code></pre></div>",
+        "id": 343544541,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1679443684
+    },
+    {
+        "content": "<p>As long as you don't have any massive Tuples stored in the struct, I imagine it'll be super quick</p>",
+        "id": 343544726,
+        "sender_full_name": "Brian Chen",
+        "timestamp": 1679443754
+    },
+    {
+        "content": "<p>Even then it's pretty tolerable:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">let</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Foo2</span><span class=\"p\">(</span><span class=\"n\">ntuple</span><span class=\"p\">(</span><span class=\"n\">identity</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">100</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"s\">\"hi\"</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mf\">4.0</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"n\">b</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Ref</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"n\">d</span><span class=\"o\">=</span><span class=\"kt\">Ref</span><span class=\"p\">(</span><span class=\"mf\">3.0</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">copy_with_changes</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">f</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"p\">(;</span><span class=\"n\">b</span><span class=\"o\">=$</span><span class=\"n\">b</span><span class=\"p\">[],</span><span class=\"w\"> </span><span class=\"n\">d</span><span class=\"o\">=$</span><span class=\"n\">d</span><span class=\"p\">[]))</span>\n<span class=\"w\">       </span><span class=\"k\">end</span><span class=\"p\">;</span>\n<span class=\"go\">  22.746 ns (0 allocations: 0 bytes)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">let</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Foo2</span><span class=\"p\">(</span><span class=\"n\">ntuple</span><span class=\"p\">(</span><span class=\"n\">identity</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">100</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"s\">\"hi\"</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mf\">4.0</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Ref</span><span class=\"p\">(</span><span class=\"n\">f</span><span class=\"o\">.</span><span class=\"n\">a</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"n\">d</span><span class=\"o\">=</span><span class=\"kt\">Ref</span><span class=\"p\">(</span><span class=\"mf\">3.0</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">copy_with_changes</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">f</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"p\">(;</span><span class=\"n\">a</span><span class=\"o\">=$</span><span class=\"n\">a</span><span class=\"p\">[],</span><span class=\"w\"> </span><span class=\"n\">d</span><span class=\"o\">=$</span><span class=\"n\">d</span><span class=\"p\">[]))</span>\n<span class=\"w\">       </span><span class=\"k\">end</span><span class=\"p\">;</span>\n<span class=\"go\">  20.242 ns (0 allocations: 0 bytes)</span>\n</code></pre></div>",
+        "id": 343545170,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1679443907
+    },
+    {
+        "content": "<p>I think something soon I'll make a SumTypes 2.0 which tries to address the issues raised in <a href=\"https://github.com/JuliaLang/julia/discussions/48883\">https://github.com/JuliaLang/julia/discussions/48883</a>, partially using this</p>",
+        "id": 343545426,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1679444033
+    },
+    {
+        "content": "<p>Isn't <code>copy_with_changes</code> the same as <code>setproperties</code> from <code>ConstructionBase</code>?</p>",
+        "id": 343646884,
+        "sender_full_name": "Alexander",
+        "timestamp": 1679484498
+    },
+    {
+        "content": "<p>Not quite because it bypasses constructors, it’s really about the underlying data fields instead of properties</p>",
+        "id": 343719283,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1679500608
+    },
+    {
+        "content": "<p>But it also doesnt do what I wanted because it cant handle uninitalized fields <span aria-label=\"frown\" class=\"emoji emoji-1f641\" role=\"img\" title=\"frown\">:frown:</span></p>",
+        "id": 343719376,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1679500632
+    },
+    {
+        "content": "<p>Hm, can you give some examples of these two issues?<br>\nComparing copy_with_changes vs setproperties.</p>",
+        "id": 343722941,
+        "sender_full_name": "Alexander",
+        "timestamp": 1679501395
+    }
+]

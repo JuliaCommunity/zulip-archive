@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>This seems like an obvious question, but I can't find the answer anywhere. I want to have all of my environments to have <code>Revise</code> installed, but I don't want to have to do that manually because <code>Revise</code> isn't relevant to the specific project - for instance I want to have <code>Revise</code> installed in every environment in every <code>examples</code> folder in every package I write without specifying it. Is there any way of automatically including some environment (i.e. some global <code>Project.toml</code> / <code>Manifest.toml</code>) in any current environment? Or maybe a way of nesting one environment inside another?</p>",
+        "id": 280274378,
+        "sender_full_name": "Richard Reeve",
+        "timestamp": 1651008274
+    },
+    {
+        "content": "<p>These are rather called \"stacked\" environments. <br>\nSee <a href=\"https://discourse.julialang.org/t/why-not-always-use-revise/64589/6\">https://discourse.julialang.org/t/why-not-always-use-revise/64589/6</a></p>\n<p>It should be sufficient to add Revise to the default environment to make it available while activating project and package environments.</p>",
+        "id": 280277257,
+        "sender_full_name": "j-fu",
+        "timestamp": 1651009993
+    }
+]

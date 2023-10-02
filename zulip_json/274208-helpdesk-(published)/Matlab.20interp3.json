@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p>Does anyone know a seamless way to reimplement <a href=\"https://www.mathworks.com/help/matlab/ref/interp3.html\">this</a> functionality in julia, specifically with the exact syntax as the first example below?</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">Vq</span> <span class=\"o\">=</span> <span class=\"n\">interp3</span><span class=\"p\">(</span><span class=\"n\">X</span><span class=\"p\">,</span><span class=\"n\">Y</span><span class=\"p\">,</span><span class=\"n\">Z</span><span class=\"p\">,</span><span class=\"n\">V</span><span class=\"p\">,</span><span class=\"n\">Xq</span><span class=\"p\">,</span><span class=\"n\">Yq</span><span class=\"p\">,</span><span class=\"n\">Zq</span><span class=\"p\">)</span>\n</code></pre></div>",
+        "id": 277553240,
+        "sender_full_name": "Dale Black",
+        "timestamp": 1648935618
+    }
+]

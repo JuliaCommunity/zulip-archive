@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"284680\">chriselrod</span> <a href=\"#narrow/stream/274208-helpdesk-.28published.29/topic/Non-polluting.20.60.40auto.60.20macro/near/277468211\">said</a>:</p>\n<blockquote>\n<p>What's the problem with polluting the namespace with <code>gensym</code>ed variable names?</p>\n</blockquote>\n<p>it isn't a <em>huge</em> deal, but it's still nice to avoid introducing extra variables if possible at all.  I've got bitten by tests in <code>Base</code> which check the number of names before and after calling a macro <span aria-label=\"smile\" class=\"emoji emoji-1f642\" role=\"img\" title=\"smile\">:smile:</span> </p>\n<p><span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> <a href=\"#narrow/stream/274208-helpdesk-.28published.29/topic/Non-polluting.20.60.40auto.60.20macro/near/277473597\">said</a>:</p>\n<blockquote>\n<p>The <code>local</code> keyword is what you want I think</p>\n</blockquote>\n<p>oh yes, that was it, thanks!</p>",
+        "id": 277479564,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1648848274
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269186\">Mosè Giordano</span> has marked this topic as resolved.</p>",
+        "id": 277479570,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1648848277
+    }
+]

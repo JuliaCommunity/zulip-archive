@@ -1,0 +1,55 @@
+<html>
+<head><meta charset="utf-8"><title>✔ Constant propagation · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Constant.20propagation.html">✔ Constant propagation</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="290592336"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Constant%20propagation/near/290592336" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> chriselrod <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Constant.20propagation.html#290592336">(Jul 23 2022 at 04:20)</a>:</h4>
+<p>Folks in Boston were treated to an excellent presentation by <span class="user-mention" data-user-id="307643">@Shuhei Kadowaki</span> on Thursday.</p>
+
+
+
+<a name="290592354"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Constant%20propagation/near/290592354" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Brenhin Keller <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Constant.20propagation.html#290592354">(Jul 23 2022 at 04:21)</a>:</h4>
+<p>Oh cool!</p>
+
+
+
+<a name="290592441"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Constant%20propagation/near/290592441" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Brenhin Keller <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Constant.20propagation.html#290592441">(Jul 23 2022 at 04:23)</a>:</h4>
+<p>Success! <a href="https://github.com/brenhinkeller/StaticMPI.jl/blob/main/test/scripts/mpisendrecv.jl">https://github.com/brenhinkeller/StaticMPI.jl/blob/main/test/scripts/mpisendrecv.jl</a></p>
+
+
+
+<a name="290592555"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Constant%20propagation/near/290592555" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Brenhin Keller <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Constant.20propagation.html#290592555">(Jul 23 2022 at 04:25)</a>:</h4>
+<p>Turns out there were still a bunch of actual bugs I had to iron out, and once I took care of those I didn't actually need any manual type annotations any more</p>
+
+
+
+<a name="290592567"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Constant%20propagation/near/290592567" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Brenhin Keller <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Constant.20propagation.html#290592567">(Jul 23 2022 at 04:26)</a>:</h4>
+<p>There are still a bunch of warnings in Cthulhu about constprop being disabled, but it turns out none of them were actually preventing static compilation (just making it a bit harder for me to find where my actual problem was)</p>
+
+
+
+<a name="290592606"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Constant%20propagation/near/290592606" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Brenhin Keller <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Constant.20propagation.html#290592606">(Jul 23 2022 at 04:26)</a>:</h4>
+<p>So I owe the compiler a bit of an apology <span aria-label="sweat smile" class="emoji emoji-1f605" role="img" title="sweat smile">:sweat_smile:</span></p>
+
+
+
+<a name="290592618"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Constant%20propagation/near/290592618" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Constant.20propagation.html#290592618">(Jul 23 2022 at 04:26)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="293896">Brenhin Keller</span> has marked this topic as resolved.</p>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>In the various blogs, docs, and posts about Artifacts it is very nicely explained how to use Artifacts in a package. I'd love to see a MWE of using Artifacts in a project that is not a package.</p>\n<p>My specific use-case is providing all the code to reproduce the analysis (to be) published in a scientific article. This analysis depends on raw data that is hosted online.</p>\n<p>I really like that the data is:</p>\n<ul>\n<li>linked to its sha256</li>\n<li>downloaded and managed by the Artifacts framework</li>\n<li>located at  artifact\"name\"</li>\n<li>maintained (and gc) by the Artifacts framework</li>\n</ul>\n<p>Does anyone have a good example for this?</p>\n<p>One specific problem I currently have, for instance, is that although I have a Artifact.toml file in the project's directory, activating and then instantiating the session does not \"install\" the artifacts specified in the Artifacts.toml file. I need to \"manually\" <code>download_artifact</code> or <code>ensure_artifact_installed</code> first.</p>",
+        "id": 262776420,
+        "sender_full_name": "Yakir Luc Gagnon",
+        "timestamp": 1637919456
+    },
+    {
+        "content": "<p>the solution was to use ArtifactUtils</p>",
+        "id": 262790036,
+        "sender_full_name": "Yakir Luc Gagnon",
+        "timestamp": 1637928480
+    }
+]

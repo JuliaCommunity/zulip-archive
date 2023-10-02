@@ -1,0 +1,55 @@
+<html>
+<head><meta charset="utf-8"><title>✔ JET analysis of Base.isless for field Union{T, Nothing} · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20JET.20analysis.20of.20Base.2Eisless.20for.20field.20Union.7BT.2C.20Nothing.7D.html">✔ JET analysis of Base.isless for field Union{T, Nothing}</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="385000797"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20JET%20analysis%20of%20Base.isless%20for%20field%20Union%7BT%2C%20Nothing%7D/near/385000797" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20JET.20analysis.20of.20Base.2Eisless.20for.20field.20Union.7BT.2C.20Nothing.7D.html#385000797">(Aug 15 2023 at 04:52)</a>:</h4>
+<p>The issue is that currently, the Julia compiler doesn't realise that if you load the same field multiple times from the same struct, the field is of the same type. So, even though you checked that a.x is not nothing and b.x is not nothing, when you do the comparison, Julia has "forgotten" that you checked</p>
+
+
+
+<a name="385000814"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20JET%20analysis%20of%20Base.isless%20for%20field%20Union%7BT%2C%20Nothing%7D/near/385000814" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20JET.20analysis.20of.20Base.2Eisless.20for.20field.20Union.7BT.2C.20Nothing.7D.html#385000814">(Aug 15 2023 at 04:53)</a>:</h4>
+<p>You solve it by storing them in a variable</p>
+
+
+
+<a name="385001157"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20JET%20analysis%20of%20Base.isless%20for%20field%20Union%7BT%2C%20Nothing%7D/near/385001157" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20JET.20analysis.20of.20Base.2Eisless.20for.20field.20Union.7BT.2C.20Nothing.7D.html#385001157">(Aug 15 2023 at 04:56)</a>:</h4>
+<p>See more here: <a href="https://aviatesk.github.io/JET.jl/stable/jetanalysis/#no-matching-method-found-(x/y-union-split)">https://aviatesk.github.io/JET.jl/stable/jetanalysis/#no-matching-method-found-(x/y-union-split)</a></p>
+
+
+
+<a name="385004300"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20JET%20analysis%20of%20Base.isless%20for%20field%20Union%7BT%2C%20Nothing%7D/near/385004300" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jesper Stemann Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20JET.20analysis.20of.20Base.2Eisless.20for.20field.20Union.7BT.2C.20Nothing.7D.html#385004300">(Aug 15 2023 at 05:20)</a>:</h4>
+<p>Right! I should’ve re-read the documentation for JET… Thanks!</p>
+
+
+
+<a name="385012116"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20JET%20analysis%20of%20Base.isless%20for%20field%20Union%7BT%2C%20Nothing%7D/near/385012116" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20JET.20analysis.20of.20Base.2Eisless.20for.20field.20Union.7BT.2C.20Nothing.7D.html#385012116">(Aug 15 2023 at 06:09)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="432905">Jesper Stemann Andersen</span> has marked this topic as resolved.</p>
+
+
+
+<a name="385023523"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20JET%20analysis%20of%20Base.isless%20for%20field%20Union%7BT%2C%20Nothing%7D/near/385023523" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sebastian Pfitzner <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20JET.20analysis.20of.20Base.2Eisless.20for.20field.20Union.7BT.2C.20Nothing.7D.html#385023523">(Aug 15 2023 at 07:11)</a>:</h4>
+<p>worth noting that JET is correct in this specific case  -- <code>Bar</code> is mutable after all, so some other thread could write a <code>nothing</code> to <code>a.x</code> or <code>b.x</code> after your check. Only accessing the field once and storing that in a local variable <em>technically</em> changes the behaviour of your program</p>
+
+
+
+<a name="385024699"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20JET%20analysis%20of%20Base.isless%20for%20field%20Union%7BT%2C%20Nothing%7D/near/385024699" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jesper Stemann Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20JET.20analysis.20of.20Base.2Eisless.20for.20field.20Union.7BT.2C.20Nothing.7D.html#385024699">(Aug 15 2023 at 07:16)</a>:</h4>
+<p>Right ... I was also wondering whether that point should be added as a footnote to the JET documentation...</p>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

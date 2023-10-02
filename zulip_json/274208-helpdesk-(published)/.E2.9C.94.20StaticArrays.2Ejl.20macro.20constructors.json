@@ -1,0 +1,80 @@
+[
+    {
+        "content": "<p>docs are coming along, but I think there may be some breaking changes sometime.. I'm not quite happy with the experience yet</p>",
+        "id": 287615800,
+        "sender_full_name": "Sukera",
+        "timestamp": 1656353327
+    },
+    {
+        "content": "<p>With Lisp I feel like I am working backwards, always having to implement my own stuff, because of the above. The plus side is, that the language standard is so well designed that it hasn't ever needed to change. Code from the 60's still runs on modern implementations for example.</p>",
+        "id": 287615895,
+        "sender_full_name": "Michael Fiano",
+        "timestamp": 1656353392
+    },
+    {
+        "content": "<p>But I had enough of it. I want to feel productive again, even if it means throwing away my life's work.</p>",
+        "id": 287615971,
+        "sender_full_name": "Michael Fiano",
+        "timestamp": 1656353412
+    },
+    {
+        "content": "<p>Ah well good luck on it. By the way, what else do you work on? I'm curious since you are the only other Julia developer I know that only has a general CS background.</p>",
+        "id": 287616269,
+        "sender_full_name": "Michael Fiano",
+        "timestamp": 1656353551
+    },
+    {
+        "content": "<p>I'm trying to finish my bachelor's thesis <span aria-label=\"joy\" class=\"emoji emoji-1f602\" role=\"img\" title=\"joy\">:joy:</span></p>",
+        "id": 287616340,
+        "sender_full_name": "Sukera",
+        "timestamp": 1656353582
+    },
+    {
+        "content": "<p>but I procrastinate too much with other cool julia stuff</p>",
+        "id": 287616359,
+        "sender_full_name": "Sukera",
+        "timestamp": 1656353594
+    },
+    {
+        "content": "<p>Aha.</p>",
+        "id": 287616393,
+        "sender_full_name": "Michael Fiano",
+        "timestamp": 1656353609
+    },
+    {
+        "content": "<p>It looks like I've been dabbling with Julia on and off for 7 years already. I first started playing with it when <span class=\"user-mention\" data-user-id=\"359511\">@Tamas K. Papp</span> moved from CL to Julia, and I wanted to ever since, but I was in the midst of a years-long project until recently.</p>",
+        "id": 287616679,
+        "sender_full_name": "Michael Fiano",
+        "timestamp": 1656353753
+    },
+    {
+        "content": "<p><a href=\"https://tamaspapp.eu/post/common-lisp-to-julia/\">https://tamaspapp.eu/post/common-lisp-to-julia/</a></p>",
+        "id": 287617095,
+        "sender_full_name": "Michael Fiano",
+        "timestamp": 1656353962
+    },
+    {
+        "content": "<p>I don't agree with every point he makes, especially 7 years later, but it does bring up a lot of good points. I am no data scientist though.</p>",
+        "id": 287617283,
+        "sender_full_name": "Michael Fiano",
+        "timestamp": 1656354043
+    },
+    {
+        "content": "<blockquote>\n<p>The equivalent of reader macros are called non-standard string literals in Julia.</p>\n</blockquote>\n<p><del>Sadly the link to the Julia docs is dead, and the new Metaprogramming chapter doesn't have a section on them, so I don't know if they are user-extensible or not.</del></p>",
+        "id": 287617543,
+        "sender_full_name": "Michael Fiano",
+        "timestamp": 1656354169
+    },
+    {
+        "content": "<p>Oh it does. I was looking in the wrong place.</p>",
+        "id": 287617659,
+        "sender_full_name": "Michael Fiano",
+        "timestamp": 1656354220
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"374994\">Michael Fiano</span> has marked this topic as resolved.</p>",
+        "id": 287620507,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1656355521
+    }
+]

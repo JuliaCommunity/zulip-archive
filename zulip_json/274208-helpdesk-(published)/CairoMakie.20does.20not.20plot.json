@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">CairoMakie</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">heatmap</span><span class=\"p\">(</span><span class=\"n\">randn</span><span class=\"p\">(</span><span class=\"mi\">100</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">100</span><span class=\"p\">))</span>\n<span class=\"go\">FigureAxisPlot()</span>\n</code></pre></div>\n<p>This does not produce a visible plot. I can save it as an image. Is there a way to have a plotting window?</p>",
+        "id": 329681341,
+        "sender_full_name": "Guido Kraemer",
+        "timestamp": 1677148552
+    }
+]

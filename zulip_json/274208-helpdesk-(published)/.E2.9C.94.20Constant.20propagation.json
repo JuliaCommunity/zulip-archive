@@ -1,0 +1,44 @@
+[
+    {
+        "content": "<p>Folks in Boston were treated to an excellent presentation by <span class=\"user-mention\" data-user-id=\"307643\">@Shuhei Kadowaki</span> on Thursday.</p>",
+        "id": 290592336,
+        "sender_full_name": "chriselrod",
+        "timestamp": 1658550011
+    },
+    {
+        "content": "<p>Oh cool!</p>",
+        "id": 290592354,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1658550086
+    },
+    {
+        "content": "<p>Success! <a href=\"https://github.com/brenhinkeller/StaticMPI.jl/blob/main/test/scripts/mpisendrecv.jl\">https://github.com/brenhinkeller/StaticMPI.jl/blob/main/test/scripts/mpisendrecv.jl</a></p>",
+        "id": 290592441,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1658550191
+    },
+    {
+        "content": "<p>Turns out there were still a bunch of actual bugs I had to iron out, and once I took care of those I didn't actually need any manual type annotations any more</p>",
+        "id": 290592555,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1658550324
+    },
+    {
+        "content": "<p>There are still a bunch of warnings in Cthulhu about constprop being disabled, but it turns out none of them were actually preventing static compilation (just making it a bit harder for me to find where my actual problem was)</p>",
+        "id": 290592567,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1658550362
+    },
+    {
+        "content": "<p>So I owe the compiler a bit of an apology <span aria-label=\"sweat smile\" class=\"emoji emoji-1f605\" role=\"img\" title=\"sweat smile\">:sweat_smile:</span></p>",
+        "id": 290592606,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1658550377
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"293896\">Brenhin Keller</span> has marked this topic as resolved.</p>",
+        "id": 290592618,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1658550386
+    }
+]

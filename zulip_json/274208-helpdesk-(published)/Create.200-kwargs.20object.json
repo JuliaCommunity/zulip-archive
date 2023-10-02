@@ -1,0 +1,20 @@
+[
+    {
+        "content": "<p>Hey, I'm trying to store a \"0 kwargs\" object. I.e. the result of <code>((;k...) -&gt; k)()</code>. I see the type is <code>Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()</code>, but that seems to be uninstantiable. The closest I could get was <code>Base.Pairs(NamedTuple(),())</code> but that gives <code>Base.Pairs{Union{}, ...</code>instead of <code>`Base.Pairs{Symbol, ...</code>.</p>",
+        "id": 279381834,
+        "sender_full_name": "Timothy",
+        "timestamp": 1650359057
+    },
+    {
+        "content": "<p><code>Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}(NamedTuple(),())</code> works, no?</p>",
+        "id": 279382617,
+        "sender_full_name": "Sebastian Pfitzner",
+        "timestamp": 1650359541
+    },
+    {
+        "content": "<p>It's an immutable (and also is a singleton). So, why not just do <code>const NOKWARGS = ((;k...) -&gt; k)()</code> and use it where you need it?</p>",
+        "id": 279382933,
+        "sender_full_name": "Takafumi Arakaki (tkf)",
+        "timestamp": 1650359764
+    }
+]

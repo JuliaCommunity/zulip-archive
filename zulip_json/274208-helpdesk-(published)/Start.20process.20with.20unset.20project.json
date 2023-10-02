@@ -1,0 +1,38 @@
+[
+    {
+        "content": "<p>I'm trying to create Julia processes that aren't initially bound to a project, and then bind themselves to a project on demand. I'm wondering if I can create a result similar to <code>julia --project=X</code> if a Julia process is created with an \"unset project\" (or similar) such that a <code>Pkg.activate(X)</code> (or similar) yeilds a result indistinguishable from <code>julia --project=X</code>.</p>",
+        "id": 340379133,
+        "sender_full_name": "Timothy",
+        "timestamp": 1678286285
+    },
+    {
+        "content": "<p>If you haven't set <code>JULIA_LOAD_PATH</code> then those area already equivalent.</p>",
+        "id": 340529639,
+        "sender_full_name": "Fredrik Ekre",
+        "timestamp": 1678346619
+    },
+    {
+        "content": "<p>I'm thinking of setting <code>JULIA_LOAD_PATH</code> to <code>@v#.#:@stdlib</code> then running <code>push!(LOAD_PATH, \"@\")</code> and <code>set_active_project(&lt;project&gt;)</code> might work.</p>",
+        "id": 340540763,
+        "sender_full_name": "Timothy",
+        "timestamp": 1678350875
+    },
+    {
+        "content": "<p>What are you trying to achieve? If you can manipulate the environment variable I would do <em>only</em> that and <em>nothing</em> from Julia.</p>",
+        "id": 340541146,
+        "sender_full_name": "Fredrik Ekre",
+        "timestamp": 1678351029
+    },
+    {
+        "content": "<blockquote>\n<p>I'm trying to create Julia processes that aren't initially bound to a project, and then bind themselves to a project on demand.</p>\n</blockquote>\n<p>I have a way of creating Julia daemon processes for a particular project, but when they start up they take ~2s to do the setup and compiling. So, I'm thinking I could perhaps create an \"unbound\" daemon process in reserve, and then when requested simply set its project and hand it over, instead of going through the whole initialisation process at that point.</p>",
+        "id": 340544833,
+        "sender_full_name": "Timothy",
+        "timestamp": 1678352048
+    },
+    {
+        "content": "<p>Okay, the I would just do <code>push!(empty!(LOAD_PATH), \"new/project\")</code> or something like that</p>",
+        "id": 340545866,
+        "sender_full_name": "Fredrik Ekre",
+        "timestamp": 1678352362
+    }
+]

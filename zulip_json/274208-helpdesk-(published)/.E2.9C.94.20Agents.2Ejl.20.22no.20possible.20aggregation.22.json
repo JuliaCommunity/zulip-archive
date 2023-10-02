@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Found out how to solve the issue: use <code>collect(collection)</code> first, because whatever was being passed could not be filtered... gotta learn how to check types more easily :/</p>",
+        "id": 288212872,
+        "sender_full_name": "Lorenzo Gaifas",
+        "timestamp": 1656702650
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"504808\">Lorenzo Gaifas</span> has marked this topic as resolved.</p>",
+        "id": 288212877,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1656702654
+    }
+]

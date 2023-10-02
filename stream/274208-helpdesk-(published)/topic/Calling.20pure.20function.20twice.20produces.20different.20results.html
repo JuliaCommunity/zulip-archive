@@ -1,0 +1,82 @@
+<html>
+<head><meta charset="utf-8"><title>Calling pure function twice produces different results · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Calling.20pure.20function.20twice.20produces.20different.20results.html">Calling pure function twice produces different results</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="285625817"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Calling%20pure%20function%20twice%20produces%20different%20results/near/285625817" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Timothy <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Calling.20pure.20function.20twice.20produces.20different.20results.html#285625817">(Jun 10 2022 at 03:21)</a>:</h4>
+<p>I'm seeing some exceptionally strange behavior, that I find somewhat concerning. I'm afraid that to explain the situation well I'll need to write a fair bit, but this should give you all the information I have.</p>
+<p>I have a DataFrame <code>clinvar_confident_pathogenic_snvs</code> which I process with two function, the first (<code>get_exon</code>) is impure but only relies on a constant (it looks up a match) and the second is a pure function (<code>rotate_attributes</code>) which merges the <code>.attributes</code> Dicts of some data into a DataFrame.</p>
+<p>I apply these functions with <a href="https://github.com/search?q=Transducers.jl&amp;type=Repositories">Transducers.jl</a>,</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">genes_from_exons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clinvar_confident_pathogenic_snvs</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">eachrow</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">withprogress</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="n">Map</span><span class="p">(</span><span class="n">get_exon</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">Map</span><span class="p">(</span><span class="n">rotate_attributes</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">collect</span><span class="w"></span>
+</code></pre></div>
+<p>This is all very well and good, but it gave me a strange result:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="n">genes_from_exons</span><span class="p">[</span><span class="mi">79</span><span class="p">]</span><span class="w"></span>
+<span class="go">2×15 DataFrame</span>
+<span class="go"> Row │ ID                        Parent             exon_id            exon_number  gene_id            gene_name  gene_type       havana_gene           havana_transcript   ⋯</span>
+<span class="go">     │ String                    String             String             String       String             String     String          String                String              ⋯</span>
+<span class="go">─────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span class="go">   1 │ exon:ENST00000400490.2:1  ENST00000400490.2  ENSE00001946236.1  1            ENSG00000158828.7  PINK1      protein_coding  OTTHUMG00000002841.1  OTTHUMT00000007956. ⋯</span>
+<span class="go">   2 │ exon:ENST00000451424.1:2  ENST00000451424.1  ENSE00001711022.1  2            ENSG00000117242.7  PINK1-AS   protein_coding  OTTHUMG00000002840.1  OTTHUMT00000007953.</span>
+<span class="go">                                                                                                                                                            7 columns omitted</span>
+</code></pre></div>
+<p><code>PINK1-AS</code> is an antisense gene, not a protein coding gene.</p>
+<p>We can verify that <code>PINK1-AS</code> is reported as such by the data file I've processed,</p>
+<div class="codehilite" data-code-language="Bash"><pre><span></span><code>❯ cat gencode.v26.annotation.gff3 <span class="p">|</span> grep <span class="s1">'exon:ENST00000451424.1:2'</span>
+chr1    HAVANA  exon    <span class="m">20645585</span>    <span class="m">20645686</span>    .   -   .   <span class="nv">ID</span><span class="o">=</span>exon:ENST00000451424.1:2<span class="p">;</span><span class="nv">Parent</span><span class="o">=</span>ENST00000451424.1<span class="p">;</span><span class="nv">gene_id</span><span class="o">=</span>ENSG00000117242.7<span class="p">;</span><span class="nv">transcript_id</span><span class="o">=</span>ENST00000451424.1<span class="p">;</span><span class="nv">gene_type</span><span class="o">=</span>antisense<span class="p">;</span><span class="nv">gene_name</span><span class="o">=</span>PINK1-AS<span class="p">;</span><span class="nv">transcript_type</span><span class="o">=</span>antisense<span class="p">;</span><span class="nv">transcript_name</span><span class="o">=</span>PINK1-AS-001<span class="p">;</span><span class="nv">exon_number</span><span class="o">=</span><span class="m">2</span><span class="p">;</span><span class="nv">exon_id</span><span class="o">=</span>ENSE00001711022.1<span class="p">;</span><span class="nv">level</span><span class="o">=</span><span class="m">2</span><span class="p">;</span><span class="nv">transcript_support_level</span><span class="o">=</span><span class="m">2</span><span class="p">;</span><span class="nv">tag</span><span class="o">=</span>basic<span class="p">;</span><span class="nv">havana_gene</span><span class="o">=</span>OTTHUMG00000002840.1<span class="p">;</span><span class="nv">havana_transcript</span><span class="o">=</span>OTTHUMT00000007953.1
+</code></pre></div>
+<p>Note "gene_type=antisense".</p>
+<p>Investigating this correctness error, I looked at the result if I stop at <code>Map(get_exon)</code>, and look at the exon in question.</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">clinvar_confident_pathogenic_snvs</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">eachrow</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">withprogress</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"></span>
+<span class="w">           </span><span class="n">Map</span><span class="p">(</span><span class="n">get_exon</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">collect</span><span class="p">)[</span><span class="mi">79</span><span class="p">][</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="ss">:attributes</span><span class="p">]</span><span class="w"></span>
+<span class="go">Dict{String, Vector{String}} with 15 entries:</span>
+<span class="go">  "havana_gene"              =&gt; ["OTTHUMG00000002840.1"]</span>
+<span class="go">  "exon_id"                  =&gt; ["ENSE00001711022.1"]</span>
+<span class="go">  "exon_number"              =&gt; ["2"]</span>
+<span class="go">  "havana_transcript"        =&gt; ["OTTHUMT00000007953.1"]</span>
+<span class="go">  "transcript_support_level" =&gt; ["2"]</span>
+<span class="go">  "gene_id"                  =&gt; ["ENSG00000117242.7"]</span>
+<span class="go">  "transcript_id"            =&gt; ["ENST00000451424.1"]</span>
+<span class="go">  "Parent"                   =&gt; ["ENST00000451424.1"]</span>
+<span class="go">  "gene_type"                =&gt; ["antisense"]</span>
+<span class="go">  "level"                    =&gt; ["2"]</span>
+<span class="go">  "gene_name"                =&gt; ["PINK1-AS"]</span>
+<span class="go">  "transcript_type"          =&gt; ["antisense"]</span>
+<span class="go">  "tag"                      =&gt; ["basic"]</span>
+<span class="go">  "transcript_name"          =&gt; ["PINK1-AS-001"]</span>
+<span class="go">  "ID"                       =&gt; ["exon:ENST00000451424.1:2"]</span>
+</code></pre></div>
+<p>This correctly reports <code>exon:ENST00000451424.1:2</code> as being from an antisense gene. No "protein_coding" in sight. Second guessing my sanity, I tried adding the <code>Map(rotate_attributes)</code> step back in:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">clinvar_confident_pathogenic_snvs</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">eachrow</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">withprogress</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"></span>
+<span class="w">           </span><span class="n">Map</span><span class="p">(</span><span class="n">get_exon</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">Map</span><span class="p">(</span><span class="n">rotate_attributes</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">collect</span><span class="p">)[</span><span class="mi">79</span><span class="p">]</span><span class="w"></span>
+<span class="go">2×15 DataFrame</span>
+<span class="go"> Row │ ID                        Parent             exon_id            exon_number  gene_id            gene_name  gene_type       havana_gene           havana_transcript   ⋯</span>
+<span class="go">     │ String                    String             String             String       String             String     String          String                String              ⋯</span>
+<span class="go">─────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span class="go">   1 │ exon:ENST00000400490.2:1  ENST00000400490.2  ENSE00001946236.1  1            ENSG00000158828.7  PINK1      protein_coding  OTTHUMG00000002841.1  OTTHUMT00000007956. ⋯</span>
+<span class="go">   2 │ exon:ENST00000451424.1:2  ENST00000451424.1  ENSE00001711022.1  2            ENSG00000117242.7  PINK1-AS   antisense       OTTHUMG00000002840.1  OTTHUMT00000007953.</span>
+<span class="go">                                                                                                                                                            7 columns omitted</span>
+</code></pre></div>
+<p>... and it's antisense now.</p>
+<p>This is now <em>the exact same expression</em> I used to set <code>genes_from_exons</code>, but the result has changed!?! Checking my REPL history, I didn't do anything to <code>genes_from_exons</code> other than inspect some of  the values. I can't imagine any issue with <code>get_exon</code>, as if that behaved any differently we'd see different exons entirely. Perhaps there's something fishy about <code>rotate_attributes</code>, but looking at my definition again I can't see any hints of non-determinism.</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">rotate_attributes</span><span class="p">(</span><span class="n">ginfo</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">isempty</span><span class="p">(</span><span class="n">ginfo</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="n">filter</span><span class="p">((</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="o">::</span><span class="kt">Pair</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="n">ginfo</span><span class="o">.</span><span class="n">attributes</span><span class="p">),</span><span class="w"></span>
+<span class="w">               </span><span class="n">mergewith</span><span class="p">(</span><span class="n">vcat</span><span class="p">,</span><span class="w"> </span><span class="n">ginfo</span><span class="o">.</span><span class="n">attributes</span><span class="o">...</span><span class="p">))</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">DataFrame</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"></span>
+<span class="w">                   </span><span class="n">df</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">unique</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="ss">:gene_id</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="n">DataFrame</span><span class="p">()</span><span class="w"> </span><span class="k">end</span><span class="w"></span>
+<span class="k">end</span><span class="w"></span>
+</code></pre></div>
+<p>So, what on earth could be going on here??</p>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

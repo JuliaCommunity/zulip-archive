@@ -1,0 +1,39 @@
+<html>
+<head><meta charset="utf-8"><title>Remove Rows in DataFrame Based on Mismatch · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Remove.20Rows.20in.20DataFrame.20Based.20on.20Mismatch.html">Remove Rows in DataFrame Based on Mismatch</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="290416956"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Remove%20Rows%20in%20DataFrame%20Based%20on%20Mismatch/near/290416956" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Dale Black <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Remove.20Rows.20in.20DataFrame.20Based.20on.20Mismatch.html#290416956">(Jul 21 2022 at 18:44)</a>:</h4>
+<p>Is there a way to filter different sized DataFrames and keep only the rows of both DataFrames where there are matching values in a specific column? E.g.</p>
+<p>Given</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">df1_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DataFrame</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="ss">:col1</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="s">"low"</span><span class="p">,</span><span class="w"> </span><span class="s">"med"</span><span class="p">,</span><span class="w"> </span><span class="s">"high"</span><span class="p">],</span><span class="w"></span>
+<span class="w">    </span><span class="ss">:col2</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="s">"a1"</span><span class="p">,</span><span class="w"> </span><span class="s">"b1"</span><span class="p">,</span><span class="w"> </span><span class="s">"c1"</span><span class="p">]</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+<span class="n">df2_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DataFrame</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="ss">:col1</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="s">"med"</span><span class="p">],</span><span class="w"></span>
+<span class="w">    </span><span class="ss">:col2</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="s">"b2"</span><span class="p">]</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>I would like to return only the <code>"med"</code> row of each DataFrame since only <code>"med"</code> of <code>:col1</code> are matching</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">df1_new</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DataFrame</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="ss">:col1</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="s">"med"</span><span class="p">],</span><span class="w"></span>
+<span class="w">    </span><span class="ss">:col2</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="s">"b1"</span><span class="p">]</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+<span class="n">df2_new</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DataFrame</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="ss">:col1</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="s">"med"</span><span class="p">],</span><span class="w"></span>
+<span class="w">    </span><span class="ss">:col2</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="s">"b2"</span><span class="p">]</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

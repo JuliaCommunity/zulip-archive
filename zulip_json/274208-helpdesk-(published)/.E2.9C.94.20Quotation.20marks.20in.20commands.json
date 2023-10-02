@@ -1,0 +1,26 @@
+[
+    {
+        "content": "<p>I think I was confused by Julia eliding the <code>\"</code>s:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"sb\">`exiv2 -M\"set Exif.Photo.UserComment My Photo3\" image.jpg`</span><span class=\"w\"></span>\n<span class=\"go\">`exiv2 '-Mset Exif.Photo.UserComment My Photo3' image.jpg`</span>\n</code></pre></div>\n<p>I assumed this would fail. So I tried this:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">run</span><span class=\"p\">(</span><span class=\"sb\">`exiv2 -M\\\"set Exif.Photo.UserComment My Photo3\\\" image.jpg`</span><span class=\"p\">)</span><span class=\"w\"></span>\n<span class=\"go\">-M option 1: Invalid command line:</span>\n<span class=\"go\">exiv2: Error parsing -M option arguments</span>\n<span class=\"go\">Usage: exiv2 [ options ] [ action ] file ...</span>\n\n<span class=\"go\">Manipulate the Exif metadata of images.</span>\n<span class=\"gr\">ERROR: failed process: Process(`exiv2 '-M\"set' Exif.Photo.UserComment My 'Photo3\"' image.jpg`, ProcessExited(1)) [1]</span>\n</code></pre></div>\n<p>and I think from here I went down a rabbit hole instead of just doing the simplest thing, running the original command <span aria-label=\"sweat smile\" class=\"emoji emoji-1f605\" role=\"img\" title=\"sweat smile\">:sweat_smile:</span></p>",
+        "id": 289595283,
+        "sender_full_name": "mbaz",
+        "timestamp": 1657807110
+    },
+    {
+        "content": "<p>yeah, Cmd printing is very confusing</p>",
+        "id": 289595363,
+        "sender_full_name": "Sebastian Pfitzner",
+        "timestamp": 1657807150
+    },
+    {
+        "content": "<p>Julia tries to be too smart for its own good</p>",
+        "id": 289595380,
+        "sender_full_name": "Sebastian Pfitzner",
+        "timestamp": 1657807158
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"345789\">mbaz</span> has marked this topic as resolved.</p>",
+        "id": 289595450,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1657807197
+    }
+]

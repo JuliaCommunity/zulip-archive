@@ -1,0 +1,32 @@
+[
+    {
+        "content": "<p>the stacktrace has <code>cityindex:62</code>, which is likely where your function definition originally is?</p>",
+        "id": 365242636,
+        "sender_full_name": "Sukera",
+        "timestamp": 1686463739
+    },
+    {
+        "content": "<p>if so, yes, the interpolation ALWAYS happens, not just when the error is thrown</p>",
+        "id": 365242669,
+        "sender_full_name": "Sukera",
+        "timestamp": 1686463759
+    },
+    {
+        "content": "<p>note also the docstring of <code>@assert</code>:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"w\">  </span><span class=\"n\">│</span><span class=\"w\"> </span><span class=\"n\">Warning</span>\n<span class=\"w\">  </span><span class=\"n\">│</span>\n<span class=\"w\">  </span><span class=\"n\">│</span><span class=\"w\">  </span><span class=\"n\">An</span><span class=\"w\"> </span><span class=\"n\">assert</span><span class=\"w\"> </span><span class=\"n\">might</span><span class=\"w\"> </span><span class=\"n\">be</span><span class=\"w\"> </span><span class=\"n\">disabled</span><span class=\"w\"> </span><span class=\"n\">at</span><span class=\"w\"> </span><span class=\"n\">various</span><span class=\"w\"> </span><span class=\"n\">optimization</span><span class=\"w\"> </span><span class=\"n\">levels</span><span class=\"o\">.</span><span class=\"w\"> </span><span class=\"n\">Assert</span><span class=\"w\"> </span><span class=\"n\">should</span><span class=\"w\"> </span><span class=\"n\">therefore</span><span class=\"w\"> </span><span class=\"n\">only</span><span class=\"w\"> </span><span class=\"n\">be</span><span class=\"w\"> </span><span class=\"n\">used</span><span class=\"w\"> </span><span class=\"n\">as</span><span class=\"w\"> </span><span class=\"n\">a</span>\n<span class=\"w\">  </span><span class=\"n\">│</span><span class=\"w\">  </span><span class=\"n\">debugging</span><span class=\"w\"> </span><span class=\"n\">tool</span><span class=\"w\"> </span><span class=\"n\">and</span><span class=\"w\"> </span><span class=\"n\">not</span><span class=\"w\"> </span><span class=\"n\">used</span><span class=\"w\"> </span><span class=\"k\">for</span><span class=\"w\"> </span><span class=\"n\">authentication</span><span class=\"w\"> </span><span class=\"n\">verification</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"n\">e</span><span class=\"o\">.</span><span class=\"n\">g</span><span class=\"o\">.</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">verifying</span><span class=\"w\"> </span><span class=\"n\">passwords</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"n\">nor</span><span class=\"w\"> </span><span class=\"n\">should</span>\n<span class=\"w\">  </span><span class=\"n\">│</span><span class=\"w\">  </span><span class=\"n\">side</span><span class=\"w\"> </span><span class=\"n\">effects</span><span class=\"w\"> </span><span class=\"n\">needed</span><span class=\"w\"> </span><span class=\"k\">for</span><span class=\"w\"> </span><span class=\"n\">the</span><span class=\"w\"> </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">to</span><span class=\"w\"> </span><span class=\"n\">work</span><span class=\"w\"> </span><span class=\"n\">correctly</span><span class=\"w\"> </span><span class=\"n\">be</span><span class=\"w\"> </span><span class=\"n\">used</span><span class=\"w\"> </span><span class=\"n\">inside</span><span class=\"w\"> </span><span class=\"n\">of</span><span class=\"w\"> </span><span class=\"n\">asserts</span><span class=\"o\">.</span>\n</code></pre></div>\n<p>So at various optimization levels, the <code>@assert</code> may be removed entirely, leading to a wrong result. I'd suggest the pattern</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">isnothing</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">||</span><span class=\"w\"> </span><span class=\"n\">throw</span><span class=\"p\">(</span><span class=\"kt\">ArgumentError</span><span class=\"p\">(</span><span class=\"n\">LazyString</span><span class=\"p\">(</span><span class=\"s\">\"City \"</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">c</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"s\">\" not found\"</span><span class=\"p\">))</span>\n</code></pre></div>\n<p>which will stay in your code across optimization levels and only interpolate the string when the error is actually thrown.</p>",
+        "id": 365242864,
+        "sender_full_name": "Sukera",
+        "timestamp": 1686463874
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"477227\">Laura Demkowicz-Duffy</span> has marked this topic as resolved.</p>",
+        "id": 365296375,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1686483111
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"477227\">Laura Demkowicz-Duffy</span> has marked this topic as resolved.</p>",
+        "id": 365296377,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1686483112
+    }
+]

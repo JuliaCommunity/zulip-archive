@@ -1,0 +1,64 @@
+<html>
+<head><meta charset="utf-8"><title>Interpolating operator in quoted expression · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Interpolating.20operator.20in.20quoted.20expression.html">Interpolating operator in quoted expression</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="281054917"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Interpolating%20operator%20in%20quoted%20expression/near/281054917" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> mbaz <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Interpolating.20operator.20in.20quoted.20expression.html#281054917">(May 03 2022 at 18:15)</a>:</h4>
+<p>This works:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span> <span class="o">:</span><span class="p">(</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="p">)</span>
+<span class="o">:</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+</code></pre></div>
+<p>I'd like to interpolate an operator instead of having a hard-coded <code>+</code>. I can do this:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span> <span class="n">op</span> <span class="o">=</span> <span class="o">:+</span>
+<span class="o">:+</span>
+<span class="n">julia</span><span class="o">&gt;</span> <span class="o">:</span><span class="p">(</span> <span class="o">$</span><span class="n">op</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="p">)</span>
+<span class="o">:</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+</code></pre></div>
+<p>Is there a way to keep the <code>x op y</code> syntax? This fails:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="o">:</span><span class="p">(</span> <span class="n">x</span> <span class="o">$</span><span class="n">op</span> <span class="n">y</span> <span class="p">)</span>
+<span class="n">ERROR</span><span class="o">:</span> <span class="n">syntax</span><span class="o">:</span> <span class="nb">missing</span> <span class="n">comma</span> <span class="n">or</span> <span class="p">)</span> <span class="k">in</span> <span class="n">argument</span> <span class="n">list</span>
+</code></pre></div>
+
+
+
+<a name="281059013"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Interpolating%20operator%20in%20quoted%20expression/near/281059013" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Interpolating.20operator.20in.20quoted.20expression.html#281059013">(May 03 2022 at 18:47)</a>:</h4>
+<p>I doubt it. If it's not syntactically okay it's hard to get further. Of course you can do string interpolation and <code>Meta.parse</code> but you probably don't want that.</p>
+
+
+
+<a name="281059439"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Interpolating%20operator%20in%20quoted%20expression/near/281059439" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> mbaz <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Interpolating.20operator.20in.20quoted.20expression.html#281059439">(May 03 2022 at 18:50)</a>:</h4>
+<p>Thanks! Yes, I thought of <code>Meta.parse</code>, but basically I was just wondering if I was missing something. The manual doesn't provide clarity about this.</p>
+
+
+
+<a name="281059878"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Interpolating%20operator%20in%20quoted%20expression/near/281059878" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> mbaz <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Interpolating.20operator.20in.20quoted.20expression.html#281059878">(May 03 2022 at 18:53)</a>:</h4>
+<p>I'm not sure  why it fails, though. My mental model (which is likely wrong) is that <code>:( x $op y )</code> is first converted to <code>:( x + y )</code>; that is, interpolation happens before further parsing of the quote. Probably parsing occurs before interpolation.</p>
+
+
+
+<a name="281072858"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Interpolating%20operator%20in%20quoted%20expression/near/281072858" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Interpolating.20operator.20in.20quoted.20expression.html#281072858">(May 03 2022 at 20:33)</a>:</h4>
+<p>It would be kinda hard to interpolate before parsing. E.g. making sense of</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span> <span class="n">op</span> <span class="o">=</span> <span class="p">[</span><span class="o">:+</span><span class="p">,</span> <span class="o">:-</span><span class="p">]</span>
+<span class="mi">2</span><span class="o">-</span><span class="n">element</span> <span class="kt">Vector</span><span class="p">{</span><span class="kt">Symbol</span><span class="p">}</span><span class="o">:</span>
+ <span class="o">:+</span>
+ <span class="o">:-</span>
+
+<span class="n">julia</span><span class="o">&gt;</span> <span class="o">:</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="n">op</span><span class="p">[</span><span class="mi">2</span><span class="p">])(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+<span class="o">:</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

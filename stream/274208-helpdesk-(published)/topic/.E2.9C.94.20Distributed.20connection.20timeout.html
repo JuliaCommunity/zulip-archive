@@ -1,0 +1,82 @@
+<html>
+<head><meta charset="utf-8"><title>✔ Distributed connection timeout · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Distributed.20connection.20timeout.html">✔ Distributed connection timeout</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="258697726"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Distributed%20connection%20timeout/near/258697726" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Distributed.20connection.20timeout.html#258697726">(Oct 22 2021 at 11:23)</a>:</h4>
+<p>Fwiw, I found an <a href="https://github.com/shashi/FileTrees.jl/issues/60">issue</a>  with the parallelism in my program where 95% of work ended up on a single worker. After fixing it I seem to be able to scale things up as much as I want to. Perhaps the worker was so overworked it could not respond?</p>
+
+
+
+<a name="258697821"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Distributed%20connection%20timeout/near/258697821" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Distributed.20connection.20timeout.html#258697821">(Oct 22 2021 at 11:24)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="300483">DrChainsaw</span> has marked this topic as resolved.</p>
+
+
+
+<a name="258832192"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Distributed%20connection%20timeout/near/258832192" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> rocco sprmnt21 <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Distributed.20connection.20timeout.html#258832192">(Oct 23 2021 at 16:46)</a>:</h4>
+<p>I was reading <a href="http://slendermeans.org/julia-iterators.html">this </a> blog trying to understand how iterators work </p>
+<p>I tried to adapt the following script using the iterate function in place of start (), next () and done () . With some difficulty, but in the end I succeeded. </p>
+<p>#######<br>
+ Jeff Bezanson • 8 years ago</p>
+<p>Very nice and thorough discussion of julia iterators!</p>
+<p>I'm surprised the fibonacci example uses mutation, since it is very naturally functional:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">immutable</span> <span class="n">Fibs</span>
+<span class="k">end</span>
+
+<span class="n">start</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">Fibs</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">next</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">Fibs</span><span class="p">,</span> <span class="n">st</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">st</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+<span class="n">done</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">Fibs</span><span class="p">,</span> <span class="n">st</span><span class="p">)</span> <span class="o">=</span> <span class="nb">false</span>
+</code></pre></div>
+<p>Then you can do e.g. <code>take(Fibs(), 10)</code> (using the Iterators package).</p>
+<p>#################</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">struct</span> <span class="kt">Fibs</span>
+<span class="k">end</span>
+
+<span class="n">Base</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">Fibs</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">Base</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">Fibs</span><span class="p">,</span> <span class="n">st</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">st</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+<span class="k">using</span> <span class="n">IterTools</span>
+
+<span class="n">collect</span><span class="p">(</span><span class="n">takestrict</span><span class="p">(</span><span class="n">Fibs</span><span class="p">(),</span><span class="mi">10</span><span class="p">))</span>
+</code></pre></div>
+<p>I tried later to define a non-infinite iterator, as follows: </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">struct</span> <span class="kt">Fibn</span>
+    <span class="n">n</span><span class="o">::</span><span class="kt">Int</span>
+<span class="k">end</span>
+
+<span class="n">ϕ</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">fb</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">=</span><span class="kt">Int</span><span class="p">(</span><span class="n">trunc</span><span class="p">((</span><span class="n">ϕ</span><span class="o">^</span><span class="n">n</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">ϕ</span><span class="p">)</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">))</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="n">n</span><span class="p">))</span>
+
+<span class="n">f</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">=</span><span class="n">Fibn</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">length</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">Fibn</span><span class="p">)</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">n</span>
+<span class="n">Base</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">Fibn</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">Base</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">Fibn</span><span class="p">,</span> <span class="n">st</span><span class="p">)</span> <span class="o">=</span> <span class="n">st</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">fb</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">st</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span> <span class="o">:</span> <span class="nb">nothing</span>
+
+<span class="k">using</span> <span class="n">IterTools</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="o">=</span><span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>I just wanted to do an exercise on iterators, it's not meant to be a solution to some real problem. <br>
+I was unable to fix things to get the collect () function to work though.</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span> <span class="n">collect</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">ERROR</span><span class="o">:</span> <span class="kt">MethodError</span><span class="o">:</span> <span class="n">no</span> <span class="n">method</span> <span class="n">matching</span> <span class="n">length</span><span class="p">(</span><span class="o">::</span><span class="kt">Fibn</span><span class="p">)</span>
+</code></pre></div>
+<p>How should I do instead of ...? </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">length</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">Fibn</span><span class="p">)</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">n</span>
+</code></pre></div>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

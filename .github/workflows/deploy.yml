@@ -1,0 +1,22 @@
+name: Deploy Archive
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 30 4 * * *
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Publish zulip-archive on GH Pages
+    steps:
+      - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
+      - uses: zulip/zulip-archive@5da606feac0fa69445de717c406f79dd81e82e59
+        with:
+          zulip_organization_url: ${{ secrets.ZULIP_ORGANISATION_URL }}
+          zulip_bot_email: ${{ secrets.ZULIP_BOT_EMAIL }}
+          zulip_bot_key: ${{ secrets.ZULIP_BOT_KEY }}
+          # archive_branch: main
+          
+          github_personal_access_token: ${{ secrets.DEPLOY_PAT }}
+          delete_history: true

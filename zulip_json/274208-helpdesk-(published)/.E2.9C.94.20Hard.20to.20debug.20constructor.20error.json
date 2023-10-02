@@ -1,0 +1,26 @@
+[
+    {
+        "content": "<p>Hard to say without a reproducer. Have you tried making a minimal working example?</p>",
+        "id": 292666856,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1660083581
+    },
+    {
+        "content": "<p>It seems this was due to specifying default values that are types rather than instances of the asserted type.</p>",
+        "id": 292666945,
+        "sender_full_name": "Michael Fiano",
+        "timestamp": 1660083615
+    },
+    {
+        "content": "<p>Such a confusing error message</p>",
+        "id": 292666961,
+        "sender_full_name": "Michael Fiano",
+        "timestamp": 1660083622
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"374994\">Michael Fiano</span> has marked this topic as resolved.</p>",
+        "id": 292669567,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1660085210
+    }
+]

@@ -1,0 +1,24 @@
+<html>
+<head><meta charset="utf-8"><title>CairoMakie does not plot · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/CairoMakie.20does.20not.20plot.html">CairoMakie does not plot</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="329681341"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/CairoMakie%20does%20not%20plot/near/329681341" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Guido Kraemer <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/CairoMakie.20does.20not.20plot.html#329681341">(Feb 23 2023 at 10:35)</a>:</h4>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">CairoMakie</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">heatmap</span><span class="p">(</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">))</span>
+<span class="go">FigureAxisPlot()</span>
+</code></pre></div>
+<p>This does not produce a visible plot. I can save it as an image. Is there a way to have a plotting window?</p>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

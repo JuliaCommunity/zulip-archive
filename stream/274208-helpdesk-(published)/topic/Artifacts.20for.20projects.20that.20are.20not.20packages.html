@@ -1,0 +1,35 @@
+<html>
+<head><meta charset="utf-8"><title>Artifacts for projects that are not packages · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Artifacts.20for.20projects.20that.20are.20not.20packages.html">Artifacts for projects that are not packages</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="262776420"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Artifacts%20for%20projects%20that%20are%20not%20packages/near/262776420" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Yakir Luc Gagnon <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Artifacts.20for.20projects.20that.20are.20not.20packages.html#262776420">(Nov 26 2021 at 09:37)</a>:</h4>
+<p>In the various blogs, docs, and posts about Artifacts it is very nicely explained how to use Artifacts in a package. I'd love to see a MWE of using Artifacts in a project that is not a package.</p>
+<p>My specific use-case is providing all the code to reproduce the analysis (to be) published in a scientific article. This analysis depends on raw data that is hosted online.</p>
+<p>I really like that the data is:</p>
+<ul>
+<li>linked to its sha256</li>
+<li>downloaded and managed by the Artifacts framework</li>
+<li>located at  artifact"name"</li>
+<li>maintained (and gc) by the Artifacts framework</li>
+</ul>
+<p>Does anyone have a good example for this?</p>
+<p>One specific problem I currently have, for instance, is that although I have a Artifact.toml file in the project's directory, activating and then instantiating the session does not "install" the artifacts specified in the Artifacts.toml file. I need to "manually" <code>download_artifact</code> or <code>ensure_artifact_installed</code> first.</p>
+
+
+
+<a name="262790036"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Artifacts%20for%20projects%20that%20are%20not%20packages/near/262790036" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Yakir Luc Gagnon <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Artifacts.20for.20projects.20that.20are.20not.20packages.html#262790036">(Nov 26 2021 at 12:08)</a>:</h4>
+<p>the solution was to use ArtifactUtils</p>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

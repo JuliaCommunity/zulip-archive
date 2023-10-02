@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"272644\">Fredrik Ekre</span> <a href=\"#narrow/stream/274208-helpdesk-.28published.29/topic/dev.20local.20package.20from.20another.20package.20fails.20github.20actions/near/313039477\">said</a>:</p>\n<blockquote>\n<p>You can add ABC by URL instead of tracking the local path.</p>\n</blockquote>\n<p>Well then i can't develop XYZ without pushing ABC to GitHub. I want local changes to be available in XYZ while developing.</p>\n<p><span class=\"user-mention\" data-user-id=\"431304\">@Rik Huijzer</span> solution works! Thanks a lot.</p>",
+        "id": 313218720,
+        "sender_full_name": "Brynjar Smári Bjarnason",
+        "timestamp": 1669879957
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"461850\">Brynjar Smári Bjarnason</span> has marked this topic as resolved.</p>",
+        "id": 313218771,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1669879984
+    }
+]

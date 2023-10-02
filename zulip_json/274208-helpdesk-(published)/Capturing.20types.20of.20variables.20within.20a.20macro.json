@@ -1,0 +1,68 @@
+[
+    {
+        "content": "<p>Say I want to write a macro</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"nd\">@foo</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">a</span><span class=\"p\">,</span><span class=\"n\">b</span><span class=\"p\">,</span><span class=\"n\">c</span><span class=\"p\">)</span><span class=\"w\"></span>\n</code></pre></div>\n<p>that captures and modifies a function call <code>f(a,b,c)</code>. Is there any way to get the types of the arguments <code>a</code>,<code>b</code>, etc. within the macro?</p>",
+        "id": 284939518,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1654294992
+    },
+    {
+        "content": "<p>Within the macro they're all just <code>Symbol</code>s within the captured Expr, so I can't just use <code>typeof</code> directly...</p>",
+        "id": 284939833,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1654295268
+    },
+    {
+        "content": "<p>The only way I can think of is something along the lines of </p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">bad_form</span><span class=\"p\">(</span><span class=\"n\">expr</span><span class=\"p\">)</span><span class=\"w\"></span>\n<span class=\"w\">    </span><span class=\"n\">argtypes</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">ntuple</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"o\">-&gt;</span><span class=\"n\">typeof</span><span class=\"p\">(</span><span class=\"n\">eval</span><span class=\"p\">(</span><span class=\"n\">expr</span><span class=\"o\">.</span><span class=\"n\">args</span><span class=\"p\">[</span><span class=\"n\">i</span><span class=\"o\">+</span><span class=\"mi\">1</span><span class=\"p\">])),</span><span class=\"w\"> </span><span class=\"n\">length</span><span class=\"p\">(</span><span class=\"n\">expr</span><span class=\"o\">.</span><span class=\"n\">args</span><span class=\"p\">)</span><span class=\"o\">-</span><span class=\"mi\">1</span><span class=\"p\">)</span><span class=\"w\"></span>\n<span class=\"w\">    </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">argtypes</span><span class=\"p\">)</span><span class=\"w\"></span>\n<span class=\"k\">end</span><span class=\"w\"></span>\n</code></pre></div>",
+        "id": 284939859,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1654295282
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">b</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">c</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mf\">2.0</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">3</span><span class=\"o\">//</span><span class=\"mi\">4</span><span class=\"w\"></span>\n<span class=\"go\">(1, 2.0, 3//4)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@bad_form</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">a</span><span class=\"p\">,</span><span class=\"n\">b</span><span class=\"p\">,</span><span class=\"n\">c</span><span class=\"p\">)</span><span class=\"w\"></span>\n<span class=\"go\">(Int64, Float64, Rational{Int64})</span>\n</code></pre></div>\n<p>which works in global scope but is a massive code smell AFAIU</p>",
+        "id": 284939935,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1654295343
+    },
+    {
+        "content": "<p>N.b. I can't do something like</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">good_form_but_not_helpful</span><span class=\"p\">(</span><span class=\"n\">expr</span><span class=\"p\">)</span><span class=\"w\"></span>\n<span class=\"w\">    </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"n\">typeof</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"n\">expr</span><span class=\"o\">.</span><span class=\"n\">args</span><span class=\"p\">[</span><span class=\"mi\">2</span><span class=\"p\">])))</span><span class=\"w\"></span>\n<span class=\"k\">end</span><span class=\"w\"></span>\n</code></pre></div>\n<p>because I need access to the types within the body of the macro</p>",
+        "id": 284940222,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1654295632
+    },
+    {
+        "content": "<p>Don't the <code>@code_*</code> macros do exactly this? How do they work? Do they use the generated function suggested above? I'm away from computer, can't easily check myself.</p>\n<p>Note that <code>@ccall</code> shouldn't infer the type of the arguments, you can pass a value with a different type as long as it can be converted to the actual type required by the library</p>",
+        "id": 284949426,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1654305848
+    },
+    {
+        "content": "<p>Ok, I browsed a bit the repo on the phone and found it: <a href=\"https://github.com/JuliaLang/julia/blob/bd8dbc388c7b89f68838ca554ed7ba91740cce75/stdlib/InteractiveUtils/src/macros.jl#L34\">https://github.com/JuliaLang/julia/blob/bd8dbc388c7b89f68838ca554ed7ba91740cce75/stdlib/InteractiveUtils/src/macros.jl#L34</a></p>",
+        "id": 284949891,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1654306614
+    },
+    {
+        "content": "<p>I don't see any generated function anywhere</p>",
+        "id": 284949980,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1654306754
+    },
+    {
+        "content": "<p>Oh woah!</p>",
+        "id": 284950460,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1654307523
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"293896\">Brenhin Keller</span> has marked this topic as unresolved.</p>",
+        "id": 284950468,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1654307548
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269186\">Mosè Giordano</span> <a href=\"#narrow/stream/274208-helpdesk-.28published.29/topic/Capturing.20types.20of.20variables.20within.20a.20macro/near/284949426\">said</a>:</p>\n<blockquote>\n<p>Don't the <code>@code_*</code> macros do exactly this? How do they work? Do they use the generated function suggested above? I'm away from computer, can't easily check myself.</p>\n<p>Note that <code>@ccall</code> shouldn't infer the type of the arguments, you can pass a value with a different type as long as it can be converted to the actual type required by the library</p>\n</blockquote>\n<p>The <code>@code_*</code> macros do not do anything with the type in their body.</p>",
+        "id": 284952108,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1654309979
+    }
+]

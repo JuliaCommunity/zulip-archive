@@ -1,0 +1,38 @@
+[
+    {
+        "content": "<p>Say I write something like</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">ccall</span><span class=\"p\">(</span><span class=\"ss\">:printf</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"kt\">Cstring</span><span class=\"p\">,),</span><span class=\"w\"> </span><span class=\"s\">\"hello there!</span><span class=\"se\">\\n</span><span class=\"s\">\"</span><span class=\"p\">)</span><span class=\"w\"></span>\n<span class=\"go\">hello there!</span>\n<span class=\"go\">13</span>\n</code></pre></div>\n<p>i,e,. without explicitly specifying a path to a library… what determines the default set of paths Julia will search for the <code>printf </code>function?</p>",
+        "id": 290691913,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1658684870
+    },
+    {
+        "content": "<p>(x-posted on slack, will update either if I get an answer)</p>",
+        "id": 290691959,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1658684900
+    },
+    {
+        "content": "<p>it should check the usual library paths, since iirc it just delegates that to <code>dlsym</code></p>",
+        "id": 290692251,
+        "sender_full_name": "Sukera",
+        "timestamp": 1658685370
+    },
+    {
+        "content": "<p>or <code>LD_LIBRARY_PATH</code> on linux, or the other usual places for libraries, which is system dependent</p>",
+        "id": 290692258,
+        "sender_full_name": "Sukera",
+        "timestamp": 1658685406
+    },
+    {
+        "content": "<p>e.g. Windows also checks the current directory, IIRC</p>",
+        "id": 290692261,
+        "sender_full_name": "Sukera",
+        "timestamp": 1658685416
+    },
+    {
+        "content": "<p>Symbols in libraries dlopened with RTLD_GLOBAL are available without specifying the library (which is also a good way to get clashes between different libraries providing same symbols)</p>",
+        "id": 290692269,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1658685439
+    }
+]

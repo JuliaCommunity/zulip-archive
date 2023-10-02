@@ -1,0 +1,56 @@
+[
+    {
+        "content": "<p>I found this: <a href=\"https://discourse.julialang.org/t/style-recommendation-for-enum-as-type/46078\">Style recommendation for enum as type</a>, which has discussion on the difference between enumerated types, and types that can be dispatched apon.</p>",
+        "id": 261719992,
+        "sender_full_name": "Peter Goodall",
+        "timestamp": 1637103558
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"373536\">Alexander</span> has marked this topic as unresolved.</p>",
+        "id": 261767775,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1637145893
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"373536\">Alexander</span> has marked this topic as resolved.</p>",
+        "id": 261767807,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1637145912
+    },
+    {
+        "content": "<p>from an out-of-the-box REPL:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">julia</span><span class=\"o\">&gt;</span> <span class=\"n\">zero</span><span class=\"p\">(</span><span class=\"nb\">true</span><span class=\"p\">)</span>\n<span class=\"nb\">false</span>\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span> <span class=\"n\">zero</span><span class=\"p\">(</span><span class=\"nb\">false</span><span class=\"p\">)</span>\n<span class=\"nb\">false</span>\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span> <span class=\"n\">one</span><span class=\"p\">(</span><span class=\"nb\">false</span><span class=\"p\">)</span>\n<span class=\"nb\">true</span>\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span> <span class=\"n\">one</span><span class=\"p\">(</span><span class=\"nb\">true</span><span class=\"p\">)</span>\n<span class=\"nb\">true</span>\n</code></pre></div>\n<p><em>Learning by Breaking</em></p>",
+        "id": 261849044,
+        "sender_full_name": "Peter Goodall",
+        "timestamp": 1637183117
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"208845\">Sebastian Pfitzner</span> <a href=\"#narrow/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20help.20with.20Unicode.20.20variables.20.20defining.20a.20Bit.20type.20with.20.2E.2E.2E/near/261686128\">said</a>:</p>\n<blockquote>\n<p>It does say \"Subsequent characters may also include ! and digits (0-9 and other characters in categories Nd/No)\", which kinda implies that those are not allowed at the start</p>\n</blockquote>\n<p>\"Subsequen t characters may also include ! and digits (0-9 and other characters in categories Nd/No)\", implies that characters other than a-z, _, A-Z,!, 0-9, \"subset of Unicode code points greater than 00A0\"  and so on,  are not allowed either at the beginning or as subsequent characters, in my opinion. <br>\nIn any case, the definition seems to me not \"clean\" as it speaks as allowed characters of UN SUBSET unspecified of Unicode code points greater than 00A0 <br>\nIt is not clear whether all code points greater than 00A0 or only some (which?) of them are intended.</p>",
+        "id": 261851511,
+        "sender_full_name": "rocco sprmnt21",
+        "timestamp": 1637184273
+    },
+    {
+        "content": "<p>yes, <code>Bool</code> is a <code>Integer</code> in julia</p>",
+        "id": 261854217,
+        "sender_full_name": "Sukera",
+        "timestamp": 1637185606
+    },
+    {
+        "content": "<p>which IMO is <strong>much</strong> more sensible than the reverse where a lot of languages treat integers as booleans</p>",
+        "id": 261992884,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1637270623
+    },
+    {
+        "content": "<p>yes, but only if you error when trying to index with a boolean</p>",
+        "id": 261993367,
+        "sender_full_name": "Sukera",
+        "timestamp": 1637270846
+    },
+    {
+        "content": "<p>else writing <code>x &gt; 4</code> instead of <code>x &gt;&gt; 4</code> in an indexing expression by accident is horrible to debug</p>",
+        "id": 261993408,
+        "sender_full_name": "Sukera",
+        "timestamp": 1637270872
+    }
+]

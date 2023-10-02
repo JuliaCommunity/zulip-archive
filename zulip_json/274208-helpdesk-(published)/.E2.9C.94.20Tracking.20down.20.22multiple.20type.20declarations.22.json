@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>I think I got it. I pass in named tuples for arguments, observations, and parameters. Then in the generated function, I  push some lines like</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">k</span><span class=\"o\">::$</span><span class=\"n\">T</span> <span class=\"o\">=</span> <span class=\"n\">_pars</span><span class=\"o\">.$</span><span class=\"n\">k</span><span class=\"p\">)</span>\n</code></pre></div>\n<p>I thought maybe I needed to get rid of the type annotation, but I think it might work out better to make sure the variable is treated as local. So I added</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code>    <span class=\"k\">for</span> <span class=\"n\">k</span> <span class=\"k\">in</span> <span class=\"n\">keys</span><span class=\"p\">(</span><span class=\"n\">args</span><span class=\"p\">)</span> <span class=\"o\">∪</span> <span class=\"n\">keys</span><span class=\"p\">(</span><span class=\"n\">pars</span><span class=\"p\">)</span> <span class=\"o\">∪</span> <span class=\"n\">keys</span><span class=\"p\">(</span><span class=\"n\">data</span><span class=\"p\">)</span>\n        <span class=\"n\">push!</span><span class=\"p\">(</span><span class=\"n\">loader</span><span class=\"o\">.</span><span class=\"n\">args</span><span class=\"p\">,</span> <span class=\"o\">:</span><span class=\"p\">(</span><span class=\"k\">local</span> <span class=\"o\">$</span><span class=\"n\">k</span><span class=\"p\">))</span>\n    <span class=\"k\">end</span>\n</code></pre></div>\n<p>and I think that fixes things. Thanks all for the helpful discussion <span aria-label=\"smile\" class=\"emoji emoji-1f642\" role=\"img\" title=\"smile\">:smile:</span></p>",
+        "id": 279431312,
+        "sender_full_name": "Chad Scherrer",
+        "timestamp": 1650384640
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"286004\">Chad Scherrer</span> has marked this topic as resolved.</p>",
+        "id": 279431349,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1650384657
+    }
+]

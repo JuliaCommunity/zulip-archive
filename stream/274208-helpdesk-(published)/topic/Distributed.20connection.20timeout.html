@@ -1,0 +1,22 @@
+<html>
+<head><meta charset="utf-8"><title>Distributed connection timeout · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Distributed.20connection.20timeout.html">Distributed connection timeout</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="258539111"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Distributed%20connection%20timeout/near/258539111" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Distributed.20connection.20timeout.html#258539111">(Oct 21 2021 at 12:51)</a>:</h4>
+<p>Anyone has experience with debugging Distributed/Dagger jobs on a cluster?</p>
+<p>My task works when I use a small number of workers (10-40) but when I try to use more than that the thing pretty much always comes crashing down with "Peer N didn't connect to M in X seconds" at some point. Ideally I think I would like to be in the 500 range for maximum parallelism.</p>
+<p>Is it possible to log when and how much data is sent so I can get an overview of whether I overload the network or something? I have tried to set things up so that the bulk of the data is aggregated in the same Thunk before handing off, but maybe this is not enough. Increasing the timeout by a factor of 10 didn't help, but maybe things scale in some exponential fashion which is not clear to me.</p>
+<p>Assuming network loading is a problem, will concentrating workers on the same node help or will stuff anyways be sent over the network when passed between workers?</p>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

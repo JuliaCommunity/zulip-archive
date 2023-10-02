@@ -1,0 +1,20 @@
+[
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269582\">Mark Kittisopikul</span> has marked this topic as resolved.</p>",
+        "id": 287671488,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1656392979
+    },
+    {
+        "content": "<p>I learned something here. I still want to explore the bounds of how this works, but I think I understand more than when I did several hours ago.</p>",
+        "id": 287671546,
+        "sender_full_name": "Mark Kittisopikul",
+        "timestamp": 1656393029
+    },
+    {
+        "content": "<p>\"don't benchmark in global scope\" really should be \"don't inspect compiler optimizations in global scope\" <span aria-label=\"thinking\" class=\"emoji emoji-1f914\" role=\"img\" title=\"thinking\">:thinking:</span> if it requires constant prop, you need a compiled context to propagate in, which only happens in functions</p>",
+        "id": 287761096,
+        "sender_full_name": "Sukera",
+        "timestamp": 1656442907
+    }
+]

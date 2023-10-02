@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>I've now had a bit more of a look at the codebase of TypedTables... and I don't like what I'm seeing. For my use case, I think I'll just write a quick <a href=\"https://github.com/search?q=Tables.jl&amp;type=Repositories\">Tables.jl</a> compatible wrapper around a Matrix and so I'll solve this problem by no longer using TypedTables.</p>",
+        "id": 315858988,
+        "sender_full_name": "Timothy",
+        "timestamp": 1671035062
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"400021\">Timothy</span> has marked this topic as resolved.</p>",
+        "id": 315859034,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1671035072
+    }
+]

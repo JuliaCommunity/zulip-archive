@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Seems like the names are indeed there - they are returned by <code>getpropertynames(fo.core)</code> - just that they somehow are not available from the REPL...</p>",
+        "id": 356018897,
+        "sender_full_name": "Jesper Stemann Andersen",
+        "timestamp": 1683284589
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"432905\">Jesper Stemann Andersen</span> has marked this topic as resolved.</p>",
+        "id": 356018915,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1683284593
+    }
+]

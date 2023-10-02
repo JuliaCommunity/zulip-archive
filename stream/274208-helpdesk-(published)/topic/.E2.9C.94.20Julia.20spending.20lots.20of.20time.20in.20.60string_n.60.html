@@ -1,0 +1,53 @@
+<html>
+<head><meta charset="utf-8"><title>✔ Julia spending lots of time in `string_n` · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Julia.20spending.20lots.20of.20time.20in.20.60string_n.60.html">✔ Julia spending lots of time in `string_n`</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="365242636"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Julia%20spending%20lots%20of%20time%20in%20%60string_n%60/near/365242636" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Julia.20spending.20lots.20of.20time.20in.20.60string_n.60.html#365242636">(Jun 11 2023 at 06:08)</a>:</h4>
+<p>the stacktrace has <code>cityindex:62</code>, which is likely where your function definition originally is?</p>
+
+
+
+<a name="365242669"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Julia%20spending%20lots%20of%20time%20in%20%60string_n%60/near/365242669" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Julia.20spending.20lots.20of.20time.20in.20.60string_n.60.html#365242669">(Jun 11 2023 at 06:09)</a>:</h4>
+<p>if so, yes, the interpolation ALWAYS happens, not just when the error is thrown</p>
+
+
+
+<a name="365242864"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Julia%20spending%20lots%20of%20time%20in%20%60string_n%60/near/365242864" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Julia.20spending.20lots.20of.20time.20in.20.60string_n.60.html#365242864">(Jun 11 2023 at 06:11)</a>:</h4>
+<p>note also the docstring of <code>@assert</code>:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="w">  </span><span class="n">│</span><span class="w"> </span><span class="n">Warning</span>
+<span class="w">  </span><span class="n">│</span>
+<span class="w">  </span><span class="n">│</span><span class="w">  </span><span class="n">An</span><span class="w"> </span><span class="n">assert</span><span class="w"> </span><span class="n">might</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">disabled</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">various</span><span class="w"> </span><span class="n">optimization</span><span class="w"> </span><span class="n">levels</span><span class="o">.</span><span class="w"> </span><span class="n">Assert</span><span class="w"> </span><span class="n">should</span><span class="w"> </span><span class="n">therefore</span><span class="w"> </span><span class="n">only</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">used</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">a</span>
+<span class="w">  </span><span class="n">│</span><span class="w">  </span><span class="n">debugging</span><span class="w"> </span><span class="n">tool</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">used</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">authentication</span><span class="w"> </span><span class="n">verification</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span><span class="w"> </span><span class="n">verifying</span><span class="w"> </span><span class="n">passwords</span><span class="p">),</span><span class="w"> </span><span class="n">nor</span><span class="w"> </span><span class="n">should</span>
+<span class="w">  </span><span class="n">│</span><span class="w">  </span><span class="n">side</span><span class="w"> </span><span class="n">effects</span><span class="w"> </span><span class="n">needed</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">work</span><span class="w"> </span><span class="n">correctly</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">used</span><span class="w"> </span><span class="n">inside</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">asserts</span><span class="o">.</span>
+</code></pre></div>
+<p>So at various optimization levels, the <code>@assert</code> may be removed entirely, leading to a wrong result. I'd suggest the pattern</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">isnothing</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">throw</span><span class="p">(</span><span class="kt">ArgumentError</span><span class="p">(</span><span class="n">LazyString</span><span class="p">(</span><span class="s">"City "</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="s">" not found"</span><span class="p">))</span>
+</code></pre></div>
+<p>which will stay in your code across optimization levels and only interpolate the string when the error is actually thrown.</p>
+
+
+
+<a name="365296375"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Julia%20spending%20lots%20of%20time%20in%20%60string_n%60/near/365296375" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Julia.20spending.20lots.20of.20time.20in.20.60string_n.60.html#365296375">(Jun 11 2023 at 11:31)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="477227">Laura Demkowicz-Duffy</span> has marked this topic as resolved.</p>
+
+
+
+<a name="365296377"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Julia%20spending%20lots%20of%20time%20in%20%60string_n%60/near/365296377" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Julia.20spending.20lots.20of.20time.20in.20.60string_n.60.html#365296377">(Jun 11 2023 at 11:31)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="477227">Laura Demkowicz-Duffy</span> has marked this topic as resolved.</p>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

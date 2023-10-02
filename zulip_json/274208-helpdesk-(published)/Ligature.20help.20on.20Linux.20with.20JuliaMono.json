@@ -1,0 +1,20 @@
+[
+    {
+        "content": "<p>I don't have super strong feelings about ligatures in my fonts, so I never  bothered dealing with this before, but I've noticed that JuliaMono ligatures are not showing up in my terminal (Konsole) or text editor (Emacs using Ligature.el). Curiously, Fira Code's ligatures <em>do</em> work for me in both of those circumstances. I'm using Manjaro Linux with KDE. Does anyone have any suggestions for how to begin troubleshooting what's going on here?</p>",
+        "id": 311169246,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1668967760
+    },
+    {
+        "content": "<p>I'm a bit out of my depth trying to find help online with configuring this stuff so even just suggestions for settings and stuff to check would be appreciated.</p>",
+        "id": 311169335,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1668967808
+    },
+    {
+        "content": "<p>cc <span class=\"user-mention\" data-user-id=\"269183\">@cormullion</span>  in case you know anything about potential pitfalls here</p>",
+        "id": 311169354,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1668967826
+    }
+]

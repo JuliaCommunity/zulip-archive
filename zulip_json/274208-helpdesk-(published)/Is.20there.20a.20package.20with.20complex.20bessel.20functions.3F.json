@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Neither <a href=\"https://github.com/search?q=SpecialFunctions.jl&amp;type=Repositories\">SpecialFunctions.jl</a> or <a href=\"https://github.com/search?q=Bessels.jl&amp;type=Repositories\">Bessels.jl</a> support complex order parameters. For my specific problem I need something like <code>hankelh1(-im,1.0)</code> to work. (oops, could an admin move this to the published helpdesk stream? Thanks)</p>",
+        "id": 394016148,
+        "sender_full_name": "Robbie Rosati",
+        "timestamp": 1696028649
+    },
+    {
+        "content": "<p>This topic was moved here from <a class=\"stream-topic\" data-stream-id=\"225542\" href=\"/#narrow/stream/225542-helpdesk/topic/Is.20there.20a.20package.20with.20complex.20bessel.20functions.3F\">#helpdesk &gt; Is there a package with complex bessel functions?</a> by <span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span>.</p>",
+        "id": 394055555,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1696056037
+    }
+]

@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p>I have a package that contains a submodule. I can use that submodule directly, like:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">MyPackage</span><span class=\"o\">.</span><span class=\"n\">Submodule</span><span class=\"w\"></span>\n</code></pre></div>\n<p>Now, I want to use that submodule in another package, and thus this other package has <code>MyPackage</code> as a dependency. Until there, all fine.</p>\n<p>However, this other package starts with:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">module</span><span class=\"w\"> </span><span class=\"n\">MyOtherPackage</span><span class=\"w\"></span>\n<span class=\"w\">    </span><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">MyPackage</span><span class=\"o\">.</span><span class=\"n\">Submodule</span><span class=\"w\"></span>\n<span class=\"w\">    </span><span class=\"o\">...</span><span class=\"w\"></span>\n<span class=\"k\">end</span><span class=\"w\"></span>\n</code></pre></div>\n<p>but I'm getting the <code>Package MyOtherPackage does not have Submodule as a dependency</code> error.</p>\n<p>Is there a standard way to deal with this kind of issue? Having a submodule that essentially can be loaded independently  is such an extraneous thing?</p>",
+        "id": 294326680,
+        "sender_full_name": "Leandro Martínez",
+        "timestamp": 1660928767
+    }
+]

@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>I'm looking to find the path to the installed documentation (e.g. <code>/opt/julias/julia-1.7.3/share/doc/julia/html/en</code>), but I'm not sure how to go about it.</p>",
+        "id": 284289486,
+        "sender_full_name": "Timothy",
+        "timestamp": 1653835511
+    },
+    {
+        "content": "<p>how did you install julia?</p>",
+        "id": 284289500,
+        "sender_full_name": "Sukera",
+        "timestamp": 1653835539
+    }
+]

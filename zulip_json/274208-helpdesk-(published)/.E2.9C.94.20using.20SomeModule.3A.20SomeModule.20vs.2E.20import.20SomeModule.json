@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"343024\">Patrick Bouffard</span> has marked this topic as resolved.</p>",
+        "id": 320827200,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1673485923
+    },
+    {
+        "content": "<p>If you feel that the implicit extension stuff is dangerous, please do comment on the issue I linked, since that is part of the stuff that may be kept once this is tackled eventually</p>",
+        "id": 320861416,
+        "sender_full_name": "Sukera",
+        "timestamp": 1673504243
+    }
+]

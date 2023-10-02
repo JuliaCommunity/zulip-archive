@@ -1,0 +1,26 @@
+[
+    {
+        "content": "<p>I'm looking for a function (or macro) that returns the root directory of a git repo when run from a file inside the repo (sort of how <code>@__DIR__</code> does it, but then should return the git root dir). Has anybody implemented this?</p>",
+        "id": 284618029,
+        "sender_full_name": "Martin Roa",
+        "timestamp": 1654093229
+    },
+    {
+        "content": "<p>I came up with this approach:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">gitrootdir</span><span class=\"p\">(</span><span class=\"n\">currdir</span><span class=\"p\">)</span><span class=\"w\"></span>\n<span class=\"w\">  </span><span class=\"k\">while</span><span class=\"w\"> </span><span class=\"nb\">true</span><span class=\"w\"></span>\n<span class=\"w\">    </span><span class=\"n\">currdir</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"n\">homedir</span><span class=\"p\">()</span><span class=\"w\"> </span><span class=\"o\">&amp;&amp;</span><span class=\"w\"> </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"nb\">nothing</span><span class=\"w\"></span>\n<span class=\"w\">    </span><span class=\"n\">currdir</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"s\">\"/\"</span><span class=\"w\"> </span><span class=\"o\">&amp;&amp;</span><span class=\"w\"> </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"nb\">nothing</span><span class=\"w\"></span>\n<span class=\"w\">    </span><span class=\"s\">\".git\"</span><span class=\"w\"> </span><span class=\"k\">in</span><span class=\"w\"> </span><span class=\"n\">readdir</span><span class=\"p\">(</span><span class=\"n\">currdir</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">&amp;&amp;</span><span class=\"w\"> </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"n\">currdir</span><span class=\"w\"></span>\n<span class=\"w\">    </span><span class=\"n\">currdir</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">dirname</span><span class=\"p\">(</span><span class=\"n\">currdir</span><span class=\"p\">)</span><span class=\"w\"></span>\n<span class=\"w\">  </span><span class=\"k\">end</span><span class=\"w\"></span>\n<span class=\"k\">end</span><span class=\"w\"></span>\n<span class=\"n\">gitrootdir</span><span class=\"p\">(</span><span class=\"nd\">@__DIR__</span><span class=\"p\">)</span><span class=\"w\"></span>\n</code></pre></div>\n<p>If someone has a better approach or an improvement for this one, please let me know.</p>",
+        "id": 284621511,
+        "sender_full_name": "Martin Roa",
+        "timestamp": 1654094637
+    },
+    {
+        "content": "<p>There's probably someting in  <code>LibGit2</code> for this</p>",
+        "id": 284621881,
+        "sender_full_name": "Sukera",
+        "timestamp": 1654094782
+    },
+    {
+        "content": "<p>Thanks! There is indeed <code>LibGit2.path(repo::GitRepo)</code>.</p>",
+        "id": 284623008,
+        "sender_full_name": "Martin Roa",
+        "timestamp": 1654095256
+    }
+]

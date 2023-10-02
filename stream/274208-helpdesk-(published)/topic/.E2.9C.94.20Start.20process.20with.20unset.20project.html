@@ -1,0 +1,68 @@
+<html>
+<head><meta charset="utf-8"><title>✔ Start process with unset project · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Start.20process.20with.20unset.20project.html">✔ Start process with unset project</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="340587357"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Start%20process%20with%20unset%20project/near/340587357" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Timothy <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Start.20process.20with.20unset.20project.html#340587357">(Mar 09 2023 at 12:01)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="400021">Timothy</span> <a href="#narrow/stream/274208-helpdesk-.28published.29/topic/Start.20process.20with.20unset.20project/near/340540763">said</a>:</p>
+<blockquote>
+<p>I'm thinking of setting <code>JULIA_LOAD_PATH</code> to <code>@v#.#:@stdlib</code> then running <code>push!(LOAD_PATH, "@")</code> and <code>set_active_project(&lt;project&gt;)</code> might work.</p>
+</blockquote>
+<p>This seems to work</p>
+
+
+
+<a name="340587368"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Start%20process%20with%20unset%20project/near/340587368" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Start.20process.20with.20unset.20project.html#340587368">(Mar 09 2023 at 12:01)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="400021">Timothy</span> has marked this topic as resolved.</p>
+
+
+
+<a name="340588595"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Start%20process%20with%20unset%20project/near/340588595" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Fredrik Ekre <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Start.20process.20with.20unset.20project.html#340588595">(Mar 09 2023 at 12:07)</a>:</h4>
+<p>You might as well put the <code>@</code> in the environment variable too then.</p>
+
+
+
+<a name="340600830"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Start%20process%20with%20unset%20project/near/340600830" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Timothy <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Start.20process.20with.20unset.20project.html#340600830">(Mar 09 2023 at 13:08)</a>:</h4>
+<p>It doesn't matter what the project/load-path is during <code>julia</code> startup?</p>
+
+
+
+<a name="340600936"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Start%20process%20with%20unset%20project/near/340600936" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Fredrik Ekre <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Start.20process.20with.20unset.20project.html#340600936">(Mar 09 2023 at 13:09)</a>:</h4>
+<p>No</p>
+
+
+
+<a name="340757717"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Start%20process%20with%20unset%20project/near/340757717" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Timothy <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Start.20process.20with.20unset.20project.html#340757717">(Mar 10 2023 at 03:37)</a>:</h4>
+<p>Oh good, that resolves some of my worries. I took note of this line in the environment variables docs:</p>
+<blockquote>
+<p>JULIA_PROJECT must be defined before starting julia; defining it in startup.jl is too late in the startup process.</p>
+</blockquote>
+
+
+
+<a name="340792343"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Start%20process%20with%20unset%20project/near/340792343" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Fredrik Ekre <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Start.20process.20with.20unset.20project.html#340792343">(Mar 10 2023 at 08:37)</a>:</h4>
+<p>You are not using <code>JULIA_PROJECT</code> though.</p>
+
+
+
+<a name="340849525"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Start%20process%20with%20unset%20project/near/340849525" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Timothy <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/.E2.9C.94.20Start.20process.20with.20unset.20project.html#340849525">(Mar 10 2023 at 12:40)</a>:</h4>
+<p>Mmm, I just took this to say the full effect of setting <code>JULIA_PROJECT</code> could not be simulated/applied after launching <code>julia</code></p>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

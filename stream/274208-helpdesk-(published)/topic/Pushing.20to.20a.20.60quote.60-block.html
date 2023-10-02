@@ -1,0 +1,49 @@
+<html>
+<head><meta charset="utf-8"><title>Pushing to a `quote`-block · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Pushing.20to.20a.20.60quote.60-block.html">Pushing to a `quote`-block</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="352331515"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pushing%20to%20a%20%60quote%60-block/near/352331515" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-(published)/topic/Pushing.20to.20a.20.60quote.60-block.html#352331515">(Apr 24 2023 at 16:44)</a>:</h4>
+<p>is there an easy way to push to a quote-block without adding nested begin-blocks?  for example, currently I have</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">quote</span><span class="w"> </span><span class="k">end</span>
+<span class="k">quote</span>
+<span class="w">    </span><span class="cm">#= REPL[27]:1 =#</span>
+<span class="k">end</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">push!</span><span class="p">(</span><span class="n">code</span><span class="o">.</span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="k">quote</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="k">end</span><span class="p">);</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">code</span>
+<span class="k">quote</span>
+<span class="w">    </span><span class="cm">#= REPL[27]:1 =#</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">        </span><span class="cm">#= REPL[28]:1 =#</span>
+<span class="w">        </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span>
+<span class="w">        </span><span class="cm">#= REPL[28]:1 =#</span>
+<span class="w">        </span><span class="n">c</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">d</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>but I'd like to have</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="k">quote</span>
+<span class="w">           </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span>
+<span class="w">           </span><span class="n">c</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">d</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="k">quote</span>
+<span class="w">    </span><span class="cm">#= REPL[30]:2 =#</span>
+<span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span>
+<span class="w">    </span><span class="cm">#= REPL[30]:3 =#</span>
+<span class="w">    </span><span class="n">c</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">d</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<hr><p>Last updated: Oct 02 2023 at 04:34 UTC</p>
+</html>

@@ -1,0 +1,44 @@
+[
+    {
+        "content": "<p>The issue is that currently, the Julia compiler doesn't realise that if you load the same field multiple times from the same struct, the field is of the same type. So, even though you checked that a.x is not nothing and b.x is not nothing, when you do the comparison, Julia has \"forgotten\" that you checked</p>",
+        "id": 385000797,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1692075178
+    },
+    {
+        "content": "<p>You solve it by storing them in a variable</p>",
+        "id": 385000814,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1692075188
+    },
+    {
+        "content": "<p>See more here: <a href=\"https://aviatesk.github.io/JET.jl/stable/jetanalysis/#no-matching-method-found-(x/y-union-split)\">https://aviatesk.github.io/JET.jl/stable/jetanalysis/#no-matching-method-found-(x/y-union-split)</a></p>",
+        "id": 385001157,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1692075366
+    },
+    {
+        "content": "<p>Right! I should’ve re-read the documentation for JET… Thanks!</p>",
+        "id": 385004300,
+        "sender_full_name": "Jesper Stemann Andersen",
+        "timestamp": 1692076821
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"432905\">Jesper Stemann Andersen</span> has marked this topic as resolved.</p>",
+        "id": 385012116,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1692079787
+    },
+    {
+        "content": "<p>worth noting that JET is correct in this specific case  -- <code>Bar</code> is mutable after all, so some other thread could write a <code>nothing</code> to <code>a.x</code> or <code>b.x</code> after your check. Only accessing the field once and storing that in a local variable <em>technically</em> changes the behaviour of your program</p>",
+        "id": 385023523,
+        "sender_full_name": "Sebastian Pfitzner",
+        "timestamp": 1692083507
+    },
+    {
+        "content": "<p>Right ... I was also wondering whether that point should be added as a footnote to the JET documentation...</p>",
+        "id": 385024699,
+        "sender_full_name": "Jesper Stemann Andersen",
+        "timestamp": 1692083815
+    }
+]
