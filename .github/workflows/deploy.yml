@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Publish zulip-archive on GH Pages
     steps:
-      - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
-      - uses: zulip/zulip-archive@5da606feac0fa69445de717c406f79dd81e82e59
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: zulip/zulip-archive@5ff607209cbd3a7ff74cbca84656d01bfc8b5929
         with:
           zulip_organization_url: ${{ secrets.ZULIP_ORGANISATION_URL }}
           zulip_bot_email: ${{ secrets.ZULIP_BOT_EMAIL }}
