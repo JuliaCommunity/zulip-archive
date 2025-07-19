@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Is JET built into the VS Code extension now? Or does one have to do <code>using JET</code> to get the features?</p>\n<p>Aside: if the latter, I've been having a hard time with compat via Revise, Runic, InteractiveUtils, JuliaSyntax, and now JET recently (on 1.11).</p>",
+        "id": 528718401,
+        "sender_full_name": "Alec",
+        "timestamp": 1752517801
+    },
+    {
+        "content": "<p>JET is only partly integrated with VSCode. You have to still run JET the normal way through the REPL. The only integration is that the JET report will place underlines in your code where it detects issues.<br>\nThere is ongoing work on a true JET-powered language server - <a href=\"https://github.com/aviatesk/JETLS.jl\">https://github.com/aviatesk/JETLS.jl</a>. It is still in early development and not yet ready to use for anyone who isn't a JET developer. But I think it looks very promising. Expect to hear more about JETLS at JuliaCon in a few weeks.</p>",
+        "id": 528808741,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1752569025
+    }
+]
