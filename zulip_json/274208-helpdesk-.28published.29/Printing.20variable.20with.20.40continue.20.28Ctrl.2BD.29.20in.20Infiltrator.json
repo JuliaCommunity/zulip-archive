@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p>I am trying to troubleshoot some complex/deep code and would like to be able to keep hitting Ctrl+D (<code>@continue</code>) and have a variable (e.g. call it <code>p</code> print for each time I hit Ctrl+D. Is there anyway to do this or do I have to enter <code>p</code> into the REPL each time?</p>",
+        "id": 532822380,
+        "sender_full_name": "Alec",
+        "timestamp": 1754360599
+    }
+]
