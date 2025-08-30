@@ -1,0 +1,128 @@
+[
+    {
+        "content": "<p>Hey! I'm a bit confused why some <code>Ref</code>s have <code>#undef</code> and others have a \"zero\" value as default:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"kt\">Ref</span><span class=\"p\">{</span><span class=\"kt\">Any</span><span class=\"p\">}()</span>\n<span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"kt\">RefValue</span><span class=\"p\">{</span><span class=\"kt\">Any</span><span class=\"p\">}(</span><span class=\"c\">#undef)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"kt\">Ref</span><span class=\"p\">{</span><span class=\"kt\">Float64</span><span class=\"p\">}()</span>\n<span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"kt\">RefValue</span><span class=\"p\">{</span><span class=\"kt\">Float64</span><span class=\"p\">}(</span><span class=\"mf\">0.0</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"kt\">Ref</span><span class=\"p\">{</span><span class=\"kt\">Bool</span><span class=\"p\">}()</span>\n<span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"kt\">RefValue</span><span class=\"p\">{</span><span class=\"kt\">Bool</span><span class=\"p\">}(</span><span class=\"nb\">false</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"kt\">Ref</span><span class=\"p\">{</span><span class=\"kt\">Char</span><span class=\"p\">}()</span>\n<span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"kt\">RefValue</span><span class=\"p\">{</span><span class=\"kt\">Char</span><span class=\"p\">}(</span><span class=\"sc\">'\\0'</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"kt\">Ref</span><span class=\"p\">{</span><span class=\"kt\">Vector</span><span class=\"p\">}()</span>\n<span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"kt\">RefValue</span><span class=\"p\">{</span><span class=\"kt\">Vector</span><span class=\"p\">}(</span><span class=\"c\">#undef)</span>\n</code></pre></div>\n<p>Can I get a <code>Ref{Bool}</code> with an undef value?</p>",
+        "id": 532264949,
+        "sender_full_name": "Fons van der Plas",
+        "timestamp": 1754040094
+    },
+    {
+        "content": "<p>They are only <code>#undef</code> if the <code>Ref</code> is implemented with a pointer. <code>#undef</code> represents a null pointer.</p>",
+        "id": 532265760,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1754040382
+    },
+    {
+        "content": "<p>That's a little unsatisfactory because it's an explanation of the internals. The semantics are:</p>\n<ul>\n<li>A type is a bitstype if it is a primitive type, or is immutable and contains only bitstypes.</li>\n<li>A reference to a bitstype, or unions of bitstypes, is never <code>#undef</code>. Instead, uninitialized refs contain arbitrary data. This can be read safely - it is not undefined behaviour to access it. Reading the same uninitialized data twice will always result in the same value.</li>\n<li>References that are not typed as bitstype (e.g. <code>Ref{T}</code> where T is not a bitstype) are always undef unless set. Accessing it will always throw an exception.</li>\n</ul>",
+        "id": 532266246,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1754040556
+    },
+    {
+        "content": "<p>So the answer is no: You can't have a <code>RefValue{Bool}</code> with an undef value.<br>\nDo you need it for something?</p>",
+        "id": 532266321,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1754040591
+    },
+    {
+        "content": "<p>Okay thanks!</p>\n<p>My use case was:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">computed</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Ref</span><span class=\"p\">{</span><span class=\"kt\">Any</span><span class=\"p\">}()</span>\n\n<span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">expensive</span><span class=\"p\">()</span>\n<span class=\"w\">    </span><span class=\"n\">isassigned</span><span class=\"p\">(</span><span class=\"n\">computed</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">&amp;&amp;</span><span class=\"w\"> </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"n\">computed</span><span class=\"p\">[]</span>\n<span class=\"w\">    </span><span class=\"n\">computed</span><span class=\"p\">[]</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"k\">let</span>\n<span class=\"w\">        </span><span class=\"c\"># something expensive</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"k\">end</span>\n</code></pre></div>",
+        "id": 532267810,
+        "sender_full_name": "Fons van der Plas",
+        "timestamp": 1754041134
+    },
+    {
+        "content": "<p>and changing <code>Ref{Any}</code> to <code>Ref{Bool}</code> broke that code</p>",
+        "id": 532267898,
+        "sender_full_name": "Fons van der Plas",
+        "timestamp": 1754041172
+    },
+    {
+        "content": "<p>Ah. In this case, I would use a <code>Ref{Union{Nothing, Bool}}(nothing)</code></p>",
+        "id": 532272159,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1754042693
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"272650\">Jakob Nybo Nissen</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref/near/532266321\">said</a>:</p>\n<blockquote>\n<p>So the answer is no: You can't have a <code>RefValue{Bool}</code> with an undef value.<br>\nDo you need it for something?</p>\n</blockquote>\n<p>Are you sure? I'm not aware of there being any special initialization logic for bitstypes, the bitpattern is arbitrary, is it not? Not all bitpatterns are necessarily valid for all bitstypes, so reading this uninitialized memory is very much UB in the general case.</p>",
+        "id": 532274386,
+        "sender_full_name": "Sukera",
+        "timestamp": 1754043542
+    },
+    {
+        "content": "<blockquote>\n<p>reading this uninitialized memory is very much UB in the general case</p>\n</blockquote>\n<p>I think Julia uses the LLVM <a href=\"https://llvm.org/docs/LangRef.html#freeze-instruction\"><code>freeze</code></a> instruction to prevent UB from reading uninitialized memory. Some merged PRs found after a quick search:</p>\n<ul>\n<li>\n<p><a href=\"https://github.com/JuliaLang/julia/pull/52169\">https://github.com/JuliaLang/julia/pull/52169</a></p>\n</li>\n<li>\n<p><a href=\"https://github.com/JuliaLang/julia/pull/54136\">https://github.com/JuliaLang/julia/pull/54136</a></p>\n</li>\n</ul>",
+        "id": 532282530,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1754046618
+    },
+    {
+        "content": "<p>Yes, it was made non-UB in Julia 1.11. Of course, it can still invoke undefined behaviour yourself if you create your own type which results in undefined behaviour if it doesn't have specifit bitpatterns. I.e. if you do:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">struct</span> <span class=\"kt\">NeverZero</span>\n<span class=\"w\">    </span><span class=\"n\">x</span><span class=\"o\">::</span><span class=\"kt\">UInt8</span>\n\n<span class=\"w\">    </span><span class=\"n\">NeverZero</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"o\">::</span><span class=\"kt\">UInt8</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">iszero</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">?</span><span class=\"w\"> </span><span class=\"n\">error</span><span class=\"p\">()</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"n\">new</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n\n<span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">foo</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"o\">::</span><span class=\"kt\">NeverZero</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"n\">iszero</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"o\">.</span><span class=\"n\">x</span><span class=\"p\">)</span>\n<span class=\"w\">        </span><span class=\"n\">call_undefined_behaviour</span><span class=\"p\">()</span>\n<span class=\"w\">    </span><span class=\"k\">else</span>\n<span class=\"w\">        </span><span class=\"n\">x</span><span class=\"o\">.</span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">+</span><span class=\"w\"> </span><span class=\"mh\">0x01</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"k\">end</span>\n\n<span class=\"n\">foo</span><span class=\"p\">(</span><span class=\"kt\">Ref</span><span class=\"p\">{</span><span class=\"kt\">NeverZero</span><span class=\"p\">}()[])</span>\n</code></pre></div>",
+        "id": 532283724,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1754047051
+    },
+    {
+        "content": "<p>I'm wondering now what the possible bitpatterns for <code>Bool</code> in particular are when accessed through that <code>RefValue</code> - I remember there being some cleanup to always make sure to have <code>Bool</code> always be one of 0 or 1 as the bitpattern, but I don't know if that applies to this case as well.</p>",
+        "id": 532365980,
+        "sender_full_name": "Sukera",
+        "timestamp": 1754076195
+    },
+    {
+        "content": "<p>Even in this example,  it's not really correct to say that <em>accessing</em> the value is undefined behavior, is it? However, since the instance you get isn't guaranteed to satisfy invariants enforced by the constructor, <em>using</em> it may result in undefined behavior.</p>",
+        "id": 532371133,
+        "sender_full_name": "Daniel Wennberg",
+        "timestamp": 1754078581
+    },
+    {
+        "content": "<p>Well, it depends. Julia is a little bit more generous than C/C++ (due to optimizing a few things differently/less, ironically), but in principle there is no difference between \"accessing\" and \"using\" when it comes to UB. Anything at all may happen, including <a href=\"https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633\">time travel</a>! So just viewing it from the perspective of \"but I haven't <em>used</em> that value for anything yet!\" is not sufficient.</p>",
+        "id": 532424553,
+        "sender_full_name": "Sukera",
+        "timestamp": 1754117258
+    },
+    {
+        "content": "<p>No that's not right. It is not UB to access the value. I.e. if you have a program that accesses the data but does not call an unsafe function, there is no UB. E.g. in my example, the UB is from the call to <code>call_unsafe_behaviour</code>, not from loading the value.</p>\n<p>W.r.t booleans, they can be stored as any bitpattern. Loading them will only read the lowest bit. On an LLVM level this happens with loading an i1, on an assembly level the byte is loaded, and then a mask is applied.<br>\nI wonder if it's possible to somehow invoke UB using the fact that booleans can be stored in memory as any bitpattern, although when loaded, they must always have 0x01 or 0x00. I can't think of a way, though</p>",
+        "id": 532439767,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1754129912
+    },
+    {
+        "content": "<p>Maybe using <code>unsafe_load</code>? Not sure though.</p>",
+        "id": 532439896,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1754130024
+    },
+    {
+        "content": "<p>There can still be UB, even if you don't do anything with that value. That's exactly what the link I posted is about. I'm not sure it applies for the exact case of <code>RefValue{Bool}</code> in Julia, but reading something that is not initialized is generally UB. It's still not merged, but <a href=\"https://github.com/JuliaLang/julia/pull/54099/files#diff-cad50cf26296590b1937056ff6064bd99292b8428c0fdff1db0f682e8a48551cR34\">https://github.com/JuliaLang/julia/pull/54099/files#diff-cad50cf26296590b1937056ff6064bd99292b8428c0fdff1db0f682e8a48551cR34</a> explicitly calls out the _existence_ of values other than 0x0/0x1 for a <code>Bool</code> as UB. This is irrespective of what happens later on the LLVM level.</p>",
+        "id": 532442583,
+        "sender_full_name": "Sukera",
+        "timestamp": 1754132355
+    },
+    {
+        "content": "<p>We should probably also check what the effects system says about reading from an uninitialized <code>RefValue{Bool}</code> - I suspect the <code>:noub</code> effect ist tainted.</p>",
+        "id": 532442679,
+        "sender_full_name": "Sukera",
+        "timestamp": 1754132425
+    },
+    {
+        "content": "<p>Ah, and just a few lines below, it explicitly states that reading uninitialized bitstypes is not UB.. <a href=\"https://github.com/JuliaLang/julia/pull/54099/files#diff-cad50cf26296590b1937056ff6064bd99292b8428c0fdff1db0f682e8a48551cR46\">https://github.com/JuliaLang/julia/pull/54099/files#diff-cad50cf26296590b1937056ff6064bd99292b8428c0fdff1db0f682e8a48551cR46</a></p>\n<p>What great consistency.</p>",
+        "id": 532442878,
+        "sender_full_name": "Sukera",
+        "timestamp": 1754132612
+    },
+    {
+        "content": "<p>I think you're mistaken. Specifically:</p>\n<ul>\n<li>The fact that UB can cause bad behaviour even in code that is supposed to run before the UB is encountered is not relevant here. What I'm saying is that <em>loading uninitialized memory in Julia is not UB</em>. Sure, you can <em>then</em> go ahead and invoke UB with that value. But that does not make loading the data UB. This is similar to how <code>1 + 1</code> is not UB, even though you can use the resulting value <code>2</code> to invoke UB.</li>\n<li>I don't think it's possible to load a <code>Bool</code> value as something other than <code>0x01</code> or  <code>0x00</code> in Julia, even as the memory storing the bool is whatever. That is, I don't believe that it's UB to have <code>Memory{Bool}</code> filled with e.g. <code>0xff</code>. The UB would be if you did something like <code>reinterpret(Bool, unsafe_load(Ptr{UInt8}(pointer(mem)))</code> - i.e. if you actually created the <code>Bool</code>. I don't think the <code>Bool</code> really \"exists\" in the relevant sense before it's loaded</li>\n</ul>",
+        "id": 532448914,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1754136736
+    },
+    {
+        "content": "<p>See:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">r</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Ref</span><span class=\"p\">{</span><span class=\"kt\">Bool</span><span class=\"p\">}()</span>\n<span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"kt\">RefValue</span><span class=\"p\">{</span><span class=\"kt\">Bool</span><span class=\"p\">}(</span><span class=\"nb\">false</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"n\">infer_effects</span><span class=\"p\">(</span><span class=\"n\">getindex</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Tuple</span><span class=\"p\">{</span><span class=\"kt\">typeof</span><span class=\"p\">(</span><span class=\"kt\">r</span><span class=\"p\">)})</span>\n<span class=\"p\">(</span><span class=\"o\">?</span><span class=\"n\">c</span><span class=\"p\">,</span><span class=\"o\">+</span><span class=\"n\">e</span><span class=\"p\">,</span><span class=\"o\">+</span><span class=\"n\">n</span><span class=\"p\">,</span><span class=\"o\">+</span><span class=\"n\">t</span><span class=\"p\">,</span><span class=\"o\">+</span><span class=\"n\">s</span><span class=\"p\">,</span><span class=\"o\">?</span><span class=\"n\">m</span><span class=\"p\">,</span><span class=\"o\">+</span><span class=\"n\">u</span><span class=\"p\">,</span><span class=\"o\">+</span><span class=\"n\">o</span><span class=\"p\">,</span><span class=\"o\">+</span><span class=\"n\">r</span><span class=\"p\">)</span>\n</code></pre></div>",
+        "id": 532449089,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1754136891
+    },
+    {
+        "content": "<p>Summa summarum: As far as I can tell there is no way loading uninitialized data in Julia can cause UB, and I think we would need to see an example of this happening before it's worth considering as a problem.<br>\nThat being said, it would be nice if we had something like: <a href=\"https://github.com/JuliaLang/julia/pull/54099#discussion_r1566982970\">https://github.com/JuliaLang/julia/pull/54099#discussion_r1566982970</a></p>",
+        "id": 532449497,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1754137205
+    }
+]
