@@ -1,0 +1,32 @@
+[
+    {
+        "content": "<p>I am seeing this warning in my tests, but can't reproduce in a fresh environment, even though it is the exact same version of the package installed:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">┌</span><span class=\"w\"> </span><span class=\"n\">VectorizationBase</span>\n<span class=\"n\">│</span><span class=\"w\">  </span><span class=\"n\">WARNING</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">Static</span><span class=\"o\">.</span><span class=\"n\">static_first</span><span class=\"w\"> </span><span class=\"k\">in</span><span class=\"w\"> </span><span class=\"k\">module</span><span class=\"w\"> </span><span class=\"n\">VectorizationBase</span><span class=\"w\"> </span><span class=\"n\">conflicts</span><span class=\"w\"> </span><span class=\"n\">with</span><span class=\"w\"> </span><span class=\"n\">an</span><span class=\"w\"> </span><span class=\"n\">existing</span><span class=\"w\"> </span><span class=\"n\">identifier</span><span class=\"o\">.</span>\n<span class=\"n\">│</span><span class=\"w\">  </span><span class=\"n\">WARNING</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">Static</span><span class=\"o\">.</span><span class=\"n\">static_last</span><span class=\"w\"> </span><span class=\"k\">in</span><span class=\"w\"> </span><span class=\"k\">module</span><span class=\"w\"> </span><span class=\"n\">VectorizationBase</span><span class=\"w\"> </span><span class=\"n\">conflicts</span><span class=\"w\"> </span><span class=\"n\">with</span><span class=\"w\"> </span><span class=\"n\">an</span><span class=\"w\"> </span><span class=\"n\">existing</span><span class=\"w\"> </span><span class=\"n\">identifier</span><span class=\"o\">.</span>\n</code></pre></div>\n<p>Someone else seeing this on Julia v1.11.7?</p>",
+        "id": 541284870,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1758734174
+    },
+    {
+        "content": "<p>lucky for you, those warnings are no longer emitted in 1.12</p>",
+        "id": 541323607,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1758744722
+    },
+    {
+        "content": "<p>behavior didn't change though, just no warnings</p>",
+        "id": 541323629,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1758744733
+    },
+    {
+        "content": "<p>So it is an issue with Julia v1.11?</p>",
+        "id": 541335980,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1758750717
+    },
+    {
+        "content": "<p>Maybe the same as <a href=\"https://github.com/JuliaLang/julia/issues/58692\">#58692</a>?</p>",
+        "id": 541362135,
+        "sender_full_name": "wheeheee",
+        "timestamp": 1758770664
+    }
+]

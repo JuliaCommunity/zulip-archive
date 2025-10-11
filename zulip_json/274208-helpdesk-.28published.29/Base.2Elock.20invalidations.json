@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p>Does anyone know what could be done about these invalidations from defining a Base.lock method for a new IO type? <a href=\"https://github.com/JuliaLang/IJulia.jl/issues/1192#issuecomment-3390755056\">https://github.com/JuliaLang/IJulia.jl/issues/1192#issuecomment-3390755056</a></p>\n<p>I have a very vague understanding of invalidations but the code in IJulia/the MWE looks ok to me so I don't fully grok why it causes so many of them.</p>",
+        "id": 544239754,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1760126829
+    }
+]
