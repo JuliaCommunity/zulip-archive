@@ -1,0 +1,68 @@
+<html>
+<head><meta charset="utf-8"><title>Base.lock invalidations · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Base.2Elock.20invalidations.html">Base.lock invalidations</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="544239754"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Base.lock%20invalidations/near/544239754" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> James Wrigley <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Base.2Elock.20invalidations.html#544239754">(Oct 10 2025 at 20:07)</a>:</h4>
+<p>Does anyone know what could be done about these invalidations from defining a Base.lock method for a new IO type? <a href="https://github.com/JuliaLang/IJulia.jl/issues/1192#issuecomment-3390755056">https://github.com/JuliaLang/IJulia.jl/issues/1192#issuecomment-3390755056</a></p>
+<p>I have a very vague understanding of invalidations but the code in IJulia/the MWE looks ok to me so I don't fully grok why it causes so many of them.</p>
+
+
+
+<a name="544306854"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Base.lock%20invalidations/near/544306854" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Base.2Elock.20invalidations.html#544306854">(Oct 11 2025 at 10:11)</a>:</h4>
+<p>It's hard to tell precisely without digging into it, but it looks very much like an ordinary invalidation due to world splitting. <br>
+There is nothing you can do about it. It's an explicit tradeoff in the Julia compiler. The compiler does a bunch of speculative compilation, that just sometimes gets invalidation without anyone having done anything wrong.</p>
+<p>The upside is that a lot of poorly inferred code runs fast due to this speculative compilation.</p>
+<p>You can try to lobby the core devs to make the compiler stop doing this kind of speculative compilation, but that's kind of it.</p>
+
+
+
+<a name="544312902"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Base.lock%20invalidations/near/544312902" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> James Wrigley <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Base.2Elock.20invalidations.html#544312902">(Oct 11 2025 at 11:49)</a>:</h4>
+<p>Alas <span aria-label="tear" class="emoji emoji-1f972" role="img" title="tear">:tear:</span> Thanks for the help.</p>
+
+
+
+<a name="544324855"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Base.lock%20invalidations/near/544324855" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Base.2Elock.20invalidations.html#544324855">(Oct 11 2025 at 14:16)</a>:</h4>
+<p>This should be easy to fix by setting <code>max_methods</code> to one for <code>Base.lock</code>. However that needs to be done in <code>Base</code>. I have some relevant PRs I want to get back to some time. This one, specifically:</p>
+<ul>
+<li><a href="https://github.com/JuliaLang/julia/pull/59377">https://github.com/JuliaLang/julia/pull/59377</a></li>
+</ul>
+
+
+
+<a name="544324967"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Base.lock%20invalidations/near/544324967" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Base.2Elock.20invalidations.html#544324967">(Oct 11 2025 at 14:18)</a>:</h4>
+<p>The other, more laborious, approach is to fix the code that is actually vulnerable to invalidation (because of type instability).</p>
+
+
+
+<a name="544325540"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Base.lock%20invalidations/near/544325540" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Base.2Elock.20invalidations.html#544325540">(Oct 11 2025 at 14:28)</a>:</h4>
+<p>IO code in particular is often intentionally despecialized - e.g. with types having a field marked ::IO, so I doubt it can be fixed</p>
+
+
+
+<a name="544327186"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Base.lock%20invalidations/near/544327186" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Base.2Elock.20invalidations.html#544327186">(Oct 11 2025 at 14:55)</a>:</h4>
+<p>As I said, it's just a matter of disabling world-splitting for <code>lock</code>.</p>
+
+
+
+<a name="544327268"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Base.lock%20invalidations/near/544327268" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Base.2Elock.20invalidations.html#544327268">(Oct 11 2025 at 14:57)</a>:</h4>
+<p>However I feel like this should be done more comprehensively, instead of on a function-by-function basis, thus the linked PR. The PR does not currently include any changes for <code>lock</code>, though.</p>
+
+
+
+<hr><p>Last updated: Oct 18 2025 at 04:39 UTC</p>
+</html>

@@ -1,0 +1,50 @@
+[
+    {
+        "content": "<p>Does anyone know what could be done about these invalidations from defining a Base.lock method for a new IO type? <a href=\"https://github.com/JuliaLang/IJulia.jl/issues/1192#issuecomment-3390755056\">https://github.com/JuliaLang/IJulia.jl/issues/1192#issuecomment-3390755056</a></p>\n<p>I have a very vague understanding of invalidations but the code in IJulia/the MWE looks ok to me so I don't fully grok why it causes so many of them.</p>",
+        "id": 544239754,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1760126829
+    },
+    {
+        "content": "<p>It's hard to tell precisely without digging into it, but it looks very much like an ordinary invalidation due to world splitting. <br>\nThere is nothing you can do about it. It's an explicit tradeoff in the Julia compiler. The compiler does a bunch of speculative compilation, that just sometimes gets invalidation without anyone having done anything wrong.</p>\n<p>The upside is that a lot of poorly inferred code runs fast due to this speculative compilation.</p>\n<p>You can try to lobby the core devs to make the compiler stop doing this kind of speculative compilation, but that's kind of it.</p>",
+        "id": 544306854,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1760177476
+    },
+    {
+        "content": "<p>Alas <span aria-label=\"tear\" class=\"emoji emoji-1f972\" role=\"img\" title=\"tear\">:tear:</span> Thanks for the help.</p>",
+        "id": 544312902,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1760183383
+    },
+    {
+        "content": "<p>This should be easy to fix by setting <code>max_methods</code> to one for <code>Base.lock</code>. However that needs to be done in <code>Base</code>. I have some relevant PRs I want to get back to some time. This one, specifically:</p>\n<ul>\n<li><a href=\"https://github.com/JuliaLang/julia/pull/59377\">https://github.com/JuliaLang/julia/pull/59377</a></li>\n</ul>",
+        "id": 544324855,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1760192194
+    },
+    {
+        "content": "<p>The other, more laborious, approach is to fix the code that is actually vulnerable to invalidation (because of type instability).</p>",
+        "id": 544324967,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1760192314
+    },
+    {
+        "content": "<p>IO code in particular is often intentionally despecialized - e.g. with types having a field marked ::IO, so I doubt it can be fixed</p>",
+        "id": 544325540,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1760192916
+    },
+    {
+        "content": "<p>As I said, it's just a matter of disabling world-splitting for <code>lock</code>.</p>",
+        "id": 544327186,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1760194544
+    },
+    {
+        "content": "<p>However I feel like this should be done more comprehensively, instead of on a function-by-function basis, thus the linked PR. The PR does not currently include any changes for <code>lock</code>, though.</p>",
+        "id": 544327268,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1760194625
+    }
+]
