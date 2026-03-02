@@ -1,0 +1,141 @@
+<html>
+<head><meta charset="utf-8"><title>✔ How to get values from `Pairs`? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html">✔ How to get values from `Pairs`?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="530560383"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530560383" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530560383">(Jul 24 2025 at 13:10)</a>:</h4>
+<p>That should be trivial, but after a few minutes trying, I still can't figure it out:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pairs</span><span class="p">((</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="n">keys</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="c"># works</span>
+<span class="n">values</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="c"># fails: returns named tuple</span>
+</code></pre></div>
+<p>The documentation of <code>Pairs</code> is non-existent in the manual.</p>
+
+
+
+<a name="530561194"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530561194" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530561194">(Jul 24 2025 at 13:14)</a>:</h4>
+<p>One possible solution:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="p">[</span><span class="nb">pi</span><span class="o">.</span><span class="n">second</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nb">pi</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">p</span><span class="p">]</span>
+</code></pre></div>
+
+
+
+<a name="530561232"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530561232" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530561232">(Jul 24 2025 at 13:14)</a>:</h4>
+<p>Iterators.map(last, p) will do it</p>
+
+
+
+<a name="530561281"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530561281" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530561281">(Jul 24 2025 at 13:15)</a>:</h4>
+<p><code>keys</code> and <code>values</code> API is a total mess</p>
+
+
+
+<a name="530561330"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530561330" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530561330">(Jul 24 2025 at 13:15)</a>:</h4>
+<p>I looked at it once and then got really mad and had to stop looking</p>
+
+
+
+<a name="530561348"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530561348" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530561348">(Jul 24 2025 at 13:15)</a>:</h4>
+<p>It is <span aria-label="grapes" class="emoji emoji-1f347" role="img" title="grapes">:grapes:</span></p>
+
+
+
+<a name="530561644"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530561644" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530561644">(Jul 24 2025 at 13:17)</a>:</h4>
+<p>actually this was just about my very first ever submitted GH issue <a href="https://github.com/JuliaLang/julia/issues/49932">https://github.com/JuliaLang/julia/issues/49932</a></p>
+
+
+
+<a name="530565255"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530565255" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530565255">(Jul 24 2025 at 13:34)</a>:</h4>
+<p>Why is it returning a <code>NamedTuple</code> a failure?</p>
+
+
+
+<a name="530565561"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530565561" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530565561">(Jul 24 2025 at 13:35)</a>:</h4>
+<p>For better or worse, <code>NamedTuple</code> does act like a value collection, not a key-value collection:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">values</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="go">(a = 1, b = 2)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">v</span>
+<span class="w">           </span><span class="n">println</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">1</span>
+<span class="go">2</span>
+</code></pre></div>
+
+
+
+<a name="530565570"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530565570" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530565570">(Jul 24 2025 at 13:35)</a>:</h4>
+<p>I think it comes from the context. I am bumping into this when I am processing kwargs:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">f</span><span class="p">(;</span><span class="w"> </span><span class="n">kwargs</span><span class="o">...</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kwargs</span>
+</code></pre></div>
+<p>Inside the function <code>f</code> I would like to extract the names of the keywords and their values.</p>
+
+
+
+<a name="530565666"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530565666" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530565666">(Jul 24 2025 at 13:36)</a>:</h4>
+<p>So I would expect <code>kwargs</code> to behave like a named tuple.</p>
+
+
+
+<a name="530565719"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530565719" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530565719">(Jul 24 2025 at 13:36)</a>:</h4>
+<p>the <code>NamedTuple</code> is a collection of values though</p>
+
+
+
+<a name="530565767"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530565767" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530565767">(Jul 24 2025 at 13:36)</a>:</h4>
+<p>I know. It is a bit weird though.</p>
+
+
+
+<a name="530566083"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530566083" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530566083">(Jul 24 2025 at 13:38)</a>:</h4>
+<p>Fair enough</p>
+
+
+
+<a name="530568313"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530568313" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530568313">(Jul 24 2025 at 13:48)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> has marked this topic as resolved.</p>
+
+
+
+<a name="530597881"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530597881" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> aplavin <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530597881">(Jul 24 2025 at 16:08)</a>:</h4>
+<p><code>values(values(kwargs))</code> if you want a Tuple?</p>
+
+
+
+<a name="530598067"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530598067" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530598067">(Jul 24 2025 at 16:09)</a>:</h4>
+<p>Also an option. Thanks.</p>
+
+
+
+<a name="530598232"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20get%20values%20from%20%60Pairs%60%3F/near/530598232" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20get.20values.20from.20.60Pairs.60.3F.html#530598232">(Jul 24 2025 at 16:10)</a>:</h4>
+<p>I wish all these inconsistencies were gone in the future after careful review of iteration on these objects</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

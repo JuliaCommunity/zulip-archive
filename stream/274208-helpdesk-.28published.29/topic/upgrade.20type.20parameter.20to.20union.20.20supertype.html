@@ -1,0 +1,43 @@
+<html>
+<head><meta charset="utf-8"><title>upgrade type parameter to union  supertype · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/upgrade.20type.20parameter.20to.20union.20.20supertype.html">upgrade type parameter to union  supertype</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="558321081"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/upgrade%20type%20parameter%20to%20union%20%20supertype/near/558321081" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/upgrade.20type.20parameter.20to.20union.20.20supertype.html#558321081">(Nov 19 2025 at 23:08)</a>:</h4>
+<p>Say I have something like this</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">BigUnion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Union</span><span class="p">{</span><span class="kt">Int</span><span class="p">,</span><span class="w"> </span><span class="kt">Float32</span><span class="p">}</span>
+<span class="k">struct</span> <span class="kt">Wrapper</span><span class="p">{</span><span class="kt">S</span><span class="p">}</span>
+<span class="w">    </span><span class="n">a</span><span class="o">::</span><span class="kt">S</span>
+<span class="k">end</span>
+
+<span class="n">w</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Wrapper</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">::</span><span class="kt">Wrapper</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span><span class="w"> </span><span class="c"># just for clarity</span>
+</code></pre></div>
+<p>Is there an efficient way to "upgrate" <code>w</code> to a <code>Wrapper{BigUnion}</code>instead?<br>
+I've been rebuilding the whole object like:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">w_union</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Wrapper</span><span class="p">{</span><span class="kt">BigUnion</span><span class="p">}(</span><span class="n">w</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+</code></pre></div>
+<p>but I'm curious to know if there is another way</p>
+
+
+
+<a name="558322771"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/upgrade%20type%20parameter%20to%20union%20%20supertype/near/558322771" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/upgrade.20type.20parameter.20to.20union.20.20supertype.html#558322771">(Nov 19 2025 at 23:23)</a>:</h4>
+<p>No, there's not really another way to re-parameterize types other than manually defining what you mean</p>
+
+
+
+<a name="558322824"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/upgrade%20type%20parameter%20to%20union%20%20supertype/near/558322824" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/upgrade.20type.20parameter.20to.20union.20.20supertype.html#558322824">(Nov 19 2025 at 23:23)</a>:</h4>
+<p>But what you're doing here should be efficient</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

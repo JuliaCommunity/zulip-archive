@@ -1,0 +1,69 @@
+<html>
+<head><meta charset="utf-8"><title>stacked environment issues · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/stacked.20environment.20issues.html">stacked environment issues</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="529272059"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/stacked%20environment%20issues/near/529272059" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Eric Hanson <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/stacked.20environment.20issues.html#529272059">(Jul 17 2025 at 12:49)</a>:</h4>
+<p>yeah. I think with JuliaSyntax and JuliaLowering, dev tools are now commonly depending on them (since they are really useful) and they are still in-development with breaking changes, so this is more of an issue now. Before I don't think there were many in-development shared deps between dev tools and it was less commonly an issue (except for the "everything in default env" situation).</p>
+
+
+
+<a name="529272663"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/stacked%20environment%20issues/near/529272663" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Eric Hanson <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/stacked.20environment.20issues.html#529272663">(Jul 17 2025 at 12:53)</a>:</h4>
+<p>it would be nice if it were easy for dev tools to have their own copies of their deps loaded <a href="https://github.com/julia-vscode/julia-vscode/blob/main/scripts/packages/VSCodeServer/src/VSCodeServer.jl">like VSCodeServer does</a>. E.g. ExplicitImports does not need to share the JuliaSyntax module or methodtable with Cthulhu, we just each need to be able to parse stuff. So if I could load my own copy of JS and skip the compat problems that would be better.</p>
+
+
+
+<a name="529303226"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/stacked%20environment%20issues/near/529303226" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Eric Hanson <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/stacked.20environment.20issues.html#529303226">(Jul 17 2025 at 15:19)</a>:</h4>
+<p><a href="https://github.com/JuliaTesting/ExplicitImports.jl/pull/121">https://github.com/JuliaTesting/ExplicitImports.jl/pull/121</a></p>
+
+
+
+<a name="529334894"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/stacked%20environment%20issues/near/529334894" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> jar <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/stacked.20environment.20issues.html#529334894">(Jul 17 2025 at 18:28)</a>:</h4>
+<p>The absolute state of my dev tools <span aria-label="woozy face" class="emoji emoji-1f974" role="img" title="woozy face">:woozy_face:</span></p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">help</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">JET</span><span class="o">.</span><span class="n">report_package</span>
+<span class="w">  </span><span class="n">No</span><span class="w"> </span><span class="n">documentation</span><span class="w"> </span><span class="n">found</span><span class="o">.</span>
+
+<span class="w">  </span><span class="n">Binding</span><span class="w"> </span><span class="n">JET</span><span class="o">.</span><span class="n">report_package</span><span class="w"> </span><span class="n">does</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">exist</span><span class="o">.</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">JET</span><span class="o">.</span><span class="n">report</span>
+<span class="n">report_call</span><span class="w">     </span><span class="n">report_color</span>
+<span class="n">report_file</span><span class="w">     </span><span class="n">report_opt</span>
+<span class="n">report_package</span><span class="w">  </span><span class="n">report_text</span>
+<span class="n">reportkey</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="ss">:report_package</span><span class="w"> </span><span class="o">∈</span><span class="w"> </span><span class="n">propertynames</span><span class="p">(</span><span class="n">JET</span><span class="p">)</span>
+<span class="nb">true</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">JET</span><span class="o">.</span><span class="n">report_package</span>
+<span class="n">ERROR</span><span class="o">:</span><span class="w"> </span><span class="kt">UndefVarError</span><span class="o">:</span><span class="w"> </span><span class="sb">`report_package`</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">defined</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`JET`</span>
+<span class="n">Suggestion</span><span class="o">:</span><span class="w"> </span><span class="n">check</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">spelling</span><span class="w"> </span><span class="n">errors</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="nb">missing</span><span class="w"> </span><span class="n">imports</span><span class="o">.</span>
+<span class="n">Stacktrace</span><span class="o">:</span>
+</code></pre></div>
+
+
+
+<a name="529341378"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/stacked%20environment%20issues/near/529341378" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Eric Hanson <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/stacked.20environment.20issues.html#529341378">(Jul 17 2025 at 19:14)</a>:</h4>
+<p>for ExplicitImports I think my manual vendoring will work OK but in general it's very annoying if the version of the dependency you need depends on the Julia version (like PrecompileTools). Because in that case you're vendoring in multiple source copies and doing <code>if VERSION</code>s to decide which to load etc - basically a manual reinvention of <code>Pkg.resolve</code>. Or if the dep itself has lots of dependencies and you need to vendor them all, or not.</p>
+<p>I think the semantics I want is basically "add DepXYZ as a dependency to my project, but pretend it has a new name/UUID and is a separate package", and the same for all of its dependent packages. Maybe <code>pkg&gt; add DepXYZ --private</code> or something could do that, with a <code>[private-deps]</code> toml section.</p>
+
+
+
+<a name="529593501"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/stacked%20environment%20issues/near/529593501" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Eric Hanson <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/stacked.20environment.20issues.html#529593501">(Jul 19 2025 at 17:13)</a>:</h4>
+<p><a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/ExplicitImports">ExplicitImports.jl</a> v1.13 now vendors JuliaSyntax (and AbstractTrees): <a href="https://discourse.julialang.org/t/ann-explicitimports-jl-tooling-to-help-use-and-maintain-explicit-imports-in-your-package/110973/20">https://discourse.julialang.org/t/ann-explicitimports-jl-tooling-to-help-use-and-maintain-explicit-imports-in-your-package/110973/20</a></p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

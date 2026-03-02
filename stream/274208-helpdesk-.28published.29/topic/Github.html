@@ -1,0 +1,62 @@
+<html>
+<head><meta charset="utf-8"><title>Github · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Github.html">Github</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="547445452"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Github/near/547445452" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Arnav Kapoor <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Github.html#547445452">(Oct 28 2025 at 09:32)</a>:</h4>
+<p>Can we automate the creation of releases when we merge a PR where we bump the version?</p>
+
+
+
+<a name="547489849"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Github/near/547489849" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Github.html#547489849">(Oct 28 2025 at 13:12)</a>:</h4>
+<p>You mean something like <a href="https://github.com/JuliaRegistries/TagBot">https://github.com/JuliaRegistries/TagBot</a>?</p>
+
+
+
+<a name="547493319"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Github/near/547493319" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Github.html#547493319">(Oct 28 2025 at 13:26)</a>:</h4>
+<p>I think he means automate pinging <code>@juliaregistrator register</code> when you change the <code>version</code> in the <code>Project.toml</code> file</p>
+
+
+
+<a name="547493415"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Github/near/547493415" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Github.html#547493415">(Oct 28 2025 at 13:27)</a>:</h4>
+<p>so one step before TagBot if I understand correctly</p>
+
+
+
+<a name="547494318"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Github/near/547494318" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Github.html#547494318">(Oct 28 2025 at 13:31)</a>:</h4>
+<p>In that case you can have a workflow triggered by edits to the Project.toml on the default branch, check if the version in the Project is already registered, and if not then call juliaregistrator</p>
+
+
+
+<a name="547494455"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Github/near/547494455" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Github.html#547494455">(Oct 28 2025 at 13:31)</a>:</h4>
+<p>But you'll also need to find a way to pass changelog information</p>
+
+
+
+<a name="547495432"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Github/near/547495432" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Github.html#547495432">(Oct 28 2025 at 13:36)</a>:</h4>
+<p>You could have the action take the changelog info from the commit that changes the <code>version</code> field, and you could have a test that runs that gives a failure if you open a PR that changes the version without having a changelog entry</p>
+
+
+
+<a name="547495447"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Github/near/547495447" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Arnav Kapoor <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Github.html#547495447">(Oct 28 2025 at 13:36)</a>:</h4>
+<p>Thanks <span aria-label="blush" class="emoji emoji-1f60a" role="img" title="blush">:blush:</span>.  Another question - Can Copilot help write release notes when we call<br>
+@JuliaRegistrator?</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

@@ -1,0 +1,233 @@
+<html>
+<head><meta charset="utf-8"><title>OhMyThreads tmap! mutating the input array · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/OhMyThreads.20tmap.21.20mutating.20the.20input.20array.html">OhMyThreads tmap! mutating the input array</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="499742529"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/OhMyThreads%20tmap%21%20mutating%20the%20input%20array/near/499742529" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Moorits Muru <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/OhMyThreads.20tmap.21.20mutating.20the.20input.20array.html#499742529">(Feb 14 2025 at 13:32)</a>:</h4>
+<p>I am using <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/OhMyThreads">OhMyThreads.jl</a> function <code>tmap!</code>. I would like to mutate the input array <code>A</code>, but I am not sure, if it is safe, as I don't have much experience with parallel computation. Basically, I am running <code>tmap!(f, A, A)</code>. Each calculation of <code>f(A[i])</code> is independent of other elements of <code>A</code>. There shouldn't be any racing happening, right? Each thread works on its own elements?</p>
+
+
+
+<a name="499743587"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/OhMyThreads%20tmap%21%20mutating%20the%20input%20array/near/499743587" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/OhMyThreads.20tmap.21.20mutating.20the.20input.20array.html#499743587">(Feb 14 2025 at 13:37)</a>:</h4>
+<p>Yes, that should be fine.</p>
+
+
+
+<a name="499743710"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/OhMyThreads%20tmap%21%20mutating%20the%20input%20array/near/499743710" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Moorits Muru <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/OhMyThreads.20tmap.21.20mutating.20the.20input.20array.html#499743710">(Feb 14 2025 at 13:37)</a>:</h4>
+<p>Thanks!</p>
+
+
+
+<a name="499810635"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/OhMyThreads%20tmap%21%20mutating%20the%20input%20array/near/499810635" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> jar <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/OhMyThreads.20tmap.21.20mutating.20the.20input.20array.html#499810635">(Feb 14 2025 at 19:14)</a>:</h4>
+<p>It might not work right on <code>A::BitArray</code> or some other types?</p>
+
+
+
+<a name="499810656"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/OhMyThreads%20tmap%21%20mutating%20the%20input%20array/near/499810656" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> jar <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/OhMyThreads.20tmap.21.20mutating.20the.20input.20array.html#499810656">(Feb 14 2025 at 19:14)</a>:</h4>
+<p>See also <a href="https://github.com/JuliaLang/julia/issues/53140">https://github.com/JuliaLang/julia/issues/53140</a></p>
+
+
+
+<a name="501019447"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/OhMyThreads%20tmap%21%20mutating%20the%20input%20array/near/501019447" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Alec <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/OhMyThreads.20tmap.21.20mutating.20the.20input.20array.html#501019447">(Feb 21 2025 at 04:35)</a>:</h4>
+<p>I have a related question, where I am trying to run a simulation across independent objects and then aggregate time-varying results into some storage arrays. Based on reading the OhMyThreads documentation, I think the following code would be susceptible to data races, though testing <code>simulation</code> thousands of iterations I haven't encountered an assertion failure which I added to check for data races in this dummy case. Of course in the non-MWE, the inner loop is doing a lot more work.</p>
+<p>My questions are: </p>
+<ol>
+<li>Am I wrong that this first code block is susceptible to data races even though I haven't encountered it in practice?</li>
+<li>What is the <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/OhMyThreads">OhMyThreads.jl</a> way of 'saving' the simulation results to a top-level container? From what I read in the documentation I think the only pattern that fits is the buffered channel, but it's very clunky (see second code example)</li>
+</ol>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">inner_loop!</span><span class="p">(</span><span class="n">output_vecs</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+<span class="w">    </span><span class="n">tid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Threads</span><span class="o">.</span><span class="n">threadid</span><span class="p">()</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+<span class="w">        </span><span class="n">output_vecs</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">tid</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">output_vecs</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">tid</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="k">end</span>
+<span class="k">function</span><span class="w"> </span><span class="n">simulation</span><span class="p">()</span>
+<span class="w">    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="o">^</span><span class="mi">5</span>
+<span class="w">    </span><span class="n">proj_length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1200</span>
+<span class="w">    </span><span class="n">nt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Threads</span><span class="o">.</span><span class="n">nthreads</span><span class="p">()</span>
+<span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span>
+<span class="w">        </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zeros</span><span class="p">(</span><span class="n">proj_length</span><span class="p">,</span><span class="n">nt</span><span class="p">),</span>
+<span class="w">        </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zeros</span><span class="p">(</span><span class="n">proj_length</span><span class="p">,</span><span class="n">nt</span><span class="p">),</span>
+<span class="w">    </span><span class="p">)</span>
+
+<span class="w">    </span><span class="n">Threads</span><span class="o">.</span><span class="nd">@threads</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+<span class="w">        </span><span class="n">inner_loop!</span><span class="p">(</span><span class="n">output</span><span class="p">,</span><span class="mi">500</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">vec</span><span class="p">(</span><span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="p">)),</span><span class="w"> </span><span class="n">output</span><span class="p">)</span>
+<span class="w">    </span><span class="nd">@assert</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">500</span>
+<span class="w">    </span><span class="nd">@assert</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="o">*</span><span class="mi">2</span>
+<span class="w">    </span><span class="n">output</span>
+<span class="k">end</span>
+
+<span class="n">simulation</span><span class="p">()</span>
+</code></pre></div>
+<p>Buffered channel with <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/OhMyThreads">OhMyThreads.jl</a></p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">inner_loop_buffer!</span><span class="p">(</span><span class="n">output_vecs</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+<span class="w">    </span><span class="n">tid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Threads</span><span class="o">.</span><span class="n">threadid</span><span class="p">()</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+<span class="w">        </span><span class="n">output_vecs</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="n">output_vecs</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="k">end</span>
+<span class="k">function</span><span class="w"> </span><span class="n">simulation_buffer</span><span class="p">()</span>
+<span class="w">    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="o">^</span><span class="mi">5</span>
+<span class="w">    </span><span class="n">proj_length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1200</span>
+<span class="w">    </span><span class="n">nt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Threads</span><span class="o">.</span><span class="n">nthreads</span><span class="p">()</span>
+<span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span>
+<span class="w">        </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zeros</span><span class="p">(</span><span class="n">proj_length</span><span class="p">),</span>
+<span class="w">        </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zeros</span><span class="p">(</span><span class="n">proj_length</span><span class="p">),</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="n">chnl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Channel</span><span class="p">{</span><span class="kt">typeof</span><span class="p">(</span><span class="kt">output</span><span class="p">)}(</span><span class="n">nt</span><span class="p">)</span>
+<span class="w">    </span><span class="n">foreach</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">nt</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">_</span>
+<span class="w">        </span><span class="n">put!</span><span class="p">(</span><span class="n">chnl</span><span class="p">,</span><span class="w"> </span><span class="p">(</span>
+<span class="w">            </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zeros</span><span class="p">(</span><span class="n">proj_length</span><span class="p">),</span>
+<span class="w">            </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zeros</span><span class="p">(</span><span class="n">proj_length</span><span class="p">),</span>
+<span class="w">        </span><span class="p">))</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="n">OhMyThreads</span><span class="o">.</span><span class="n">tmap</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">i</span>
+<span class="w">        </span><span class="n">C</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">take!</span><span class="p">(</span><span class="n">chnl</span><span class="p">)</span>
+<span class="w">        </span><span class="n">inner_loop_buffer!</span><span class="p">(</span><span class="n">C</span><span class="p">,</span><span class="mi">500</span><span class="p">)</span>
+<span class="w">        </span><span class="n">put!</span><span class="p">(</span><span class="n">chnl</span><span class="p">,</span><span class="n">C</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="n">close</span><span class="p">(</span><span class="n">chnl</span><span class="p">)</span><span class="w">  </span><span class="c"># Ensure no more items will be put into the channel</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">M</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">chnl</span>
+<span class="w">        </span><span class="n">output</span><span class="o">.</span><span class="n">x</span><span class="w"> </span><span class="o">.+=</span><span class="w"> </span><span class="n">M</span><span class="o">.</span><span class="n">x</span>
+<span class="w">        </span><span class="n">output</span><span class="o">.</span><span class="n">y</span><span class="w"> </span><span class="o">.+=</span><span class="w"> </span><span class="n">M</span><span class="o">.</span><span class="n">y</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="nd">@assert</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">500</span>
+<span class="w">    </span><span class="nd">@assert</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="o">*</span><span class="mi">2</span>
+<span class="w">    </span><span class="n">output</span>
+<span class="k">end</span>
+
+<span class="n">simulation_buffer</span><span class="p">()</span>
+</code></pre></div>
+
+
+
+<a name="501020016"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/OhMyThreads%20tmap%21%20mutating%20the%20input%20array/near/501020016" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Alec <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/OhMyThreads.20tmap.21.20mutating.20the.20input.20array.html#501020016">(Feb 21 2025 at 04:42)</a>:</h4>
+<p>In addition to being more verbose, the buffered channel version is much slower (maybe just because creating more output arrays is the predominant time spent?</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@benchmark</span><span class="w"> </span><span class="n">simulation</span><span class="p">()</span>
+<span class="n">BenchmarkTools</span><span class="o">.</span><span class="n">Trial</span><span class="o">:</span><span class="w"> </span><span class="mi">1016</span><span class="w"> </span><span class="n">samples</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">evaluation</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">sample</span><span class="o">.</span>
+<span class="w"> </span><span class="n">Range</span><span class="w"> </span><span class="p">(</span><span class="n">min</span><span class="w"> </span><span class="o">…</span><span class="w"> </span><span class="n">max</span><span class="p">)</span><span class="o">:</span><span class="w">  </span><span class="mf">4.871</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">…</span><span class="w">   </span><span class="mf">7.371</span><span class="w"> </span><span class="n">ms</span><span class="w">  </span><span class="n">┊</span><span class="w"> </span><span class="n">GC</span><span class="w"> </span><span class="p">(</span><span class="n">min</span><span class="w"> </span><span class="o">…</span><span class="w"> </span><span class="n">max</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="mf">0.00</span><span class="o">%</span><span class="w"> </span><span class="o">…</span><span class="w"> </span><span class="mf">32.04</span><span class="o">%</span>
+<span class="w"> </span><span class="n">Time</span><span class="w">  </span><span class="p">(</span><span class="n">median</span><span class="p">)</span><span class="o">:</span><span class="w">     </span><span class="mf">4.897</span><span class="w"> </span><span class="n">ms</span><span class="w">               </span><span class="n">┊</span><span class="w"> </span><span class="n">GC</span><span class="w"> </span><span class="p">(</span><span class="n">median</span><span class="p">)</span><span class="o">:</span><span class="w">    </span><span class="mf">0.00</span><span class="o">%</span>
+<span class="w"> </span><span class="n">Time</span><span class="w">  </span><span class="p">(</span><span class="n">mean</span><span class="w"> </span><span class="o">±</span><span class="w"> </span><span class="n">σ</span><span class="p">)</span><span class="o">:</span><span class="w">   </span><span class="mf">4.925</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">±</span><span class="w"> </span><span class="mf">131.609</span><span class="w"> </span><span class="n">μs</span><span class="w">  </span><span class="n">┊</span><span class="w"> </span><span class="n">GC</span><span class="w"> </span><span class="p">(</span><span class="n">mean</span><span class="w"> </span><span class="o">±</span><span class="w"> </span><span class="n">σ</span><span class="p">)</span><span class="o">:</span><span class="w">  </span><span class="mf">0.17</span><span class="o">%</span><span class="w"> </span><span class="o">±</span><span class="w">  </span><span class="mf">1.79</span><span class="o">%</span>
+
+<span class="w">     </span><span class="n">▂▅█▅▁</span>
+<span class="w">  </span><span class="n">▁▂▇█████▆▅▅▄▄▂▂▄▄▄▄▄▃▃▂▃▃▂▂▃▂▂▃▃▃▂▂▂▂▂▃▂▃▂▂▂▂▂▂▂▂▂▁▂▂▁▁▁▁▁▁</span><span class="w"> </span><span class="n">▂</span>
+<span class="w">  </span><span class="mf">4.87</span><span class="w"> </span><span class="n">ms</span><span class="w">         </span><span class="n">Histogram</span><span class="o">:</span><span class="w"> </span><span class="n">frequency</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">time</span><span class="w">        </span><span class="mf">5.03</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">&lt;</span>
+
+<span class="w"> </span><span class="n">Memory</span><span class="w"> </span><span class="n">estimate</span><span class="o">:</span><span class="w"> </span><span class="mf">96.42</span><span class="w"> </span><span class="n">KiB</span><span class="p">,</span><span class="w"> </span><span class="n">allocs</span><span class="w"> </span><span class="n">estimate</span><span class="o">:</span><span class="w"> </span><span class="mf">42.</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@benchmark</span><span class="w"> </span><span class="n">simulation_buffer</span><span class="p">()</span>
+<span class="n">BenchmarkTools</span><span class="o">.</span><span class="n">Trial</span><span class="o">:</span><span class="w"> </span><span class="mi">243</span><span class="w"> </span><span class="n">samples</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">evaluation</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">sample</span><span class="o">.</span>
+<span class="w"> </span><span class="n">Range</span><span class="w"> </span><span class="p">(</span><span class="n">min</span><span class="w"> </span><span class="o">…</span><span class="w"> </span><span class="n">max</span><span class="p">)</span><span class="o">:</span><span class="w">  </span><span class="mf">19.796</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">…</span><span class="w">  </span><span class="mf">24.860</span><span class="w"> </span><span class="n">ms</span><span class="w">  </span><span class="n">┊</span><span class="w"> </span><span class="n">GC</span><span class="w"> </span><span class="p">(</span><span class="n">min</span><span class="w"> </span><span class="o">…</span><span class="w"> </span><span class="n">max</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="mf">0.00</span><span class="o">%</span><span class="w"> </span><span class="o">…</span><span class="w"> </span><span class="mf">0.00</span><span class="o">%</span>
+<span class="w"> </span><span class="n">Time</span><span class="w">  </span><span class="p">(</span><span class="n">median</span><span class="p">)</span><span class="o">:</span><span class="w">     </span><span class="mf">20.524</span><span class="w"> </span><span class="n">ms</span><span class="w">               </span><span class="n">┊</span><span class="w"> </span><span class="n">GC</span><span class="w"> </span><span class="p">(</span><span class="n">median</span><span class="p">)</span><span class="o">:</span><span class="w">    </span><span class="mf">0.00</span><span class="o">%</span>
+<span class="w"> </span><span class="n">Time</span><span class="w">  </span><span class="p">(</span><span class="n">mean</span><span class="w"> </span><span class="o">±</span><span class="w"> </span><span class="n">σ</span><span class="p">)</span><span class="o">:</span><span class="w">   </span><span class="mf">20.627</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">±</span><span class="w"> </span><span class="mf">559.408</span><span class="w"> </span><span class="n">μs</span><span class="w">  </span><span class="n">┊</span><span class="w"> </span><span class="n">GC</span><span class="w"> </span><span class="p">(</span><span class="n">mean</span><span class="w"> </span><span class="o">±</span><span class="w"> </span><span class="n">σ</span><span class="p">)</span><span class="o">:</span><span class="w">  </span><span class="mf">1.08</span><span class="o">%</span><span class="w"> </span><span class="o">±</span><span class="w"> </span><span class="mf">2.01</span><span class="o">%</span>
+
+<span class="w">      </span><span class="n">▃</span><span class="w"> </span><span class="n">▁▄█</span><span class="w"> </span><span class="n">▆█▁▇▁▆▁▁▇▄▂</span><span class="w"> </span><span class="n">▆▂</span><span class="w">      </span><span class="n">▂</span><span class="w"> </span><span class="n">▂</span>
+<span class="w">  </span><span class="n">▃▃▄▃█▇███▇███████████▇██▆█▆█▇▆█▇██▄▇▄▃▃▆▃▇▇▃▄▃▃▁▃▁▃▄▁▁▁▁▁▁▁▃</span><span class="w"> </span><span class="n">▄</span>
+<span class="w">  </span><span class="mf">19.8</span><span class="w"> </span><span class="n">ms</span><span class="w">         </span><span class="n">Histogram</span><span class="o">:</span><span class="w"> </span><span class="n">frequency</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">time</span><span class="w">         </span><span class="mf">22.2</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">&lt;</span>
+
+<span class="w"> </span><span class="n">Memory</span><span class="w"> </span><span class="n">estimate</span><span class="o">:</span><span class="w"> </span><span class="mf">4.60</span><span class="w"> </span><span class="n">MiB</span><span class="p">,</span><span class="w"> </span><span class="n">allocs</span><span class="w"> </span><span class="n">estimate</span><span class="o">:</span><span class="w"> </span><span class="mf">163.</span>
+</code></pre></div>
+
+
+
+<a name="505232610"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/OhMyThreads%20tmap%21%20mutating%20the%20input%20array/near/505232610" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/OhMyThreads.20tmap.21.20mutating.20the.20input.20array.html#505232610">(Mar 12 2025 at 19:40)</a>:</h4>
+<p>Hey <span class="user-mention" data-user-id="272612">@Alec</span>, somehow I missed your post before. So to answer your two questions</p>
+<ol>
+<li>Yes, your code pattern here is susceptible to data races. The reason you haven't observed one is that the code you executed here happens to not <code>yield</code>, but in general you can't actually know for sure if code will never <code>yield</code> since it depends on things like optimization parameters, internal details like if it does <code>@debug</code> logging, etc. </li>
+<li>A <code>Channel</code> is one option, or task local storage, but for this example, I'd say you should just use <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/ChunkSplitters">ChunkSplitters.jl</a> directly, it'd probably be cleaner and nicer.</li>
+</ol>
+
+
+
+<a name="505234859"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/OhMyThreads%20tmap%21%20mutating%20the%20input%20array/near/505234859" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/OhMyThreads.20tmap.21.20mutating.20the.20input.20array.html#505234859">(Mar 12 2025 at 19:51)</a>:</h4>
+<p>i.e.</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">ChunkSplitters</span>
+
+<span class="k">function</span><span class="w"> </span><span class="n">simulation_cs</span><span class="p">()</span>
+<span class="w">    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="o">^</span><span class="mi">5</span>
+<span class="w">    </span><span class="n">proj_length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1200</span>
+<span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span>
+<span class="w">        </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zeros</span><span class="p">(</span><span class="n">proj_length</span><span class="p">),</span>
+<span class="w">        </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zeros</span><span class="p">(</span><span class="n">proj_length</span><span class="p">),</span>
+<span class="w">    </span><span class="p">)</span>
+
+<span class="w">    </span><span class="n">tasks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">chunks</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="n">Threads</span><span class="o">.</span><span class="n">nthreads</span><span class="p">()))</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">chunk</span>
+<span class="w">        </span><span class="n">Threads</span><span class="o">.</span><span class="nd">@spawn</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="n">C</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(;</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zeros</span><span class="p">(</span><span class="n">proj_length</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zeros</span><span class="p">(</span><span class="n">proj_length</span><span class="p">))</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">∈</span><span class="w"> </span><span class="n">chunk</span>
+<span class="w">                </span><span class="n">inner_loop_buffer!</span><span class="p">(</span><span class="n">C</span><span class="p">,</span><span class="mi">500</span><span class="p">)</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">            </span><span class="n">C</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">task</span><span class="w"> </span><span class="o">∈</span><span class="w"> </span><span class="n">tasks</span>
+<span class="w">        </span><span class="n">C</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fetch</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+<span class="w">        </span><span class="n">output</span><span class="o">.</span><span class="n">x</span><span class="w"> </span><span class="o">.+=</span><span class="w"> </span><span class="n">C</span><span class="o">.</span><span class="n">x</span>
+<span class="w">        </span><span class="n">output</span><span class="o">.</span><span class="n">y</span><span class="w"> </span><span class="o">.+=</span><span class="w"> </span><span class="n">C</span><span class="o">.</span><span class="n">y</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="nd">@assert</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">500</span>
+<span class="w">    </span><span class="nd">@assert</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="o">*</span><span class="mi">2</span>
+<span class="w">    </span><span class="n">output</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="505234875"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/OhMyThreads%20tmap%21%20mutating%20the%20input%20array/near/505234875" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/OhMyThreads.20tmap.21.20mutating.20the.20input.20array.html#505234875">(Mar 12 2025 at 19:51)</a>:</h4>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@benchmark</span><span class="w"> </span><span class="n">simulation</span><span class="p">()</span>
+<span class="go">BenchmarkTools.Trial: 1930 samples with 1 evaluation per sample.</span>
+<span class="go"> Range (min … max):  1.997 ms …   6.052 ms  ┊ GC (min … max): 0.00% … 45.98%</span>
+<span class="go"> Time  (median):     2.572 ms               ┊ GC (median):    0.00%</span>
+<span class="go"> Time  (mean ± σ):   2.588 ms ± 228.110 μs  ┊ GC (mean ± σ):  0.48% ±  3.05%</span>
+
+<span class="go">                ▁  ▁ ▁ ▁ ▅██▇▅▃▂▂▁▁▃▂▂ ▁                      ▁</span>
+<span class="go">  ▅▄▇▆██▇████▇███▇██▇█▇██████████████████▇▇█▆▆▆▄▆▄▄▄▄▁▁▁▁▁▄▁▄ █</span>
+<span class="go">  2 ms         Histogram: log(frequency) by time      3.33 ms &lt;</span>
+
+<span class="go"> Memory estimate: 173.52 KiB, allocs estimate: 62.</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@benchmark</span><span class="w"> </span><span class="n">simulation_cs</span><span class="p">()</span>
+<span class="go">BenchmarkTools.Trial: 3289 samples with 1 evaluation per sample.</span>
+<span class="go"> Range (min … max):  1.176 ms …   5.898 ms  ┊ GC (min … max): 0.00% … 67.40%</span>
+<span class="go"> Time  (median):     1.473 ms               ┊ GC (median):    0.00%</span>
+<span class="go"> Time  (mean ± σ):   1.518 ms ± 260.415 μs  ┊ GC (mean ± σ):  0.92% ±  3.70%</span>
+
+<span class="go">                      ▂▇█▇▆▅▄▄▃▂▂▂▂▂▂▁▂▁▁ ▁                   ▁</span>
+<span class="go">  ▇▇▇█▇▇█▇▇▇▇█▇▇████▇███████████████████████████▇▇▅▇▆▆▄▄▄▃▁▃▃ █</span>
+<span class="go">  1.18 ms      Histogram: log(frequency) by time      1.93 ms &lt;</span>
+
+<span class="go"> Memory estimate: 174.75 KiB, allocs estimate: 120.</span>
+</code></pre></div>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

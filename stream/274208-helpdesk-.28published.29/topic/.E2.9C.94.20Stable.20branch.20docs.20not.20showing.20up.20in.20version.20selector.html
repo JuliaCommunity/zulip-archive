@@ -1,0 +1,40 @@
+<html>
+<head><meta charset="utf-8"><title>✔ Stable branch docs not showing up in version selector · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Stable.20branch.20docs.20not.20showing.20up.20in.20version.20selector.html">✔ Stable branch docs not showing up in version selector</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="555739062"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Stable%20branch%20docs%20not%20showing%20up%20in%20version%20selector/near/555739062" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Stable.20branch.20docs.20not.20showing.20up.20in.20version.20selector.html#555739062">(Nov 15 2025 at 11:55)</a>:</h4>
+<p>I switched one of my packages over to <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/Documenter">Documenter.jl</a>, and it seems that the <code>dev</code> branch of the docs is deploying fine, but the tagged branches aren't showing up, and aren't selectable from the docs website.</p>
+<p>I'm probably just doing something very simple wrong, but could anyone help me figure this out? This is the git repo: <a href="https://github.com/MasonProtter/FieldViews.jl">https://github.com/MasonProtter/FieldViews.jl</a></p>
+<p>Here's the dev branch of the docs: <a href="https://masonprotter.github.io/FieldViews.jl/dev/">https://masonprotter.github.io/FieldViews.jl/dev/</a> note that when you click the version selector, only the dev version is shown.</p>
+<p>However, the <code>gh-pages</code> branch does have folders for tags I've made: <a href="https://github.com/MasonProtter/FieldViews.jl/tree/gh-pages">https://github.com/MasonProtter/FieldViews.jl/tree/gh-pages</a>, and I can manually navigate to one of them: <a href="https://masonprotter.github.io/FieldViews.jl/v0.2.3-doc1/">https://masonprotter.github.io/FieldViews.jl/v0.2.3-doc1/</a> which works, but <a href="https://masonprotter.github.io/FieldViews.jl/stable">https://masonprotter.github.io/FieldViews.jl/stable</a> doesn't work.</p>
+
+
+
+<a name="555739067"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Stable%20branch%20docs%20not%20showing%20up%20in%20version%20selector/near/555739067" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Stable.20branch.20docs.20not.20showing.20up.20in.20version.20selector.html#555739067">(Nov 15 2025 at 11:55)</a>:</h4>
+<p>Any ideas or advice?</p>
+
+
+
+<a name="555739427"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Stable%20branch%20docs%20not%20showing%20up%20in%20version%20selector/near/555739427" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Stable.20branch.20docs.20not.20showing.20up.20in.20version.20selector.html#555739427">(Nov 15 2025 at 12:01)</a>:</h4>
+<p>Nevermind, apparently the problem was that I followed some advice I found online that I could re-tag old releases like <code>v0.2.3-docs1</code> to retrigger the building of docs for that release, but documenter didn't like the <code>-</code>. Switching it to <code>v0.2.3+docs1</code> did work.</p>
+
+
+
+<a name="555739433"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Stable%20branch%20docs%20not%20showing%20up%20in%20version%20selector/near/555739433" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Stable.20branch.20docs.20not.20showing.20up.20in.20version.20selector.html#555739433">(Nov 15 2025 at 12:01)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="269150">Mason Protter</span> has marked this topic as resolved.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

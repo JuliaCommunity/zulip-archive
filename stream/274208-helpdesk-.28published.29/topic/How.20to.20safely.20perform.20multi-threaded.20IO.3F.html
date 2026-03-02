@@ -1,0 +1,138 @@
+<html>
+<head><meta charset="utf-8"><title>How to safely perform multi-threaded IO? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20safely.20perform.20multi-threaded.20IO.3F.html">How to safely perform multi-threaded IO?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="558752182"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20safely%20perform%20multi-threaded%20IO%3F/near/558752182" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20safely.20perform.20multi-threaded.20IO.3F.html#558752182">(Nov 21 2025 at 21:14)</a>:</h4>
+<p>Assume Julia &gt;= v1.10.</p>
+<p>Suppose a file stores a large matrix of floating point numbers in column-major order.</p>
+<p>I can read the file sequentially with</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+<span class="w">  </span><span class="n">skip</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="n">offset</span><span class="p">)</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">m</span>
+<span class="w">    </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>How to leverage multiple threads to read the <code>io</code> in parallel?</p>
+
+
+
+<a name="558795088"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20safely%20perform%20multi-threaded%20IO%3F/near/558795088" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20safely.20perform.20multi-threaded.20IO.3F.html#558795088">(Nov 22 2025 at 07:52)</a>:</h4>
+<p>I think you would be better off optimising your read function and running it on a single thread. <br>
+A float matrix requires no parsing and can be copied directly into memory, so you should be able to hit your drive's maximum speed doing that</p>
+
+
+
+<a name="558795178"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20safely%20perform%20multi-threaded%20IO%3F/near/558795178" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20safely.20perform.20multi-threaded.20IO.3F.html#558795178">(Nov 22 2025 at 07:53)</a>:</h4>
+<p>In your example, it looks like every column is identical. So you can read the first column, then use memcpy to fill all the other columns</p>
+
+
+
+<a name="558796848"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20safely%20perform%20multi-threaded%20IO%3F/near/558796848" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20safely.20perform.20multi-threaded.20IO.3F.html#558796848">(Nov 22 2025 at 08:20)</a>:</h4>
+<p>I simplified the actual code. I need to do some basic processing, including changing the endianess and converting to a different floating point type.</p>
+
+
+
+<a name="558796923"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20safely%20perform%20multi-threaded%20IO%3F/near/558796923" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20safely.20perform.20multi-threaded.20IO.3F.html#558796923">(Nov 22 2025 at 08:21)</a>:</h4>
+<p>But will try to load everything into a large blob and convert later to the final type to compare the speed.</p>
+
+
+
+<a name="558828390"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20safely%20perform%20multi-threaded%20IO%3F/near/558828390" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20safely.20perform.20multi-threaded.20IO.3F.html#558828390">(Nov 22 2025 at 16:58)</a>:</h4>
+<p>In a more complex example, I would have two channels, let's call them <code>filled</code> and <code>emptied</code>, both with buffers (i..e <code>Vector{UInt8}</code> or similar). One task takes a buffer from <code>emptied</code> and overwrites it with raw, unparsed data from the file, then puts it into <code>filled</code>. Then you have N consumed tasks that takes from <code>filled</code>, parses the content, fills in part of the matrix, then returns the buffer by putting it back into <code>emptied</code></p>
+
+
+
+<a name="558828605"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20safely%20perform%20multi-threaded%20IO%3F/near/558828605" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20safely.20perform.20multi-threaded.20IO.3F.html#558828605">(Nov 22 2025 at 17:01)</a>:</h4>
+<p>Could you please share a MWE with your idea <span class="user-mention" data-user-id="272650">@Jakob Nybo Andersen</span> ?</p>
+
+
+
+<a name="558831693"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20safely%20perform%20multi-threaded%20IO%3F/near/558831693" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20safely.20perform.20multi-threaded.20IO.3F.html#558831693">(Nov 22 2025 at 17:47)</a>:</h4>
+<p>Yeah, here:<br>
+It's not tested, nor with the requisite error checks, so just for illustration purposes. The actual file reading happens in only one thread, since it's essentially impossible to improve linear IO reading with multiple threads, but it's sped up by making sure the thread that does the IO doesn't need to do anything else, and all the parsing is offloaded to worker tasks</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="c"># Parse raw bytes from IO and put it into the matrix.</span>
+<span class="c"># This happens on multiple threads concurrently</span>
+<span class="k">function</span><span class="w"> </span><span class="n">parse_into_matrix!</span><span class="p">(</span>
+<span class="w">    </span><span class="n">dst</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span>
+<span class="w">    </span><span class="n">from</span><span class="o">::</span><span class="kt">Int</span><span class="p">,</span>
+<span class="w">    </span><span class="n">data</span><span class="o">::</span><span class="kt">AbstractVector</span><span class="p">{</span><span class="kt">UInt8</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="n">n_elem</span><span class="p">,</span><span class="w"> </span><span class="n">rest</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">divrem</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">data</span><span class="p">),</span><span class="w"> </span><span class="n">sizeof</span><span class="p">(</span><span class="n">eltype</span><span class="p">(</span><span class="n">dst</span><span class="p">)))</span>
+<span class="w">    </span><span class="n">checkbounds</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="w"> </span><span class="n">from</span><span class="o">:</span><span class="n">from</span><span class="o">+</span><span class="n">n_elem</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="n">GC</span><span class="o">.</span><span class="nd">@preserve</span><span class="w"> </span><span class="n">dst</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">unsafe_copyto!</span><span class="p">(</span><span class="n">pointer</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="w"> </span><span class="n">from</span><span class="p">),</span><span class="w"> </span><span class="kt">Ptr</span><span class="p">{</span><span class="kt">eltype</span><span class="p">(</span><span class="kt">dst</span><span class="p">)}(</span><span class="n">pointer</span><span class="p">(</span><span class="n">src</span><span class="p">)),</span><span class="w"> </span><span class="n">n_elem</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">dst</span>
+<span class="k">end</span>
+
+<span class="c"># Each worker tasks runs this function</span>
+<span class="k">function</span><span class="w"> </span><span class="n">worker_loop</span><span class="p">(</span>
+<span class="w">    </span><span class="n">matrix</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span>
+<span class="w">    </span><span class="n">filled</span><span class="o">::</span><span class="kt">Channel</span><span class="p">{</span><span class="kt">Tuple</span><span class="p">{</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">UInt8</span><span class="p">}},</span><span class="w"> </span><span class="kt">Int</span><span class="p">},</span>
+<span class="w">    </span><span class="n">emptied</span><span class="o">::</span><span class="kt">Channel</span><span class="p">{</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">UInt8</span><span class="p">}},</span>
+<span class="p">)</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">vector</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">filled</span>
+<span class="w">        </span><span class="n">parse_into_matrix!</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span><span class="w"> </span><span class="n">from</span><span class="p">,</span><span class="w"> </span><span class="n">vector</span><span class="p">)</span>
+<span class="w">        </span><span class="n">put!</span><span class="p">(</span><span class="n">emptied</span><span class="p">,</span><span class="w"> </span><span class="n">vector</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="n">main</span><span class="p">(</span><span class="n">io</span><span class="o">::</span><span class="kt">IO</span><span class="p">,</span><span class="w"> </span><span class="n">tasks</span><span class="o">::</span><span class="kt">Int</span><span class="p">)</span>
+<span class="w">    </span><span class="n">matrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Float64</span><span class="p">}(</span><span class="nb">undef</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span>
+<span class="w">    </span><span class="n">filled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Channel</span><span class="p">{</span><span class="kt">Tuple</span><span class="p">{</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">UInt8</span><span class="p">}},</span><span class="w"> </span><span class="kt">Int</span><span class="p">}(</span><span class="nb">Inf</span><span class="p">)</span>
+<span class="w">    </span><span class="n">emptied</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Channel</span><span class="p">{</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">UInt8</span><span class="p">}}(</span><span class="nb">Inf</span><span class="p">)</span>
+<span class="w">    </span><span class="c"># Initialize worker tasks</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">tasks</span>
+<span class="w">        </span><span class="n">Threads</span><span class="o">.</span><span class="nd">@spawn</span><span class="w"> </span><span class="n">worker_loop</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span><span class="w"> </span><span class="n">filled</span><span class="p">,</span><span class="w"> </span><span class="n">emptied</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="c"># Initialize buffers used by both main and worker tasks</span>
+<span class="w">    </span><span class="n">lock</span><span class="p">(</span><span class="n">emptied</span><span class="p">)</span><span class="w"> </span><span class="k">do</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">tasks</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">            </span><span class="n">put!</span><span class="p">(</span><span class="n">emptied</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt8</span><span class="p">[])</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="c"># Read data in main task, then ship to worker tasks</span>
+<span class="w">    </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="o">!</span><span class="n">eof</span><span class="p">(</span><span class="n">io</span><span class="p">)</span>
+<span class="w">        </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">take!</span><span class="p">(</span><span class="n">emptied</span><span class="p">)</span>
+<span class="w">        </span><span class="n">resize!</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1024</span><span class="p">)</span>
+<span class="w">        </span><span class="n">resize!</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">readbytes!</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">))</span>
+<span class="w">        </span><span class="n">put!</span><span class="p">(</span><span class="n">filled</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">))</span>
+<span class="w">        </span><span class="n">div</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">v</span><span class="p">),</span><span class="w"> </span><span class="n">sizeof</span><span class="p">(</span><span class="kt">Float64</span><span class="p">))</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">matrix</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="558832119"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20safely%20perform%20multi-threaded%20IO%3F/near/558832119" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20safely.20perform.20multi-threaded.20IO.3F.html#558832119">(Nov 22 2025 at 17:54)</a>:</h4>
+<p>Wow, that is too low-level compared to what I had in mind <span aria-label="sweat smile" class="emoji emoji-1f605" role="img" title="sweat smile">:sweat_smile:</span></p>
+
+
+
+<a name="558832613"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20safely%20perform%20multi-threaded%20IO%3F/near/558832613" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20safely.20perform.20multi-threaded.20IO.3F.html#558832613">(Nov 22 2025 at 18:02)</a>:</h4>
+<p>Yeah, multithreading IO is pretty difficult</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

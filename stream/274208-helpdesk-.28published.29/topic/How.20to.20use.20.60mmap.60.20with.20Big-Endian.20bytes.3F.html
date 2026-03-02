@@ -1,0 +1,31 @@
+<html>
+<head><meta charset="utf-8"><title>How to use `mmap` with Big-Endian bytes? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20use.20.60mmap.60.20with.20Big-Endian.20bytes.3F.html">How to use `mmap` with Big-Endian bytes?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="558530613"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20use%20%60mmap%60%20with%20Big-Endian%20bytes%3F/near/558530613" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20use.20.60mmap.60.20with.20Big-Endian.20bytes.3F.html#558530613">(Nov 20 2025 at 21:17)</a>:</h4>
+<p>Is there a way to memory-map a file on disk with Big-Endian bytes?</p>
+
+
+
+<a name="558533020"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20use%20%60mmap%60%20with%20Big-Endian%20bytes%3F/near/558533020" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20use.20.60mmap.60.20with.20Big-Endian.20bytes.3F.html#558533020">(Nov 20 2025 at 21:31)</a>:</h4>
+<p>No, the endianness is deeply tied to the memory architecture of the hardware.</p>
+
+
+
+<a name="558533442"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20use%20%60mmap%60%20with%20Big-Endian%20bytes%3F/near/558533442" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20use.20.60mmap.60.20with.20Big-Endian.20bytes.3F.html#558533442">(Nov 20 2025 at 21:34)</a>:</h4>
+<p>The order bytes are read in from a disk is, for almost all architectures, hardcoded. If the data you have stored on disk is stored with a different endianness, you'll have to decode that at some point to use it for regular code expecting the native endianness of your CPU.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

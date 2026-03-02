@@ -1,0 +1,32 @@
+[
+    {
+        "content": "<p>After recent updates I lost a very handy feature of the VSCode Julia extension: it recognized the module of the current file upon restart with Alt+J+Alt+R.</p>\n<p>Do you know if there is a setting that can be set to automatically restart the REPL in the current module?</p>",
+        "id": 567112614,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1767954932
+    },
+    {
+        "content": "<p>I have multiple modules opened in my VSCode Workspace and it is always restarting the REPL in the first module of the list. The previous behavior saved a lot of time, and I used it quite often to speed up development of multiple packages.</p>",
+        "id": 567112772,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1767954990
+    },
+    {
+        "content": "<p>I have the Julia extension on VSCodium, which is a clone. I still see the shortcut. The way you can set or reset the shortcut is with the following json:</p>\n<p>I just put f1 here to get the json code for you: you can replace with alt+j+alt+r or whatever else you like.</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"p\">{</span>\n<span class=\"w\">        </span><span class=\"s\">\"key\"</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"s\">\"f1\"</span><span class=\"p\">,</span>\n<span class=\"w\">        </span><span class=\"s\">\"command\"</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"s\">\"language-julia.restartREPL\"</span>\n<span class=\"w\">    </span><span class=\"p\">},</span>\n</code></pre></div>",
+        "id": 567330711,
+        "sender_full_name": "Patrick Toche",
+        "timestamp": 1768061946
+    },
+    {
+        "content": "<p>Or perhaps you mean that the behavior of <code>\"command\": \"language-julia.restartREPL\"</code> is totally different now? Then I have no answer...</p>",
+        "id": 567330776,
+        "sender_full_name": "Patrick Toche",
+        "timestamp": 1768062007
+    },
+    {
+        "content": "<p>I have the shortcut still. The problem is the behavior. It no longer opens the REPL in the active module.</p>",
+        "id": 567331073,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1768062302
+    }
+]

@@ -1,0 +1,66 @@
+<html>
+<head><meta charset="utf-8"><title>JET: access to binding in a world prior to its definition · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/JET.3A.20access.20to.20binding.20in.20a.20world.20prior.20to.20its.20definition.html">JET: access to binding in a world prior to its definition</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="526061951"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/JET%3A%20access%20to%20binding%20in%20a%20world%20prior%20to%20its%20definition/near/526061951" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> James Wrigley <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/JET.3A.20access.20to.20binding.20in.20a.20world.20prior.20to.20its.20definition.html#526061951">(Jun 27 2025 at 11:15)</a>:</h4>
+<p>I'm seeing this warning (among a bazillion others) when running <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/JET">JET.jl</a> on 1.12 on an IJulia branch:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="n">report_package</span><span class="p">(</span><span class="s">"IJulia"</span><span class="p">;</span><span class="w"> </span><span class="n">toplevel_logger</span><span class="o">=</span><span class="nb">nothing</span><span class="p">)</span>
+<span class="go">WARNING: Detected access to binding `IJulia.heartbeat_thread` in a world prior to its definition world.</span>
+<span class="go">  Julia 1.12 has introduced more strict world age semantics for global bindings.</span>
+<span class="go">  !!! This code may malfunction under Revise.</span>
+<span class="go">  !!! This code will error in future versions of Julia.</span>
+<span class="go">Hint: Add an appropriate `invokelatest` around the access to this binding.</span>
+<span class="go">To make this warning an error, and hence obtain a stack trace, use `julia --depwarn=error`.</span>
+</code></pre></div>
+<p>This is the function in question: <a href="https://github.com/JuliaLang/IJulia.jl/blob/42c99f1aeb06b7bd514b1888e84a1060440910aa/src/heartbeat.jl#L8">https://github.com/JuliaLang/IJulia.jl/blob/42c99f1aeb06b7bd514b1888e84a1060440910aa/src/heartbeat.jl#L8</a></p>
+<p>But I can't figure out where the warning is coming from because <code>heartbeat_thread()</code> is only ever called in <code>start_heartbeat()</code>, which is defined afterwards. Does anyone know why it's triggering that warning?</p>
+
+
+
+<a name="526082510"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/JET%3A%20access%20to%20binding%20in%20a%20world%20prior%20to%20its%20definition/near/526082510" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/JET.3A.20access.20to.20binding.20in.20a.20world.20prior.20to.20its.20definition.html#526082510">(Jun 27 2025 at 13:22)</a>:</h4>
+<p>friendly neighborhood LLM suggests it's due to the use of <code>@cfunction(heartbeat_thread, Cint, (Ptr{Cvoid},))</code> which is trying to use <code>heartbeat_thread</code> at macro expansion time prior to the compilation of <code>heartbeat_thread</code> function</p>
+
+
+
+<a name="526082975"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/JET%3A%20access%20to%20binding%20in%20a%20world%20prior%20to%20its%20definition/near/526082975" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> James Wrigley <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/JET.3A.20access.20to.20binding.20in.20a.20world.20prior.20to.20its.20definition.html#526082975">(Jun 27 2025 at 13:25)</a>:</h4>
+<p>That... would make sense <span aria-label="thinking" class="emoji emoji-1f914" role="img" title="thinking">:thinking:</span> But then I'm not sure how to fix it without making a runtime cfunction or moving the cfunction to the top-level.</p>
+
+
+
+<a name="526087957"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/JET%3A%20access%20to%20binding%20in%20a%20world%20prior%20to%20its%20definition/near/526087957" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/JET.3A.20access.20to.20binding.20in.20a.20world.20prior.20to.20its.20definition.html#526087957">(Jun 27 2025 at 13:48)</a>:</h4>
+<p>what if you take <code>heartbeat_thread</code> to a separate file and then <code>include</code> it in to the file where you define <code>start_heartbeat</code> ?</p>
+
+
+
+<a name="526088097"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/JET%3A%20access%20to%20binding%20in%20a%20world%20prior%20to%20its%20definition/near/526088097" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/JET.3A.20access.20to.20binding.20in.20a.20world.20prior.20to.20its.20definition.html#526088097">(Jun 27 2025 at 13:49)</a>:</h4>
+<p>LLM also suggests moving cfunction to top level</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">_heartbeat_c</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="nd">@cfunction</span><span class="p">(</span><span class="n">heartbeat_thread</span><span class="p">,</span><span class="w"> </span><span class="kt">Cint</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">Ptr</span><span class="p">{</span><span class="kt">Cvoid</span><span class="p">},))</span><span class="w">  </span><span class="c"># executed once at load time</span>
+
+<span class="c"># 3️⃣  use the cached pointer</span>
+<span class="k">function</span><span class="w"> </span><span class="n">start_heartbeat</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+<span class="w">    </span><span class="n">hb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kernel</span><span class="o">.</span><span class="n">heartbeat</span><span class="p">[]</span>
+<span class="w">    </span><span class="n">hb</span><span class="o">.</span><span class="n">linger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="k">ccall</span><span class="p">(</span><span class="ss">:uv_thread_create</span><span class="p">,</span><span class="w"> </span><span class="kt">Cint</span><span class="p">,</span>
+<span class="w">          </span><span class="p">(</span><span class="kt">Ptr</span><span class="p">{</span><span class="kt">Int</span><span class="p">},</span><span class="w"> </span><span class="kt">Ptr</span><span class="p">{</span><span class="kt">Cvoid</span><span class="p">},</span><span class="w"> </span><span class="kt">Ptr</span><span class="p">{</span><span class="kt">Cvoid</span><span class="p">}),</span>
+<span class="w">          </span><span class="n">kernel</span><span class="o">.</span><span class="n">heartbeat_threadid</span><span class="p">,</span><span class="w"> </span><span class="n">_heartbeat_c</span><span class="p">,</span><span class="w"> </span><span class="n">hb</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>but I do see how that's a bit uglier</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

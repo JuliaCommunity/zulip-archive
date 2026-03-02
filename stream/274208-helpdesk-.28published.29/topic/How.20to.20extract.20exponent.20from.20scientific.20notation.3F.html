@@ -1,0 +1,59 @@
+<html>
+<head><meta charset="utf-8"><title>How to extract exponent from scientific notation? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20extract.20exponent.20from.20scientific.20notation.3F.html">How to extract exponent from scientific notation?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="507449382"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20extract%20exponent%20from%20scientific%20notation%3F/near/507449382" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20extract.20exponent.20from.20scientific.20notation.3F.html#507449382">(Mar 22 2025 at 12:58)</a>:</h4>
+<p>Given a number, say <code>x = 1e-5</code>, how would you extract the number <code>5</code>?</p>
+<p>One possible solution is <code>round(Int, -log10(x))</code>. Is there any special function in Base with this purpose?</p>
+
+
+
+<a name="507459039"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20extract%20exponent%20from%20scientific%20notation%3F/near/507459039" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20extract.20exponent.20from.20scientific.20notation.3F.html#507459039">(Mar 22 2025 at 14:58)</a>:</h4>
+<p>Base.hidigit, but that's internal and does similar things anyway</p>
+
+
+
+<a name="507459094"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20extract%20exponent%20from%20scientific%20notation%3F/near/507459094" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20extract.20exponent.20from.20scientific.20notation.3F.html#507459094">(Mar 22 2025 at 14:59)</a>:</h4>
+<p>But are you sure about round? Is what you want? 5e-5 would be different from 1e-5, is that what you want?</p>
+
+
+
+<a name="507460089"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20extract%20exponent%20from%20scientific%20notation%3F/near/507460089" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20extract.20exponent.20from.20scientific.20notation.3F.html#507460089">(Mar 22 2025 at 15:11)</a>:</h4>
+<p>Not sure about the round, just wanted to get an integer as the result</p>
+
+
+
+<a name="507461064"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20extract%20exponent%20from%20scientific%20notation%3F/near/507461064" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20extract.20exponent.20from.20scientific.20notation.3F.html#507461064">(Mar 22 2025 at 15:24)</a>:</h4>
+<p>Let's change the question: _what_ integer do you want based on the given input? Your request is under specified, there's lots of ambiguity</p>
+
+
+
+<a name="507463443"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20extract%20exponent%20from%20scientific%20notation%3F/near/507463443" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20extract.20exponent.20from.20scientific.20notation.3F.html#507463443">(Mar 22 2025 at 15:52)</a>:</h4>
+<p>Assuming that the value <code>x</code> is a tolerance to floating point approximations, I'm trying to extract the number of digits that make a difference. So if two numbers are subtracted I'm expecting to represent the difference with this number of digits</p>
+
+
+
+<a name="524094901"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20extract%20exponent%20from%20scientific%20notation%3F/near/524094901" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Richard Careaga <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20extract.20exponent.20from.20scientific.20notation.3F.html#524094901">(Jun 15 2025 at 00:26)</a>:</h4>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.234567890e5</span>
+<span class="n">decimal_exp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">floor</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span><span class="w"> </span><span class="n">log10</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+<span class="mi">5</span>
+</code></pre></div>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

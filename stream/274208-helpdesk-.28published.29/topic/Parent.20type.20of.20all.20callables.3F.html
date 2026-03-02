@@ -1,0 +1,209 @@
+<html>
+<head><meta charset="utf-8"><title>Parent type of all callables? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html">Parent type of all callables?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="542931430"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542931430" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542931430">(Oct 03 2025 at 12:09)</a>:</h4>
+<p>Is there a parent type for all callable objects?</p>
+<p>I am trying to constrain the arguments of a function to <code>Function</code> + constructors. Something like <code>Union{&lt;:Function,&lt;:Constructor}</code> but <code>Constructor</code> doesn't exist. Is there a general type that I can use in this scenario?</p>
+
+
+
+<a name="542931912"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542931912" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542931912">(Oct 03 2025 at 12:12)</a>:</h4>
+<p>nope</p>
+
+
+
+<a name="542932309"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542932309" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542932309">(Oct 03 2025 at 12:15)</a>:</h4>
+<p>I am considering <code>Union{Function,Type}</code>. Experimenting with it...</p>
+
+
+
+<a name="542932733"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542932733" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542932733">(Oct 03 2025 at 12:17)</a>:</h4>
+<p>why not <code>Any</code> ? there's nothing really generic you can do over "callables" anyway</p>
+
+
+
+<a name="542932856"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542932856" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542932856">(Oct 03 2025 at 12:18)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="671422">Andy Dienes</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F/near/542932733">said</a>:</p>
+<blockquote>
+<p>why not <code>Any</code> ? there's nothing really generic you can do over "callables" anyway</p>
+</blockquote>
+<p>Ambiguity with other types. It is a more convoluted use case.</p>
+
+
+
+<a name="542933057"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542933057" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542933057">(Oct 03 2025 at 12:19)</a>:</h4>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="c"># supported argument types</span>
+<span class="k">const</span><span class="w"> </span><span class="n">Callable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Union</span><span class="p">{</span><span class="kt">Function</span><span class="p">,</span><span class="kt">Type</span><span class="p">}</span>
+<span class="k">const</span><span class="w"> </span><span class="n">Target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Union</span><span class="p">{</span><span class="kt">Symbol</span><span class="p">,</span><span class="kt">AbstractString</span><span class="p">}</span>
+<span class="k">const</span><span class="w"> </span><span class="n">ColsCallableTarget</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Pair</span><span class="p">{</span><span class="o">&lt;:</span><span class="kt">Any</span><span class="p">,</span><span class="o">&lt;:</span><span class="kt">Pair</span><span class="p">{</span><span class="o">&lt;:</span><span class="kt">Callable</span><span class="p">,</span><span class="o">&lt;:</span><span class="kt">Target</span><span class="p">}}</span>
+<span class="k">const</span><span class="w"> </span><span class="n">ColsCallable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Pair</span><span class="p">{</span><span class="o">&lt;:</span><span class="kt">Any</span><span class="p">,</span><span class="o">&lt;:</span><span class="kt">Callable</span><span class="p">}</span>
+<span class="k">const</span><span class="w"> </span><span class="n">CallableTarget</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Pair</span><span class="p">{</span><span class="o">&lt;:</span><span class="kt">Callable</span><span class="p">,</span><span class="o">&lt;:</span><span class="kt">Target</span><span class="p">}</span>
+<span class="k">const</span><span class="w"> </span><span class="n">MapArg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Union</span><span class="p">{</span><span class="kt">ColsCallableTarget</span><span class="p">,</span><span class="kt">ColsCallable</span><span class="p">,</span><span class="kt">CallableTarget</span><span class="p">,</span><span class="kt">Callable</span><span class="p">}</span>
+</code></pre></div>
+<p><code>MapArg</code> is the type that I want to constrain at the end. My function definition will have a <code>VargArg</code> of them:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">arg</span><span class="o">::</span><span class="kt">MapArg</span><span class="o">...</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="542933244"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542933244" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542933244">(Oct 03 2025 at 12:20)</a>:</h4>
+<p>The <code>VarArg</code> requirement forces this non-idiomatic approach with explicit types. I would use simple dispatch if I could.</p>
+
+
+
+<a name="542933334"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542933334" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542933334">(Oct 03 2025 at 12:21)</a>:</h4>
+<p>does does <code>foo</code> do?</p>
+
+
+
+<a name="542933368"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542933368" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542933368">(Oct 03 2025 at 12:21)</a>:</h4>
+<p>Let me finish the PR and you can see the whole picture <span aria-label="slight smile" class="emoji emoji-1f642" role="img" title="slight smile">:slight_smile:</span></p>
+
+
+
+<a name="542933674"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542933674" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542933674">(Oct 03 2025 at 12:22)</a>:</h4>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">struct</span> <span class="kt">Foo</span><span class="w"> </span><span class="k">end</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="p">(</span><span class="o">::</span><span class="kt">Foo</span><span class="p">)(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">Foo</span><span class="p">()(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="go">3</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">supertype</span><span class="p">(</span><span class="n">Foo</span><span class="p">)</span>
+<span class="go">Any</span>
+</code></pre></div>
+
+
+
+<a name="542933777"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542933777" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542933777">(Oct 03 2025 at 12:23)</a>:</h4>
+<p>Yes, I am thinking of types as possible callables.</p>
+
+
+
+<a name="542933861"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542933861" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542933861">(Oct 03 2025 at 12:24)</a>:</h4>
+<p>that wasn't a type</p>
+
+
+
+<a name="542933891"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542933891" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542933891">(Oct 03 2025 at 12:24)</a>:</h4>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Foo</span><span class="p">()</span><span class="w"> </span><span class="k">isa</span><span class="w"> </span><span class="kt">Type</span>
+<span class="nb">false</span>
+</code></pre></div>
+
+
+
+<a name="542933902"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542933902" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542933902">(Oct 03 2025 at 12:24)</a>:</h4>
+<p>Oh I see your point.</p>
+
+
+
+<a name="542934005"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542934005" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542934005">(Oct 03 2025 at 12:24)</a>:</h4>
+<p>You are mentioning the case of an instance that is callable and not a subtype of <code>Function</code>.</p>
+
+
+
+<a name="542934035"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542934035" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542934035">(Oct 03 2025 at 12:24)</a>:</h4>
+<p>I don't want to support this use case.</p>
+
+
+
+<a name="542934108"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542934108" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542934108">(Oct 03 2025 at 12:25)</a>:</h4>
+<p>It's callable <span aria-label="shrug" class="emoji emoji-1f937" role="img" title="shrug">:shrug:</span></p>
+
+
+
+<a name="542934353"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542934353" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542934353">(Oct 03 2025 at 12:26)</a>:</h4>
+<p>I know. It wouldn't hurt to support this case, but since Julia doesn't have a <code>Callable</code> super type, I don't need to cover it in practice.</p>
+
+
+
+<a name="542934499"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542934499" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542934499">(Oct 03 2025 at 12:26)</a>:</h4>
+<p>The use case is pretty simple: take a function or constructor and map over an array of arguments. The PR is almost ready...</p>
+
+
+
+<a name="542938988"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542938988" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542938988">(Oct 03 2025 at 12:51)</a>:</h4>
+<p><a href="https://github.com/JuliaML/TableTransforms.jl/pull/305">https://github.com/JuliaML/TableTransforms.jl/pull/305</a></p>
+
+
+
+<a name="542939034"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542939034" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542939034">(Oct 03 2025 at 12:51)</a>:</h4>
+<p>The PR above should clarify the use case. It is working fine <span aria-label="slight smile" class="emoji emoji-1f642" role="img" title="slight smile">:slight_smile:</span></p>
+
+
+
+<a name="542988680"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542988680" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542988680">(Oct 03 2025 at 16:59)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F/near/542934353">said</a>:</p>
+<blockquote>
+<p>Julia doesn't have a <code>Callable</code> super type</p>
+</blockquote>
+<p>Technically there's <a href="https://github.com/JuliaLang/julia/blob/85687b522a6e73836b6ae95e65a8dc1723427d32/base/essentials.jl#L5">https://github.com/JuliaLang/julia/blob/85687b522a6e73836b6ae95e65a8dc1723427d32/base/essentials.jl#L5</a> but it isn't public.</p>
+
+
+
+<a name="542991794"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542991794" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542991794">(Oct 03 2025 at 17:15)</a>:</h4>
+<p>Interesting. The exact same definition.</p>
+
+
+
+<a name="542997484"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/542997484" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> aplavin <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#542997484">(Oct 03 2025 at 17:52)</a>:</h4>
+<p>For not-really-generic code it's totally fine to dispatch on <code>Union{Function, Type}</code> to catch many callables, but in generic code there's no way to select callables just by their supertype. That's why generic API is designed so that there's no confusion – whether a callable should be in this argument or not.</p>
+
+
+
+<a name="543068720"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/543068720" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#543068720">(Oct 04 2025 at 07:57)</a>:</h4>
+<p>Relevant discussion on the Julia issue tracker:</p>
+<ul>
+<li><a href="https://github.com/JuliaLang/julia/issues/43491">https://github.com/JuliaLang/julia/issues/43491</a></li>
+</ul>
+
+
+
+<a name="543068811"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/543068811" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#543068811">(Oct 04 2025 at 07:59)</a>:</h4>
+<p>The design of Julia is such that anything may be callable, just give it a method. Thus a <code>Callable</code> type would not make sense.</p>
+
+
+
+<a name="543074505"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Parent%20type%20of%20all%20callables%3F/near/543074505" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Timothy <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F.html#543074505">(Oct 04 2025 at 09:40)</a>:</h4>
+<p>Yea, I've writen functions like <code>(f::Foo)(x) = ...</code> before.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

@@ -1,0 +1,31 @@
+<html>
+<head><meta charset="utf-8"><title>What exactly is saved in .julia/compiled? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/What.20exactly.20is.20saved.20in.20.2Ejulia.2Fcompiled.3F.html">What exactly is saved in .julia/compiled?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="508278113"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/What%20exactly%20is%20saved%20in%20.julia/compiled%3F/near/508278113" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/What.20exactly.20is.20saved.20in.20.2Ejulia.2Fcompiled.3F.html#508278113">(Mar 26 2025 at 13:37)</a>:</h4>
+<p>I noticed that unlike other packages, <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/Makie">Makie.jl</a>, <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/CairoMakie">CairoMakie.jl</a> and <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/MathOptInterface">MathOptInterface.jl</a> contain various *.so files in the compiled folder:</p>
+<p><a href="/user_uploads/7178/DEv9gDlPbKP0HgN8R-ChVFV1/image.png">image.png</a></p>
+<div class="message_inline_image"><a href="/user_uploads/7178/DEv9gDlPbKP0HgN8R-ChVFV1/image.png" title="image.png"><img data-original-content-type="image/png" data-original-dimensions="699x682" src="/user_uploads/thumbnail/7178/DEv9gDlPbKP0HgN8R-ChVFV1/image.png/840x560.webp"></a></div><p>Is this caused by the way I am using these packages in dev'ed environments? How to avoid this?</p>
+<p>All other packages in the compiled folder only have a single *.so file.</p>
+
+
+
+<a name="508304104"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/What%20exactly%20is%20saved%20in%20.julia/compiled%3F/near/508304104" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/What.20exactly.20is.20saved.20in.20.2Ejulia.2Fcompiled.3F.html#508304104">(Mar 26 2025 at 15:08)</a>:</h4>
+<p>Perhaps helpful:</p>
+<ul>
+<li><a href="https://github.com/timholy/PkgCacheInspector.jl">https://github.com/timholy/PkgCacheInspector.jl</a></li>
+</ul>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

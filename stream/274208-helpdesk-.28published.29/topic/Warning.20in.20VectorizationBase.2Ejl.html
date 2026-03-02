@@ -1,0 +1,48 @@
+<html>
+<head><meta charset="utf-8"><title>Warning in VectorizationBase.jl · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Warning.20in.20VectorizationBase.2Ejl.html">Warning in VectorizationBase.jl</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="541284870"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Warning%20in%20VectorizationBase.jl/near/541284870" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Warning.20in.20VectorizationBase.2Ejl.html#541284870">(Sep 24 2025 at 17:16)</a>:</h4>
+<p>I am seeing this warning in my tests, but can't reproduce in a fresh environment, even though it is the exact same version of the package installed:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">┌</span><span class="w"> </span><span class="n">VectorizationBase</span>
+<span class="n">│</span><span class="w">  </span><span class="n">WARNING</span><span class="o">:</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">Static</span><span class="o">.</span><span class="n">static_first</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">module</span><span class="w"> </span><span class="n">VectorizationBase</span><span class="w"> </span><span class="n">conflicts</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">an</span><span class="w"> </span><span class="n">existing</span><span class="w"> </span><span class="n">identifier</span><span class="o">.</span>
+<span class="n">│</span><span class="w">  </span><span class="n">WARNING</span><span class="o">:</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">Static</span><span class="o">.</span><span class="n">static_last</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">module</span><span class="w"> </span><span class="n">VectorizationBase</span><span class="w"> </span><span class="n">conflicts</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">an</span><span class="w"> </span><span class="n">existing</span><span class="w"> </span><span class="n">identifier</span><span class="o">.</span>
+</code></pre></div>
+<p>Someone else seeing this on Julia v1.11.7?</p>
+
+
+
+<a name="541323607"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Warning%20in%20VectorizationBase.jl/near/541323607" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Warning.20in.20VectorizationBase.2Ejl.html#541323607">(Sep 24 2025 at 20:12)</a>:</h4>
+<p>lucky for you, those warnings are no longer emitted in 1.12</p>
+
+
+
+<a name="541323629"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Warning%20in%20VectorizationBase.jl/near/541323629" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Warning.20in.20VectorizationBase.2Ejl.html#541323629">(Sep 24 2025 at 20:12)</a>:</h4>
+<p>behavior didn't change though, just no warnings</p>
+
+
+
+<a name="541335980"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Warning%20in%20VectorizationBase.jl/near/541335980" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Warning.20in.20VectorizationBase.2Ejl.html#541335980">(Sep 24 2025 at 21:51)</a>:</h4>
+<p>So it is an issue with Julia v1.11?</p>
+
+
+
+<a name="541362135"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Warning%20in%20VectorizationBase.jl/near/541362135" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> wheeheee <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Warning.20in.20VectorizationBase.2Ejl.html#541362135">(Sep 25 2025 at 03:24)</a>:</h4>
+<p>Maybe the same as <a href="https://github.com/JuliaLang/julia/issues/58692">#58692</a>?</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

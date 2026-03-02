@@ -1,0 +1,60 @@
+<html>
+<head><meta charset="utf-8"><title>juliaup failing to launch v1.10.5 · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/juliaup.20failing.20to.20launch.20v1.2E10.2E5.html">juliaup failing to launch v1.10.5</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="529342740"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/juliaup%20failing%20to%20launch%20v1.10.5/near/529342740" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/juliaup.20failing.20to.20launch.20v1.2E10.2E5.html#529342740">(Jul 17 2025 at 19:25)</a>:</h4>
+<p>I've added <code>juliaup add 1.10.5</code> to reproduce the same version of Julia I used in an old script, but this is what I get when I try to run this version:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">zsh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">julia</span><span class="w"> </span><span class="o">+</span><span class="mf">1.10.5</span>
+<span class="n">ERROR</span><span class="o">:</span><span class="w"> </span><span class="n">Unable</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="n">dependent</span><span class="w"> </span><span class="n">library</span><span class="w"> </span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">juliohm</span><span class="o">/.</span><span class="n">julia</span><span class="o">/</span><span class="n">juliaup</span><span class="o">/</span><span class="n">julia</span><span class="o">-</span><span class="mf">1.10.5</span><span class="o">+</span><span class="mf">0.</span><span class="n">x64</span><span class="o">.</span><span class="n">linux</span><span class="o">.</span><span class="n">gnu</span><span class="o">/</span><span class="n">bin</span><span class="o">/../</span><span class="n">lib</span><span class="o">/</span><span class="n">julia</span><span class="o">/</span><span class="n">libopenlibm</span><span class="o">.</span><span class="n">so</span>
+<span class="n">Message</span><span class="o">:/</span><span class="n">home</span><span class="o">/</span><span class="n">juliohm</span><span class="o">/.</span><span class="n">julia</span><span class="o">/</span><span class="n">juliaup</span><span class="o">/</span><span class="n">julia</span><span class="o">-</span><span class="mf">1.10.5</span><span class="o">+</span><span class="mf">0.</span><span class="n">x64</span><span class="o">.</span><span class="n">linux</span><span class="o">.</span><span class="n">gnu</span><span class="o">/</span><span class="n">bin</span><span class="o">/../</span><span class="n">lib</span><span class="o">/</span><span class="n">julia</span><span class="o">/</span><span class="n">libopenlibm</span><span class="o">.</span><span class="n">so</span><span class="o">:</span><span class="w"> </span><span class="n">cannot</span><span class="w"> </span><span class="n">enable</span><span class="w"> </span><span class="n">executable</span><span class="w"> </span><span class="n">stack</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="n">object</span><span class="w"> </span><span class="n">requires</span><span class="o">:</span><span class="w"> </span><span class="n">Invalid</span><span class="w"> </span><span class="n">argument</span>
+</code></pre></div>
+<p>Anything wrong from my side or yet another rough corner of the ecosystem?</p>
+
+
+
+<a name="529357670"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/juliaup%20failing%20to%20launch%20v1.10.5/near/529357670" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/juliaup.20failing.20to.20launch.20v1.2E10.2E5.html#529357670">(Jul 17 2025 at 21:18)</a>:</h4>
+<p><a href="https://github.com/JuliaLang/julia/issues/57250#issuecomment-2834911167">https://github.com/JuliaLang/julia/issues/57250#issuecomment-2834911167</a></p>
+
+
+
+<a name="529357695"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/juliaup%20failing%20to%20launch%20v1.10.5/near/529357695" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/juliaup.20failing.20to.20launch.20v1.2E10.2E5.html#529357695">(Jul 17 2025 at 21:18)</a>:</h4>
+<p>Glibc broke it</p>
+
+
+
+<a name="529358056"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/juliaup%20failing%20to%20launch%20v1.10.5/near/529358056" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/juliaup.20failing.20to.20launch.20v1.2E10.2E5.html#529358056">(Jul 17 2025 at 21:21)</a>:</h4>
+<p>And see the number of backlinks to that issue to get an idea of the affected projects</p>
+
+
+
+<a name="529358184"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/juliaup%20failing%20to%20launch%20v1.10.5/near/529358184" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/juliaup.20failing.20to.20launch.20v1.2E10.2E5.html#529358184">(Jul 17 2025 at 21:22)</a>:</h4>
+<p>Thank you. I'll try to run again tomorrow with the option shared in the comment.</p>
+
+
+
+<a name="529358906"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/juliaup%20failing%20to%20launch%20v1.10.5/near/529358906" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/juliaup.20failing.20to.20launch.20v1.2E10.2E5.html#529358906">(Jul 17 2025 at 21:29)</a>:</h4>
+<p>This is the same issue you ran into in march: <a class="stream-topic" data-stream-id="137791" href="/#narrow/channel/137791-general/topic/.E2.9C.94.20Julia.20v1.2E11.2E3.20not.20starting.20after.20system.20update/with/504615110">#general &gt; ✔ Julia v1.11.3 not starting after system update</a></p>
+
+
+
+<a name="529359053"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/juliaup%20failing%20to%20launch%20v1.10.5/near/529359053" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/juliaup.20failing.20to.20launch.20v1.2E10.2E5.html#529359053">(Jul 17 2025 at 21:30)</a>:</h4>
+<p>Yes. I remember it now very generally</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

@@ -1,0 +1,63 @@
+<html>
+<head><meta charset="utf-8"><title>Is there any advantage of using Big-Endian nowadays? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Is.20there.20any.20advantage.20of.20using.20Big-Endian.20nowadays.3F.html">Is there any advantage of using Big-Endian nowadays?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="560150007"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Is%20there%20any%20advantage%20of%20using%20Big-Endian%20nowadays%3F/near/560150007" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Is.20there.20any.20advantage.20of.20using.20Big-Endian.20nowadays.3F.html#560150007">(Nov 25 2025 at 13:11)</a>:</h4>
+<p>The docstring of <code>ntoh</code> mentions the term "Network". Was Big-Endian introduced to optimize data transfer over networks?</p>
+<p>What is the current status of this convention? The fact that it can't be <code>mmap</code>ed and that it can't be consumed in chuncks without a <code>bswap</code> seems very limiting.</p>
+
+
+
+<a name="560154558"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Is%20there%20any%20advantage%20of%20using%20Big-Endian%20nowadays%3F/near/560154558" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Is.20there.20any.20advantage.20of.20using.20Big-Endian.20nowadays.3F.html#560154558">(Nov 25 2025 at 13:29)</a>:</h4>
+<p>Endianness is arbitrary, so initial hardware and specifications differed. Processors have come to coalesce to little endianness, and network protocols to big endianness.<br>
+You can basically guarantee that any computer will store and load data little endian, so in that sense, you don't need to worry about it. W.r.t network protocols and file formats, they may be big-endian, but their content needs to be actively parsed anyway, so byteswapping can be considered just a minor part of parsing some format</p>
+
+
+
+<a name="560155617"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Is%20there%20any%20advantage%20of%20using%20Big-Endian%20nowadays%3F/near/560155617" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Is.20there.20any.20advantage.20of.20using.20Big-Endian.20nowadays.3F.html#560155617">(Nov 25 2025 at 13:34)</a>:</h4>
+<p>Or, to put it in another way, you can consume a stream/array of bytes without considering endianness. When you have to interpret these bytes as some data structure, e.g. <code>Int32</code> or whatever, you need to parse it. And when you parse, you need to do a _lot_ of operations to go from an array of bytes to whatever data structure it represents, and considering endianness is a small part of the task</p>
+
+
+
+<a name="560158329"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Is%20there%20any%20advantage%20of%20using%20Big-Endian%20nowadays%3F/near/560158329" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Is.20there.20any.20advantage.20of.20using.20Big-Endian.20nowadays.3F.html#560158329">(Nov 25 2025 at 13:45)</a>:</h4>
+<p>Got it. So basically big-endian is still the main convention for network protocols. Sad the industry didn't converge on a single representation. It seems quite arbitrary. Is there a strong reason to prefer big-endian for networks?</p>
+
+
+
+<a name="560163312"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Is%20there%20any%20advantage%20of%20using%20Big-Endian%20nowadays%3F/near/560163312" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Is.20there.20any.20advantage.20of.20using.20Big-Endian.20nowadays.3F.html#560163312">(Nov 25 2025 at 14:04)</a>:</h4>
+<p>No, not that I'm aware of</p>
+
+
+
+<a name="560163704"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Is%20there%20any%20advantage%20of%20using%20Big-Endian%20nowadays%3F/near/560163704" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Is.20there.20any.20advantage.20of.20using.20Big-Endian.20nowadays.3F.html#560163704">(Nov 25 2025 at 14:05)</a>:</h4>
+<p>Thank you for the answers!</p>
+
+
+
+<a name="560184898"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Is%20there%20any%20advantage%20of%20using%20Big-Endian%20nowadays%3F/near/560184898" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Is.20there.20any.20advantage.20of.20using.20Big-Endian.20nowadays.3F.html#560184898">(Nov 25 2025 at 15:26)</a>:</h4>
+<p>One sort-of arbitrary justification that I heard in university (but of course wasn't backed up by anything) was that in big endian the bigger parts of a number is transmitted first over the network (confusingly). The reasoning why this was considered better is that even if the number is truncated, you'll at least know the order of magnitude of whatever was transmitted. In practice this doesn't really matter anyway, since transmitted data is usually checksummed &amp; discarded if it arrives incomplete, since retransmission is relatively cheap.</p>
+
+
+
+<a name="560185585"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Is%20there%20any%20advantage%20of%20using%20Big-Endian%20nowadays%3F/near/560185585" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Is.20there.20any.20advantage.20of.20using.20Big-Endian.20nowadays.3F.html#560185585">(Nov 25 2025 at 15:29)</a>:</h4>
+<p>Nowadays, it's mostly done for backwards compatibility with existing protocols. For new protocols it's often just an arbitrary choice at this point.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

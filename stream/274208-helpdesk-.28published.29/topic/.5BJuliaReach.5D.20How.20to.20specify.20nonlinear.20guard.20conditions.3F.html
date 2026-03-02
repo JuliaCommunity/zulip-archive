@@ -1,0 +1,77 @@
+<html>
+<head><meta charset="utf-8"><title>[JuliaReach] How to specify nonlinear guard conditions? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.5BJuliaReach.5D.20How.20to.20specify.20nonlinear.20guard.20conditions.3F.html">[JuliaReach] How to specify nonlinear guard conditions?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="531396703"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%5BJuliaReach%5D%20How%20to%20specify%20nonlinear%20guard%20conditions%3F/near/531396703" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> ZihMing <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.5BJuliaReach.5D.20How.20to.20specify.20nonlinear.20guard.20conditions.3F.html#531396703">(Jul 28 2025 at 15:17)</a>:</h4>
+<p>I've recently started using JuliaReach for my research on hybrid systems, and I'm having trouble specifying nonlinear guard conditions for mode transitions.<br>
+I'm following the <a href="https://juliareach.github.io/ReachabilityAnalysis.jl/dev/generated_examples/SquareWaveOscillator/">tutorial</a> and using the <code>@system</code> macro to define each mode of the hybrid system. Now, suppose I have a mode with a guard condition like</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo>:</mo><mi>x</mi><mo>≤</mo><msup><mi>y</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">P: x\leq y^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0585em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>or, more generally,</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>x</mi><mo>≤</mo><msup><mi>y</mi><mn>2</mn></msup><mo>∨</mo><mi>x</mi><mo>≥</mo><msup><mi>z</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">x\leq y^2 \lor x\geq z^3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0585em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∨</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>How can I express this as the constraint in the <code>@system</code> macro? Are there better or recommended ways to handle nonlinear guard conditions in JuliaReach?<br>
+Any pointers would be appreciated!</p>
+
+
+
+<a name="531419578"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%5BJuliaReach%5D%20How%20to%20specify%20nonlinear%20guard%20conditions%3F/near/531419578" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> jar <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.5BJuliaReach.5D.20How.20to.20specify.20nonlinear.20guard.20conditions.3F.html#531419578">(Jul 28 2025 at 17:15)</a>:</h4>
+<p>For what it's worth, Zulip is relatively underused, so if you don't get a reply here, you might get more traction on <a href="https://discourse.julialang.org/">https://discourse.julialang.org/</a></p>
+
+
+
+<a name="531422911"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%5BJuliaReach%5D%20How%20to%20specify%20nonlinear%20guard%20conditions%3F/near/531422911" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.5BJuliaReach.5D.20How.20to.20specify.20nonlinear.20guard.20conditions.3F.html#531422911">(Jul 28 2025 at 17:32)</a>:</h4>
+<p>Yeah, I tried looking into this to see if I could help but it wasn't clear to me how it works. If someone from JuliaReach is here they'll probably help but otherwise Discourse is a good bet.</p>
+
+
+
+<a name="531432027"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%5BJuliaReach%5D%20How%20to%20specify%20nonlinear%20guard%20conditions%3F/near/531432027" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> ederag <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.5BJuliaReach.5D.20How.20to.20specify.20nonlinear.20guard.20conditions.3F.html#531432027">(Jul 28 2025 at 18:25)</a>:</h4>
+<p>Or in the zulip  <a class="stream" data-stream-id="278609" href="/#narrow/channel/278609-juliareach">#juliareach</a> channel ?</p>
+
+
+
+<a name="531441250"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%5BJuliaReach%5D%20How%20to%20specify%20nonlinear%20guard%20conditions%3F/near/531441250" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> jar <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.5BJuliaReach.5D.20How.20to.20specify.20nonlinear.20guard.20conditions.3F.html#531441250">(Jul 28 2025 at 19:19)</a>:</h4>
+<p>Oh, that seems better!</p>
+
+
+
+<a name="531460152"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%5BJuliaReach%5D%20How%20to%20specify%20nonlinear%20guard%20conditions%3F/near/531460152" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Christian Schilling <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.5BJuliaReach.5D.20How.20to.20specify.20nonlinear.20guard.20conditions.3F.html#531460152">(Jul 28 2025 at 20:53)</a>:</h4>
+<p><span class="user-mention" data-user-id="941265">@ZihMing</span> the short answer is that this is not supported :(</p>
+
+
+
+<a name="531502012"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%5BJuliaReach%5D%20How%20to%20specify%20nonlinear%20guard%20conditions%3F/near/531502012" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> ZihMing <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.5BJuliaReach.5D.20How.20to.20specify.20nonlinear.20guard.20conditions.3F.html#531502012">(Jul 29 2025 at 03:14)</a>:</h4>
+<p>Thanks so much for all the suggestions and clarifications! I’ve followed up on the recommended channels to gather more information about JuliaReach :)</p>
+
+
+
+<a name="531518899"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%5BJuliaReach%5D%20How%20to%20specify%20nonlinear%20guard%20conditions%3F/near/531518899" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Christian Schilling <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.5BJuliaReach.5D.20How.20to.20specify.20nonlinear.20guard.20conditions.3F.html#531518899">(Jul 29 2025 at 05:55)</a>:</h4>
+<p><span class="user-mention" data-user-id="941265">@ZihMing</span> the slightly longer answer is that you can code it up yourself by using a nonconvex set representation (a taylor model), but it is not easy. there is an example <a href="https://github.com/JuliaReach/ARCH2025_NLN_RE/blob/807d58984f9d0c8864e69ec3c05b3efb652c1d6a/models/LotkaVolterra/lotka_volterra_benchmark.jl#L23-L77">here</a> for the intersection with a circle<br>
+if you have questions about that, i suggest to continue the discussion in the other channel</p>
+
+
+
+<a name="531640187"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%5BJuliaReach%5D%20How%20to%20specify%20nonlinear%20guard%20conditions%3F/near/531640187" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Marcelo (mforets) <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.5BJuliaReach.5D.20How.20to.20specify.20nonlinear.20guard.20conditions.3F.html#531640187">(Jul 29 2025 at 15:30)</a>:</h4>
+<blockquote>
+<p>For what it's worth, Zulip is relatively underused, so if you don't get a reply here, you might get more traction on <a href="https://discourse.julialang.org/">https://discourse.julialang.org/</a></p>
+</blockquote>
+<p>i wish there was a way to get email notification on Julia Discourse keyword names, eg. notify me of any new post has "juliareach"  on it.  is that possible already?</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

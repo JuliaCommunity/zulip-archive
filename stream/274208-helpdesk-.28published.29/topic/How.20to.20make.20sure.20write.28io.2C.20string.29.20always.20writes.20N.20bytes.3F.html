@@ -1,0 +1,136 @@
+<html>
+<head><meta charset="utf-8"><title>How to make sure write(io, string) always writes N bytes? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html">How to make sure write(io, string) always writes N bytes?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="561896631"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561896631" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561896631">(Dec 04 2025 at 14:46)</a>:</h4>
+<p>I need to make sure that the number of bytes written to the file is always N, regardless of the content of the string. What is the most idiomatic method to achieve that goal with the Julia IO stdlib?</p>
+
+
+
+<a name="561904641"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561904641" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561904641">(Dec 04 2025 at 15:13)</a>:</h4>
+<p>What do you want to happen when the string representation is shorter or longer than N bytes?</p>
+
+
+
+<a name="561907064"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561907064" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561907064">(Dec 04 2025 at 15:23)</a>:</h4>
+<p>If it is shorter, we could append some special character that is not visible when decoding the bytes in a posterior read. Like a null character.</p>
+
+
+
+<a name="561907496"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561907496" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561907496">(Dec 04 2025 at 15:24)</a>:</h4>
+<p>If it is longer, I will throw an error. We can ignore this case.</p>
+
+
+
+<a name="561913093"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561913093" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Vincent Laporte <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561913093">(Dec 04 2025 at 15:46)</a>:</h4>
+<p>There is a <code>truncate</code> function in <code>Base</code> that sounds related.</p>
+
+
+
+<a name="561913606"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561913606" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561913606">(Dec 04 2025 at 15:48)</a>:</h4>
+<p>Nice. It seems very related indeed.</p>
+
+
+
+<a name="561913831"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561913831" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561913831">(Dec 04 2025 at 15:49)</a>:</h4>
+<p>We need something like that, but for writing into an <code>IO</code> as opposed to modifying the content of an existing <code>IO</code> with the string.</p>
+
+
+
+<a name="561914410"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561914410" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561914410">(Dec 04 2025 at 15:51)</a>:</h4>
+<p>From the docstring, it uses <code>'\0'</code> as the null character.</p>
+
+
+
+<a name="561914949"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561914949" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561914949">(Dec 04 2025 at 15:53)</a>:</h4>
+<p>You can do things like </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">padded_write</span><span class="p">(</span><span class="n">io</span><span class="o">::</span><span class="kt">IO</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="o">...</span><span class="p">;</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="w">    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">write</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="o">...</span><span class="p">)</span>
+<span class="w">    </span><span class="n">write</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="p">(</span><span class="mh">0x00</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">n</span><span class="p">))</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="n">close_with_padding</span><span class="p">(</span><span class="n">io</span><span class="o">::</span><span class="kt">IO</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="w">    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">position</span><span class="p">(</span><span class="n">io</span><span class="p">)</span>
+<span class="w">    </span><span class="n">write</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="p">(</span><span class="mh">0x00</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">n</span><span class="p">))</span>
+<span class="w">    </span><span class="n">close</span><span class="p">(</span><span class="n">io</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>but <code>truncate</code> is almost certainly better.</p>
+
+
+
+<a name="561916137"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561916137" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Nathan Zimmerberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561916137">(Dec 04 2025 at 15:58)</a>:</h4>
+<p>One option is to create a vector of N zero UInt8 as a buffer, copy in the string data, write out with <code>write</code>, and then finally error if <code>write</code> doesn't return N.</p>
+
+
+
+<a name="561917012"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561917012" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Nathan Zimmerberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561917012">(Dec 04 2025 at 16:01)</a>:</h4>
+<p>Avoid position function when writing as some IO do not have this implemented in the way you would think</p>
+
+
+
+<a name="561919591"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561919591" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561919591">(Dec 04 2025 at 16:11)</a>:</h4>
+<p>So if I want to use <code>truncate</code>, I need to create an empty <code>IO</code>, copy the string there, call <code>truncate</code> and then finally write to the final <code>IO</code> that corresponds to the file on disk? Something like the following:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">io</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">IOBuffer</span><span class="p">()</span>
+<span class="n">write</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="p">)</span>
+<span class="n">truncate</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="n">newstring</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="n">iofinal</span><span class="p">,</span><span class="w"> </span><span class="n">newstring</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<a name="561920038"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561920038" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561920038">(Dec 04 2025 at 16:13)</a>:</h4>
+<p>The <code>padded_write</code> function seems more intuitive.</p>
+
+
+
+<a name="561924065"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561924065" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Nathan Zimmerberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561924065">(Dec 04 2025 at 16:29)</a>:</h4>
+<p>Yeah, ideally the underlying IO interface would support this like zig now does with the splat argument in <a href="https://ziglang.org/documentation/master/std/#std.Io.Writer.VTable">https://ziglang.org/documentation/master/std/#std.Io.Writer.VTable</a> but currently IO goes through <code>unsafe_write</code> which just takes a pointer and a size.</p>
+<p>I do<br>
+<a href="https://github.com/JuliaIO/ZipArchives.jl/blob/c48c367b6208c9733ff0e2f3431a6b8d13939126/src/writer.jl#L253">https://github.com/JuliaIO/ZipArchives.jl/blob/c48c367b6208c9733ff0e2f3431a6b8d13939126/src/writer.jl#L253</a></p>
+
+
+
+<a name="561931707"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561931707" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561931707">(Dec 04 2025 at 17:01)</a>:</h4>
+<p>Why can't you just do <code>truncate(iofinal, N)</code> once you have written what you want to it?</p>
+
+
+
+<a name="561942055"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561942055" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561942055">(Dec 04 2025 at 17:50)</a>:</h4>
+<p>I could do that in this case I think. Will try it.</p>
+
+
+
+<a name="561942676"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20make%20sure%20write%28io%2C%20string%29%20always%20writes%20N%20bytes%3F/near/561942676" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20make.20sure.20write.28io.2C.20string.29.20always.20writes.20N.20bytes.3F.html#561942676">(Dec 04 2025 at 17:53)</a>:</h4>
+<p>Write a view of the string. For the padding, I don't think we have any good abstractions for that.<br>
+Another good reason for my <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/BufferIO">BufferIO.jl</a> where this can be done efficiently and allocation free <span aria-label="wink" class="emoji emoji-1f609" role="img" title="wink">:wink:</span></p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

@@ -1,0 +1,75 @@
+<html>
+<head><meta charset="utf-8"><title>✔ Macro to generate DSL parser code · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Macro.20to.20generate.20DSL.20parser.20code.html">✔ Macro to generate DSL parser code</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="547784994"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Macro%20to%20generate%20DSL%20parser%20code/near/547784994" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Macro.20to.20generate.20DSL.20parser.20code.html#547784994">(Oct 29 2025 at 18:20)</a>:</h4>
+<p>You can programmatically generate the regex. A similar option is to use <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/Automa">Automa.jl</a> to do this, which is a pure Julia regex engine</p>
+
+
+
+<a name="547809222"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Macro%20to%20generate%20DSL%20parser%20code/near/547809222" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Viktor G. <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Macro.20to.20generate.20DSL.20parser.20code.html#547809222">(Oct 29 2025 at 20:49)</a>:</h4>
+<p>Thanks, I did this based on this examle:<br>
+<a href="https://github.com/wdebeaum/PEG.jl/blob/master/test/calculator.jl">https://github.com/wdebeaum/PEG.jl/blob/master/test/calculator.jl</a></p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">PEG</span>
+
+<span class="nd">@rule</span><span class="w"> </span><span class="n">Word</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sa">r</span><span class="sr">"</span><span class="err">\</span><span class="sr">w+</span><span class="err">\</span><span class="sr">*"</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">w</span><span class="o">-&gt;</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="n">occursin</span><span class="p">(</span><span class="kt">Regex</span><span class="p">(</span><span class="s">"</span><span class="se">\\</span><span class="s">b</span><span class="si">$</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="s">"</span><span class="p">),</span><span class="w"> </span><span class="n">str</span><span class="p">)),</span><span class="w"> </span><span class="c"># prefix*</span>
+<span class="w">    </span><span class="sa">r</span><span class="sr">"</span><span class="err">\</span><span class="sr">w+"</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">w</span><span class="o">-&gt;</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="n">occursin</span><span class="p">(</span><span class="kt">Regex</span><span class="p">(</span><span class="s">"</span><span class="se">\\</span><span class="s">b</span><span class="si">$</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="n">w</span><span class="p">))</span><span class="se">\\</span><span class="s">b"</span><span class="p">),</span><span class="w"> </span><span class="n">str</span><span class="p">)),</span><span class="w"> </span><span class="c"># word</span>
+<span class="w">    </span><span class="sa">r</span><span class="sr">"</span><span class="err">\</span><span class="sr">("</span><span class="n">p</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Add</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="sa">r</span><span class="sr">"</span><span class="err">\</span><span class="sr">)"</span><span class="n">p</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">x</span><span class="o">-&gt;</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="c"># (a)</span>
+<span class="nd">@rule</span><span class="w"> </span><span class="n">Neg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sa">r</span><span class="sr">"!"</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Word</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">w</span><span class="o">-&gt;:</span><span class="p">(</span><span class="o">!$</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">Word</span><span class="w"> </span><span class="c"># !a</span>
+<span class="nd">@rule</span><span class="w"> </span><span class="n">Mul</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Neg</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="sa">r</span><span class="sr">"[/&amp;]"</span><span class="n">p</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Neg</span><span class="p">)[</span><span class="o">*</span><span class="p">]</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">do_op</span><span class="w"> </span><span class="c"># a&amp;b</span>
+<span class="nd">@rule</span><span class="w"> </span><span class="n">Add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Mul</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="sa">r</span><span class="sr">"[+-|]"</span><span class="n">p</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Mul</span><span class="p">)[</span><span class="o">*</span><span class="p">]</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">do_op</span><span class="w"> </span><span class="c"># a|b</span>
+
+<span class="k">function</span><span class="w"> </span><span class="n">do_op</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="w">    </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">op_v_pairs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span>
+<span class="w">    </span><span class="n">expr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="w"> </span><span class="o">$</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">v2</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">op_v_pairs</span>
+<span class="w">        </span><span class="n">sym_op</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Symbol</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+<span class="w">        </span><span class="n">expr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="w"> </span><span class="o">$</span><span class="p">(</span><span class="n">sym_op</span><span class="p">)(</span><span class="o">$</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span><span class="w"> </span><span class="o">$</span><span class="p">(</span><span class="n">v2</span><span class="p">))</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">expr</span>
+<span class="k">end</span>
+
+<span class="n">pattern1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Julia&amp;lang*&amp;!Roberts"</span>
+<span class="c"># @info parse_whole(Add, pattern1)</span>
+<span class="nd">@generated</span><span class="w"> </span><span class="n">compiled_pattern1</span><span class="p">(</span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parse_whole</span><span class="p">(</span><span class="n">Add</span><span class="p">,</span><span class="w"> </span><span class="n">pattern1</span><span class="p">)</span>
+
+<span class="n">compiled_pattern1</span><span class="p">(</span><span class="s">"Julia Roberts"</span><span class="p">)</span><span class="w"> </span><span class="c"># == false</span>
+<span class="n">compiled_pattern1</span><span class="p">(</span><span class="s">"Julia language"</span><span class="p">)</span><span class="w"> </span><span class="c"># == true</span>
+</code></pre></div>
+
+
+
+<a name="547826992"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Macro%20to%20generate%20DSL%20parser%20code/near/547826992" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Viktor G. <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Macro.20to.20generate.20DSL.20parser.20code.html#547826992">(Oct 29 2025 at 23:07)</a>:</h4>
+<p>Also added macro to skip function definitions:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="nd">@generated</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">check_str_compiled</span><span class="p">(</span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="o">::</span><span class="kt">Val</span><span class="p">{</span><span class="kt">pattern</span><span class="p">})</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="kt">pattern</span>
+<span class="w">    </span><span class="n">parse_whole</span><span class="p">(</span><span class="n">Add</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="p">(</span><span class="n">pattern</span><span class="p">))</span>
+<span class="k">end</span>
+
+<span class="k">macro</span><span class="w"> </span><span class="n">check_str</span><span class="p">(</span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="n">pattern</span><span class="p">)</span>
+<span class="w">    </span><span class="o">:</span><span class="p">(</span><span class="n">check_str_compiled</span><span class="p">(</span><span class="o">$</span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="kt">Val</span><span class="p">(</span><span class="kt">Symbol</span><span class="p">(</span><span class="o">$</span><span class="n">pattern</span><span class="p">))))</span>
+<span class="k">end</span>
+
+<span class="nd">@check_str</span><span class="p">(</span><span class="s">"Julia language"</span><span class="p">,</span><span class="w"> </span><span class="s">"Julia&amp;lang*&amp;!Roberts"</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span>
+<span class="nd">@check_str</span><span class="p">(</span><span class="s">"Julia Roberts"</span><span class="p">,</span><span class="w"> </span><span class="s">"Julia&amp;lang*&amp;!Roberts"</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span>
+</code></pre></div>
+
+
+
+<a name="547828197"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Macro%20to%20generate%20DSL%20parser%20code/near/547828197" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Macro.20to.20generate.20DSL.20parser.20code.html#547828197">(Oct 29 2025 at 23:19)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="365725">Viktor G.</span> has marked this topic as resolved.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

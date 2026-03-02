@@ -1,0 +1,85 @@
+<html>
+<head><meta charset="utf-8"><title>How to do new releases with NEWS/CHANGELOG files? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20do.20new.20releases.20with.20NEWS.2FCHANGELOG.20files.3F.html">How to do new releases with NEWS/CHANGELOG files?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="537164114"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20do%20new%20releases%20with%20NEWS/CHANGELOG%20files%3F/near/537164114" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Marcin Koculak <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20do.20new.20releases.20with.20NEWS.2FCHANGELOG.20files.3F.html#537164114">(Sep 01 2025 at 19:43)</a>:</h4>
+<p>So I have no experience with publishing packages, I managed to register my first one half a year ago, now I would want to release a new version along with meaningful release notes and a NEWS.md or CHANGELOG.md file to keep track of these over time.</p>
+<p>For now I get that new releases work like registration (so tagging tagbot in the last commit for the release) and I got that I can write the release notes in the same commit, but how to combine it with a markdown file inside a repo? <br>
+Is there a general preference whether it should be NEWS or CHANGELOG in julialand?<br>
+And on top of that, is there a way to then include this in the documenter docs?<br>
+Are there automations available to sync all of this?</p>
+
+
+
+<a name="537164415"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20do%20new%20releases%20with%20NEWS/CHANGELOG%20files%3F/near/537164415" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Joshua Lampert <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20do.20new.20releases.20with.20NEWS.2FCHANGELOG.20files.3F.html#537164415">(Sep 01 2025 at 19:46)</a>:</h4>
+<p>Regarding how to include the changelog automatically in the docs, there is <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/Changelog">Changelog.jl</a>.</p>
+
+
+
+<a name="537164559"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20do%20new%20releases%20with%20NEWS/CHANGELOG%20files%3F/near/537164559" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Joshua Lampert <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20do.20new.20releases.20with.20NEWS.2FCHANGELOG.20files.3F.html#537164559">(Sep 01 2025 at 19:47)</a>:</h4>
+<p>Whether to call the file NEWS.md or CHANGELOG.md, I don't know if there is a preferred way, but I see both.</p>
+
+
+
+<a name="537164903"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20do%20new%20releases%20with%20NEWS/CHANGELOG%20files%3F/near/537164903" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Marcin Koculak <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20do.20new.20releases.20with.20NEWS.2FCHANGELOG.20files.3F.html#537164903">(Sep 01 2025 at 19:51)</a>:</h4>
+<p>Yes, I have seen the package, but was not sure how common is its usage.<br>
+I was trying to figure out was is the typical strategy for julia packages, but from repos alone one can't figure it out, right?</p>
+<p>I was kinda expecting it all somehow happens behind the scenes with github actions.</p>
+<p>I am also going through this <a href="https://discourse.julialang.org/t/new-automerge-requirement-release-notes-required-for-breaking-package-releases/123955/32">discourse thread</a> but it mostly points to Registrator readme which does not have a lot of answers.</p>
+
+
+
+<a name="537167502"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20do%20new%20releases%20with%20NEWS/CHANGELOG%20files%3F/near/537167502" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sascha Mann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20do.20new.20releases.20with.20NEWS.2FCHANGELOG.20files.3F.html#537167502">(Sep 01 2025 at 20:18)</a>:</h4>
+<p>GitHub has some built-in features for automatically generating release notes based on repo activity which you could use to generate the markdown and there's a popular github action for it, too: <a href="https://github.com/marketplace/actions/release-drafter">https://github.com/marketplace/actions/release-drafter</a></p>
+<p>I'm not sure if there's an option to write it to a file but it wouldn't be too hard to add a workflow that does this</p>
+
+
+
+<a name="537167564"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20do%20new%20releases%20with%20NEWS/CHANGELOG%20files%3F/near/537167564" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sascha Mann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20do.20new.20releases.20with.20NEWS.2FCHANGELOG.20files.3F.html#537167564">(Sep 01 2025 at 20:18)</a>:</h4>
+<p>That said, I personally feel like there's a benefit to having 'handcrafted' changelogs as auto-generated changelogs tend to have a lot of noise that's probably not overly relevant to most users</p>
+
+
+
+<a name="537273637"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20do%20new%20releases%20with%20NEWS/CHANGELOG%20files%3F/near/537273637" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Marcin Koculak <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20do.20new.20releases.20with.20NEWS.2FCHANGELOG.20files.3F.html#537273637">(Sep 02 2025 at 12:21)</a>:</h4>
+<p>True, I guess a list of merged pull requests and closed issues is better than nothing, but having just that is terrible. Ideally, I would just want to handcraft one file that gets distributed to docs and release notes.</p>
+<p>Actually reading (rather than skimming) the readme for <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/Changelog">Changelog.jl</a> allowed me to realise it can create the docs page (and found that <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/IJulia">IJulia.jl</a> is an example repo that uses it). So that's great.</p>
+<p>The other piece was actually <a href="https://discourse.julialang.org/t/make-breaking-change-releases-easier-to-handle-add-release-notes-to-tags-via-juliaregistrator/103241">proposed and prototyped</a> two years ago. Sadly not finished. Temporary solution is to just manually copy it to the registrator commit, so all three places have the same info.<br>
+Maybe after some time I'll have the time and skill to help finish that draft.</p>
+
+
+
+<a name="537591046"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20do%20new%20releases%20with%20NEWS/CHANGELOG%20files%3F/near/537591046" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Peters <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20do.20new.20releases.20with.20NEWS.2FCHANGELOG.20files.3F.html#537591046">(Sep 04 2025 at 05:09)</a>:</h4>
+<p>I have both a <code>NEWS.md</code> and <code>HISTORY.md</code>. All updates for the latest release go into news. As soon as that version is released, the news becomes history. When releasing with JuliaRegistrator, I point a link to that tag's news.</p>
+
+
+
+<a name="537913341"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20do%20new%20releases%20with%20NEWS/CHANGELOG%20files%3F/near/537913341" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20do.20new.20releases.20with.20NEWS.2FCHANGELOG.20files.3F.html#537913341">(Sep 05 2025 at 17:11)</a>:</h4>
+<p><a href="https://github.com/googleapis/release-please/issues/2152">https://github.com/googleapis/release-please/issues/2152</a></p>
+<p>A linked PR from two months ago is supposed to add the feature. No conflicts yet.</p>
+
+
+
+<a name="537913539"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20do%20new%20releases%20with%20NEWS/CHANGELOG%20files%3F/near/537913539" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20do.20new.20releases.20with.20NEWS.2FCHANGELOG.20files.3F.html#537913539">(Sep 05 2025 at 17:12)</a>:</h4>
+<p><a href="https://discourse.julialang.org/t/release-please-a-tool-for-multi-package-multi-language-releases/116450">https://discourse.julialang.org/t/release-please-a-tool-for-multi-package-multi-language-releases/116450</a></p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

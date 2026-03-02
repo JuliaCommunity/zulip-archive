@@ -1,0 +1,327 @@
+<html>
+<head><meta charset="utf-8"><title>map pattern and avoiding closures · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html">map pattern and avoiding closures</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="525441431"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525441431" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Alec <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525441431">(Jun 24 2025 at 04:50)</a>:</h4>
+<p>There's a particular pattern I use frequently, but I've realized that it creates some type instability (due to a closure, IIUC). That pattern is to declare some helper variables, and then <code>map</code> over a range/collection and return a vector of a custom struct. </p>
+<p>Here's a MWE:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">struct</span> <span class="kt">D</span><span class="p">{</span><span class="kt">A</span><span class="p">,</span><span class="kt">B</span><span class="p">}</span>
+<span class="w">    </span><span class="n">a</span><span class="o">::</span><span class="kt">A</span>
+<span class="w">    </span><span class="n">b</span><span class="o">::</span><span class="kt">B</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="w">    </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.</span>
+
+<span class="w">    </span><span class="n">map</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">i</span>
+<span class="w">        </span><span class="n">x</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">        </span><span class="n">D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div>
+<p>I could do something like the following:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">foo2</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="w">    </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.</span>
+
+<span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Vector</span><span class="p">{</span><span class="kt">D</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="kt">Int64</span><span class="p">}}(</span><span class="nb">undef</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+<span class="w">        </span><span class="n">x</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">        </span><span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="n">output</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>But:</p>
+<ol>
+<li>The <code>map</code> approach is a lot cleaner.</li>
+<li>In my real examples, <code>D</code> can be a pretty complex parametric type and pre-allocating the right concrete output type can be difficult manage.</li>
+</ol>
+<p><strong>Are there any other patterns or ways to avoid the type instability that don't require a lot of forethought about pre-allocating the right output container?</strong></p>
+<p>(My MWE is a simplified version of the <code>(d::DeferredAnnuity)(curve)</code> function from my new <a href="https://juliaactuary.org/posts/autodiff_alm/#liability-modeling">blogpost here</a>.)</p>
+
+
+
+<a name="525446712"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525446712" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525446712">(Jun 24 2025 at 06:06)</a>:</h4>
+<p>Taking your question at face value, the reason for the type instability is that <code>x</code> is defined in one function but mutated in another (in the closure). The compiler then is not able to infer the type of <code>x</code>. Some ways to fix that:</p>
+<ul>
+<li>
+<p>declare the type of <code>x</code>, like <code>x::Float64 = 0.</code></p>
+</li>
+<li>
+<p>make <code>x</code> something like a <code>Ref{Float64}</code>, or <code>Box{Float64}</code> (from <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/ZeroDimensionalArrays">ZeroDimensionalArrays.jl</a>)</p>
+</li>
+</ul>
+
+
+
+<a name="525446783"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525446783" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525446783">(Jun 24 2025 at 06:06)</a>:</h4>
+<p>However I think there may be other problems with your code.</p>
+
+
+
+<a name="525464518"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525464518" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525464518">(Jun 24 2025 at 08:17)</a>:</h4>
+<p>The <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/Transducers">Transducers.jl</a> way would be to write</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">Transducers</span>
+<span class="n">foo</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="w"> </span><span class="o">|&gt;</span>
+<span class="w">    </span><span class="n">Scan</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">nothing</span><span class="p">))</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">),</span><span class="w"> </span><span class="n">i</span>
+<span class="w">        </span><span class="n">x′</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">        </span><span class="n">x′</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="p">(</span><span class="n">x′</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">Map</span><span class="p">(</span><span class="n">last</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">collect</span>
+</code></pre></div>
+
+
+
+<a name="525465821"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525465821" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525465821">(Jun 24 2025 at 08:25)</a>:</h4>
+<p>Or if we're allowed to use the fact that <code>x</code> is stored in the previous iteration's <code>.a</code> field, you could write it with <code>Base.accumulate</code>:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">foo</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">accumulate</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">init</span><span class="o">=</span><span class="n">D</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="p">(;</span><span class="w"> </span><span class="n">a</span><span class="p">,),</span><span class="w"> </span><span class="n">i</span>
+<span class="w">    </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">    </span><span class="n">D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>I only brought in <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/Transducers">Transducers.jl</a> for the composition of <code>Map</code> with <code>Scan</code>. I guess you could also do it with <code>Iterators.accumulate</code> / <code>Iterators.map</code>.</p>
+
+
+
+<a name="525498944"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525498944" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Michael Abbott <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525498944">(Jun 24 2025 at 11:44)</a>:</h4>
+<p>Whenever I write something clever like this with accumulate, I'm proud of myself, later horrified when I have to read it...</p>
+<p><code>Ref</code> etc got mentioned, but someone ought to say that technically <code>map</code> claims not to guarantee order. </p>
+<p>Another possible pattern is just to <code>push!</code> repeatedly:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">foo_ref</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="w">           </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Ref</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+<span class="w">           </span><span class="n">map</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">i</span>
+<span class="w">               </span><span class="n">x</span><span class="p">[]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">               </span><span class="n">D</span><span class="p">(</span><span class="n">x</span><span class="p">[],</span><span class="n">i</span><span class="p">)</span>
+<span class="w">           </span><span class="k">end</span>
+
+<span class="w">       </span><span class="k">end</span>
+<span class="n">foo_ref</span><span class="w"> </span><span class="p">(</span><span class="n">generic</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">method</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">foo_1</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="w">           </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">           </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">           </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sizehint!</span><span class="p">([</span><span class="n">D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">i</span><span class="p">)],</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w">  </span><span class="c"># sizehint! optional</span>
+
+<span class="w">           </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="n">n</span>
+<span class="w">               </span><span class="n">x</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">               </span><span class="n">push!</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span>
+<span class="w">           </span><span class="k">end</span>
+
+<span class="w">           </span><span class="n">out</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="n">foo_1</span><span class="w"> </span><span class="p">(</span><span class="n">generic</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">method</span><span class="p">)</span>
+</code></pre></div>
+<p>Of course it's a bit awful to have to write the loop body twice. Sometimes I wish we had a macro <code>@pushalloc for i in 1:n</code> which would expand to something like this -- separate the first iteration, find every <code>push!</code> and allocate space using the first time's types. But I never wrote one.</p>
+
+
+
+<a name="525509467"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525509467" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525509467">(Jun 24 2025 at 12:42)</a>:</h4>
+<blockquote>
+<p>Of course it's a bit awful to have to write the loop body twice. Sometimes I wish we had a macro <code>@pushalloc for i in 1:n</code> which would expand to something like this -- separate the first iteration, find every <code>push!</code> and allocate space using the first time's types. But I never wrote one.</p>
+</blockquote>
+<p>What I use for stuff like this is an <code>@unroll</code> macro:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">macro</span><span class="w"> </span><span class="n">unroll</span><span class="p">(</span><span class="n">N</span><span class="o">::</span><span class="kt">Int</span><span class="p">,</span><span class="w"> </span><span class="n">loop</span><span class="p">)</span>
+<span class="w">    </span><span class="n">Base</span><span class="o">.</span><span class="n">isexpr</span><span class="p">(</span><span class="n">loop</span><span class="p">,</span><span class="w"> </span><span class="ss">:for</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="s">"only works on for loops"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">Base</span><span class="o">.</span><span class="n">isexpr</span><span class="p">(</span><span class="n">loop</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="o">=</span><span class="p">))</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="s">"This loop pattern isn't supported"</span><span class="p">)</span>
+<span class="w">    </span><span class="n">val</span><span class="p">,</span><span class="w"> </span><span class="n">itr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">esc</span><span class="o">.</span><span class="p">(</span><span class="n">loop</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+<span class="w">    </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">esc</span><span class="p">(</span><span class="n">loop</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="w">    </span><span class="nd">@gensym</span><span class="w"> </span><span class="n">loopend</span>
+<span class="w">    </span><span class="n">label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="nd">@label</span><span class="w"> </span><span class="o">$</span><span class="n">loopend</span><span class="p">)</span>
+<span class="w">    </span><span class="n">goto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="nd">@goto</span><span class="w"> </span><span class="o">$</span><span class="n">loopend</span><span class="p">)</span>
+<span class="w">    </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Expr</span><span class="p">(</span><span class="ss">:block</span><span class="p">,</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="n">itr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">$</span><span class="n">itr</span><span class="p">),</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="n">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iterate</span><span class="p">(</span><span class="n">itr</span><span class="p">)))</span>
+<span class="w">    </span><span class="n">unrolled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">_</span>
+<span class="w">        </span><span class="k">quote</span>
+<span class="w">            </span><span class="n">isnothing</span><span class="p">(</span><span class="n">next</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nd">@goto</span><span class="w"> </span><span class="n">loopend</span>
+<span class="w">            </span><span class="o">$</span><span class="n">val</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">next</span>
+<span class="w">            </span><span class="o">$</span><span class="n">body</span>
+<span class="w">            </span><span class="n">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iterate</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="n">append!</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="n">unrolled</span><span class="p">)</span>
+<span class="w">    </span><span class="n">remainder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">quote</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="o">!</span><span class="n">isnothing</span><span class="p">(</span><span class="n">next</span><span class="p">)</span>
+<span class="w">            </span><span class="o">$</span><span class="n">val</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">next</span>
+<span class="w">            </span><span class="o">$</span><span class="n">body</span>
+<span class="w">            </span><span class="n">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iterate</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">)</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="nd">@label</span><span class="w"> </span><span class="n">loopend</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="n">push!</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="n">remainder</span><span class="p">)</span>
+<span class="w">    </span><span class="n">out</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="525509693"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525509693" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525509693">(Jun 24 2025 at 12:43)</a>:</h4>
+<p>Combined with BangBang / MicroCollections, you can avoid type instability and still be generic:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">BangBang</span><span class="p">,</span><span class="w"> </span><span class="n">MicroCollections</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">foo_bang</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="w">           </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">UndefVector</span><span class="p">{</span><span class="kt">Union</span><span class="p">{}}(</span><span class="n">n</span><span class="p">)</span>
+<span class="w">           </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">           </span><span class="nd">@unroll</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">∈</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+<span class="w">               </span><span class="n">x</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">               </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">setindex!!</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="n">i</span><span class="p">)</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">           </span><span class="n">out</span>
+<span class="w">       </span><span class="k">end</span><span class="p">;</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">foo_bang</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">  11.934 ns (2 allocations: 128 bytes)</span>
+<span class="go">4-element Vector{D{Float64, Int64}}:</span>
+<span class="go"> D{Float64, Int64}(2.718281828459045, 1)</span>
+<span class="go"> D{Float64, Int64}(10.107337927389695, 2)</span>
+<span class="go"> D{Float64, Int64}(30.19287485057736, 3)</span>
+<span class="go"> D{Float64, Int64}(84.7910248837216, 4)</span>
+</code></pre></div>
+
+
+
+<a name="525510352"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525510352" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Michael Abbott <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525510352">(Jun 24 2025 at 12:47)</a>:</h4>
+<p>Had a go at writing the dumb one I imagined:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">foo_mac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="w">           </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">           </span><span class="nd">@pusher</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+<span class="w">               </span><span class="n">x</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">               </span><span class="n">push!</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="n">foo_mac</span><span class="w"> </span><span class="p">(</span><span class="n">generic</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">method</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">foo_mac</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="mi">3</span><span class="o">-</span><span class="n">element</span><span class="w"> </span><span class="kt">Vector</span><span class="p">{</span><span class="kt">D</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="kt">Int64</span><span class="p">}}</span><span class="o">:</span>
+<span class="w"> </span><span class="kt">D</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="kt">Int64</span><span class="p">}(</span><span class="mf">2.718281828459045</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w"> </span><span class="kt">D</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="kt">Int64</span><span class="p">}(</span><span class="mf">10.107337927389695</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w"> </span><span class="kt">D</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="kt">Int64</span><span class="p">}(</span><span class="mf">30.19287485057736</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+<p>defined:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="s">"""</span>
+<span class="s">    @pusher out = for i in ...</span>
+
+<span class="s">Looks for `push!(out, x)` in the body of a given `for` loop,</span>
+<span class="s">and replaces the first iteration with `out = [x]` to create the vector.</span>
+<span class="s">Not very smart, may be fooled by nested loops, and by `push!(out, x, y)`.</span>
+<span class="s">"""</span>
+<span class="k">macro</span><span class="w"> </span><span class="n">pusher</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+<span class="w">  </span><span class="n">Meta</span><span class="o">.</span><span class="n">isexpr</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="o">=</span><span class="p">))</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="s">"expects @pusher out = for i in ..."</span><span class="p">)</span>
+<span class="w">  </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">loop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ex</span><span class="o">.</span><span class="n">args</span>
+<span class="w">  </span><span class="n">out</span><span class="w"> </span><span class="k">isa</span><span class="w"> </span><span class="kt">Symbol</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="s">"expects @pusher out = for i in ..."</span><span class="p">)</span>
+<span class="w">  </span><span class="n">Meta</span><span class="o">.</span><span class="n">isexpr</span><span class="p">(</span><span class="n">loop</span><span class="p">,</span><span class="w"> </span><span class="ss">:for</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="s">"expects @pusher out = for i in ..."</span><span class="p">)</span>
+<span class="w">  </span><span class="n">top</span><span class="p">,</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">loop</span><span class="o">.</span><span class="n">args</span>
+<span class="w">  </span><span class="n">Meta</span><span class="o">.</span><span class="n">isexpr</span><span class="p">(</span><span class="n">top</span><span class="p">,</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="o">=</span><span class="p">))</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="s">"expects @pusher out = for i in ..."</span><span class="p">)</span>
+<span class="w">  </span><span class="n">index</span><span class="p">,</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">top</span><span class="o">.</span><span class="n">args</span>
+<span class="w">  </span><span class="nd">@gensym</span><span class="w"> </span><span class="n">rest</span>
+<span class="w">  </span><span class="n">firstbody</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deepcopy</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+<span class="w">  </span><span class="n">_firstbody!</span><span class="p">(</span><span class="n">firstbody</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">)</span>
+<span class="w">  </span><span class="k">quote</span>
+<span class="w">    </span><span class="o">$</span><span class="n">index</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">rest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">$</span><span class="n">Iterators</span><span class="o">.</span><span class="n">peel</span><span class="p">(</span><span class="o">$</span><span class="n">iter</span><span class="p">)</span>
+<span class="w">    </span><span class="o">$</span><span class="n">firstbody</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="o">$</span><span class="n">index</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">$</span><span class="n">rest</span>
+<span class="w">      </span><span class="o">$</span><span class="n">body</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="o">$</span><span class="n">out</span>
+<span class="w">  </span><span class="k">end</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">esc</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="n">_firstbody!</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="o">::</span><span class="kt">Symbol</span><span class="p">)</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="n">Meta</span><span class="o">.</span><span class="n">isexpr</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span><span class="w"> </span><span class="ss">:call</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">ex</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="ss">:push!</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">ex</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">out</span>
+<span class="w">    </span><span class="n">rhs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ex</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="w">    </span><span class="n">ex</span><span class="o">.</span><span class="n">head</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="o">=</span><span class="p">)</span><span class="w">  </span><span class="c"># apparently you can mutate this</span>
+<span class="w">    </span><span class="n">empty!</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+<span class="w">    </span><span class="n">push!</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">Expr</span><span class="p">(</span><span class="ss">:vect</span><span class="p">,</span><span class="w"> </span><span class="n">rhs</span><span class="p">))</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">ex</span><span class="w"> </span><span class="k">isa</span><span class="w"> </span><span class="kt">Expr</span>
+<span class="w">    </span><span class="n">foreach</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">_firstbody!</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="n">ex</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="525512055"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525512055" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Michael Abbott <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525512055">(Jun 24 2025 at 12:56)</a>:</h4>
+<p>Yours is more clever about allocating exactly the right amount of space, thanks to <code>UndefVector{Union{}}(n)</code> I guess:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">foo_bang</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span><span class="w">  </span><span class="c"># same as @btime foo2(100); with Vector{}(undef, ...)</span>
+<span class="w">  </span><span class="mf">415.415</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="w"> </span><span class="n">allocations</span><span class="o">:</span><span class="w"> </span><span class="mf">1.62</span><span class="w"> </span><span class="n">KiB</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">foo_mac</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span><span class="w">  </span><span class="c"># repeated simple push!</span>
+<span class="w">  </span><span class="mf">636.364</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="p">(</span><span class="mi">6</span><span class="w"> </span><span class="n">allocations</span><span class="o">:</span><span class="w"> </span><span class="mf">3.98</span><span class="w"> </span><span class="n">KiB</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">foo_1</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span><span class="w">  </span><span class="c"># sizehint! then push!... could be added to @pusher macro</span>
+<span class="w">  </span><span class="mf">487.031</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="w"> </span><span class="n">allocations</span><span class="o">:</span><span class="w"> </span><span class="mf">1.67</span><span class="w"> </span><span class="n">KiB</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span><span class="w">  </span><span class="c"># original map with Core.Box</span>
+<span class="w">  </span><span class="mf">19.417</span><span class="w"> </span><span class="n">μs</span><span class="w"> </span><span class="p">(</span><span class="mi">307</span><span class="w"> </span><span class="n">allocations</span><span class="o">:</span><span class="w"> </span><span class="mf">8.00</span><span class="w"> </span><span class="n">KiB</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<a name="525512880"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525512880" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Michael Abbott <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525512880">(Jun 24 2025 at 12:59)</a>:</h4>
+<p>I get the same performance if I delete the macro in <code>foo_bang(n)</code>, i.e. just call <code>out = setindex!!(out, D(x, i), i)</code> in the plain loop without unrolling.</p>
+
+
+
+<a name="525514321"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525514321" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525514321">(Jun 24 2025 at 13:06)</a>:</h4>
+<p>that probably works out due to small union optimizations and branch prediction</p>
+
+
+
+<a name="525514465"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525514465" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525514465">(Jun 24 2025 at 13:07)</a>:</h4>
+<p>the reason for the unroll is to make sure the loop body is able to know the concrete type of <code>out</code></p>
+
+
+
+<a name="525515257"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525515257" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Michael Abbott <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525515257">(Jun 24 2025 at 13:11)</a>:</h4>
+<p>I guess that's right. Both versions infer to return <code>out::Union{Vector{D{Float64, Int64}}, UndefVector{...}}</code> but inside the loop the unrolled one should be more certain.</p>
+
+
+
+<a name="525515282"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525515282" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Michael Abbott <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525515282">(Jun 24 2025 at 13:11)</a>:</h4>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="kt">Any</span><span class="p">[]</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">foo_bang</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="mi">0</span><span class="o">-</span><span class="n">element</span><span class="w"> </span><span class="kt">UndefVector</span><span class="p">{</span><span class="kt">Union</span><span class="p">{}}(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">foo_mac</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ERROR</span><span class="o">:</span><span class="w"> </span><span class="kt">MethodError</span><span class="o">:</span><span class="w"> </span><span class="n">no</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="n">matching</span><span class="w"> </span><span class="n">iterate</span><span class="p">(</span><span class="o">::</span><span class="kt">Nothing</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<a name="525515537"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525515537" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525515537">(Jun 24 2025 at 13:12)</a>:</h4>
+<p>yeah. Might want a length check to eliminate the 0-arg path and make the final return concrete.</p>
+
+
+
+<a name="525823340"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/map%20pattern%20and%20avoiding%20closures/near/525823340" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Alec <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/map.20pattern.20and.20avoiding.20closures.html#525823340">(Jun 26 2025 at 04:43)</a>:</h4>
+<p>Y'all are amazingly helpful as always! I <a href="https://juliaactuary.org/posts/autodiff_alm/#appendix-even-more-performance-advanced">updated the blog post</a> with the more advanced unrolling version which was 3x faster on a large AD calculation after making the function type stable.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

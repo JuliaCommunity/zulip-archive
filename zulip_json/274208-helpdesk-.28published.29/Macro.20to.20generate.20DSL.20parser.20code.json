@@ -1,0 +1,32 @@
+[
+    {
+        "content": "<p>I want to write a bunch of rules that check strings of <code>;</code>-separated words like <code>\"word1;word2;word3;word4\"</code>, using logical expressions with braces like: <code>\"word1&amp;word2|(!prefix3*&amp;!word4)\"</code>. Writing this out in regex generates very long and buggy expressions. However, code for each expression looks simple, there is just too many of them, so I want to shorten it. Optimally, just write some macro and apply it to a bunch of string rules to generate functions. What is a common way to do it?</p>",
+        "id": 547401382,
+        "sender_full_name": "Viktor G.",
+        "timestamp": 1761619173
+    },
+    {
+        "content": "<p>Have you considered a parser expression grammar like <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/PEG\">PEG.jl</a> ?</p>",
+        "id": 547402668,
+        "sender_full_name": "Luke Morris",
+        "timestamp": 1761620356
+    },
+    {
+        "content": "<p>I just don't get their examples and how to define functions based on their AST.</p>",
+        "id": 547406517,
+        "sender_full_name": "Viktor G.",
+        "timestamp": 1761624040
+    },
+    {
+        "content": "<p>So that is what I basically need - generating Julia function from PEG parser. But for now I don't understand, what additional rules are needed to parse prefixes and braces:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">PEG</span>\n\n<span class=\"nd\">@rule</span><span class=\"w\"> </span><span class=\"n\">word</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"sa\">r</span><span class=\"sr\">\"</span><span class=\"err\">\\</span><span class=\"sr\">w+\"</span><span class=\"w\"> </span><span class=\"o\">|&gt;</span><span class=\"w\"> </span><span class=\"n\">w</span><span class=\"o\">-&gt;</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"n\">contains</span><span class=\"p\">(</span><span class=\"n\">str</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"n\">w</span><span class=\"p\">)))</span>\n<span class=\"nd\">@rule</span><span class=\"w\"> </span><span class=\"n\">formula</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">word</span><span class=\"w\"> </span><span class=\"o\">&amp;</span><span class=\"w\"> </span><span class=\"n\">operation</span><span class=\"w\"> </span><span class=\"o\">&amp;</span><span class=\"w\"> </span><span class=\"n\">word</span><span class=\"w\"> </span><span class=\"o\">|&gt;</span><span class=\"w\"> </span><span class=\"n\">calculate</span>\n<span class=\"nd\">@rule</span><span class=\"w\"> </span><span class=\"n\">operation</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"s\">\"|\"</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"s\">\"&amp;\"</span>\n<span class=\"c\"># rule for \"prefix*\" ?</span>\n<span class=\"c\"># rule for any braces ?</span>\n\n<span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">calculate</span><span class=\"p\">(</span><span class=\"n\">expression</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">left</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">op</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">right</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">expression</span>\n<span class=\"w\">    </span><span class=\"n\">sym_op</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Symbol</span><span class=\"p\">(</span><span class=\"n\">op</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"n\">sym_op</span><span class=\"p\">)(</span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"n\">left</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"n\">right</span><span class=\"p\">)))</span>\n<span class=\"k\">end</span>\n\n<span class=\"n\">pattern1</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"s\">\"hello|world\"</span>\n<span class=\"nd\">@generated</span><span class=\"w\"> </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">compiled_pattern1</span><span class=\"p\">(</span><span class=\"n\">str</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">parse_whole</span><span class=\"p\">(</span><span class=\"n\">formula</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">pattern1</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n\n<span class=\"n\">compiled_pattern1</span><span class=\"p\">(</span><span class=\"s\">\"hello there\"</span><span class=\"p\">)</span>\n\n<span class=\"c\"># What rules should I add for expressions with braces and prefixes?</span>\n<span class=\"c\"># \"(jul*|rust)&amp;!(cpp)&amp;(hello|hi)\"</span>\n</code></pre></div>",
+        "id": 547618405,
+        "sender_full_name": "Viktor G.",
+        "timestamp": 1761704808
+    },
+    {
+        "content": "<p>Hmm, there might be some examples in <a href=\"https://github.com/AlgebraicJulia/DiagrammaticEquations.jl/blob/main/src/parser.jl\">here</a> that could be useful to you.</p>",
+        "id": 547625784,
+        "sender_full_name": "Luke Morris",
+        "timestamp": 1761711062
+    }
+]

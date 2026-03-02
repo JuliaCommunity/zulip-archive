@@ -1,0 +1,66 @@
+<html>
+<head><meta charset="utf-8"><title>Running external commands in Documenter.jl `@example` block · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Running.20external.20commands.20in.20Documenter.2Ejl.20.60.40example.60.20block.html">Running external commands in Documenter.jl `@example` block</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="568090355"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Running%20external%20commands%20in%20Documenter.jl%20%60%40example%60%20block/near/568090355" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Hugo Levy-Falk <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Running.20external.20commands.20in.20Documenter.2Ejl.20.60.40example.60.20block.html#568090355">(Jan 14 2026 at 22:18)</a>:</h4>
+<p>Hello, I am trying to run the following <code>@example</code> block in a Documenter page:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">pinocchio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PipeBuffer</span><span class="p">()</span>
+<span class="n">listener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">run</span><span class="p">(</span><span class="sb">`go-sendxmpp -n -p plopiplop -u pinocchio@localhost -l`</span><span class="p">,</span><span class="w"> </span><span class="nb">devnull</span><span class="p">,</span><span class="w"> </span><span class="n">pinocchio</span><span class="p">,</span><span class="w"> </span><span class="nb">stderr</span><span class="p">,</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+</code></pre></div>
+<p>But the Documenter process hangs when generating the example (the last Documenter Debug output is this block). Everything runs smoothly when I just execute the code manually. Are there any limitations on running external programs asynchronously in Documenter?</p>
+<p>Thanks!</p>
+
+
+
+<a name="568114973"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Running%20external%20commands%20in%20Documenter.jl%20%60%40example%60%20block/near/568114973" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Running.20external.20commands.20in.20Documenter.2Ejl.20.60.40example.60.20block.html#568114973">(Jan 15 2026 at 02:25)</a>:</h4>
+<p>Does the command depend on where you run it? I seem to remember Documenter changes the working directory under your feet</p>
+
+
+
+<a name="568145102"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Running%20external%20commands%20in%20Documenter.jl%20%60%40example%60%20block/near/568145102" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Hugo Levy-Falk <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Running.20external.20commands.20in.20Documenter.2Ejl.20.60.40example.60.20block.html#568145102">(Jan 15 2026 at 08:17)</a>:</h4>
+<p>Hi, unfortunately, no the command does not depend on the current directory</p>
+
+
+
+<a name="568676136"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Running%20external%20commands%20in%20Documenter.jl%20%60%40example%60%20block/near/568676136" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Hugo Levy-Falk <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Running.20external.20commands.20in.20Documenter.2Ejl.20.60.40example.60.20block.html#568676136">(Jan 18 2026 at 16:17)</a>:</h4>
+<p>Ok, I finally have something working using <code>pipeline</code>: <a href="https://discourse.julialang.org/t/documenter-jl-running-external-commands-asynchronously-in-example-blocks/135085/2?u=klafyvel">https://discourse.julialang.org/t/documenter-jl-running-external-commands-asynchronously-in-example-blocks/135085/2?u=klafyvel</a> (not entirely sure why this works)</p>
+
+
+
+<a name="568696664"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Running%20external%20commands%20in%20Documenter.jl%20%60%40example%60%20block/near/568696664" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Running.20external.20commands.20in.20Documenter.2Ejl.20.60.40example.60.20block.html#568696664">(Jan 18 2026 at 21:53)</a>:</h4>
+<p>Ah, maybe Documenter tries to capture the output?</p>
+
+
+
+<a name="568697100"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Running%20external%20commands%20in%20Documenter.jl%20%60%40example%60%20block/near/568697100" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Hugo Levy-Falk <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Running.20external.20commands.20in.20Documenter.2Ejl.20.60.40example.60.20block.html#568697100">(Jan 18 2026 at 22:01)</a>:</h4>
+<p>Yes, I think it is something along this line now that you mention it, probably the <code>stderr</code> in the original <code>run</code>!</p>
+
+
+
+<a name="568697451"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Running%20external%20commands%20in%20Documenter.jl%20%60%40example%60%20block/near/568697451" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Running.20external.20commands.20in.20Documenter.2Ejl.20.60.40example.60.20block.html#568697451">(Jan 18 2026 at 22:08)</a>:</h4>
+<p>Looks like it: <a href="https://github.com/JuliaDocs/Documenter.jl/blob/3b85898481e8f32f3f14a775c3aba22d1c12fde8/src/expander_pipeline.jl#L861">https://github.com/JuliaDocs/Documenter.jl/blob/3b85898481e8f32f3f14a775c3aba22d1c12fde8/src/expander_pipeline.jl#L861</a></p>
+
+
+
+<a name="568697484"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Running%20external%20commands%20in%20Documenter.jl%20%60%40example%60%20block/near/568697484" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Hugo Levy-Falk <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Running.20external.20commands.20in.20Documenter.2Ejl.20.60.40example.60.20block.html#568697484">(Jan 18 2026 at 22:08)</a>:</h4>
+<p>Indeed!</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

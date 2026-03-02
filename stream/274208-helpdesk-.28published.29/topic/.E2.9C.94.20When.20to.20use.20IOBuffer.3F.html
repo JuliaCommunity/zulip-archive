@@ -1,0 +1,123 @@
+<html>
+<head><meta charset="utf-8"><title>✔ When to use IOBuffer? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html">✔ When to use IOBuffer?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="558806901"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558806901" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558806901">(Nov 22 2025 at 11:07)</a>:</h4>
+<p>Reading from <code>io = open(fname)</code> is much slower than reading from <code>IOBuffer(read(io))</code>. I understand that this is because all the bytes are copied to RAM.</p>
+<p>If we can guarantee that all bytes in <code>io</code> fit in RAM, then it is always better to use <code>IOBuffer</code> for speed?</p>
+
+
+
+<a name="558810217"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558810217" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558810217">(Nov 22 2025 at 12:04)</a>:</h4>
+<p>How are you measuring? If you exclude the time it takes to reads the data into RAM for the IOBuffer from your measurement, of course it's faster.  Only the processing time is left after all. However, your overall application likely is not magically fast, because the data still has to be read into RAM.</p>
+
+
+
+<a name="558810264"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558810264" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558810264">(Nov 22 2025 at 12:05)</a>:</h4>
+<p>I am including the time it takes to create the <code>IOBuffer</code> and it is still faster.</p>
+
+
+
+<a name="558812356"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558812356" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558812356">(Nov 22 2025 at 12:41)</a>:</h4>
+<p>Interesting <span aria-label="thinking" class="emoji emoji-1f914" role="img" title="thinking">:thinking:</span> do you have an example?</p>
+
+
+
+<a name="558813096"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558813096" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558813096">(Nov 22 2025 at 12:53)</a>:</h4>
+<p>Can try to produce one with more time later. Currently trying to debug another issue.</p>
+
+
+
+<a name="558818722"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558818722" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558818722">(Nov 22 2025 at 14:30)</a>:</h4>
+<p>The example could be as simple as reading a matrix of size 2500×25000 stored in the IO:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="mi">25000</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="mi">2500</span>
+<span class="w">    </span><span class="n">read</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="kt">Float64</span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="558828608"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558828608" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558828608">(Nov 22 2025 at 17:01)</a>:</h4>
+<p>That is almost certainly because the file object (<code>IOStream</code>) has some overhead, mostly from taking a lock associated with the file. You can match the performance of the <code>IOBuffer</code> by buffering the file object in Julia. That is, you make a small buffer, e.g. a 16 KiB <code>Vector{UInt8}</code>, then read into that</p>
+
+
+
+<a name="558828700"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558828700" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558828700">(Nov 22 2025 at 17:02)</a>:</h4>
+<p>You mean there is a method of <code>read</code> that accepts a small buffer to mutate?</p>
+
+
+
+<a name="558830797"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558830797" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558830797">(Nov 22 2025 at 17:34)</a>:</h4>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">help</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">read!</span>
+<span class="n">search</span><span class="o">:</span><span class="w"> </span><span class="n">read!</span><span class="w"> </span><span class="n">read</span><span class="w"> </span><span class="n">real</span><span class="w"> </span><span class="n">rpad</span><span class="w"> </span><span class="n">readdir</span><span class="w"> </span><span class="n">Threads</span><span class="w"> </span><span class="n">isready</span><span class="w"> </span><span class="n">prepend!</span><span class="w"> </span><span class="n">readeach</span><span class="w"> </span><span class="n">readline</span><span class="w"> </span><span class="n">readlink</span><span class="w"> </span><span class="n">replace!</span>
+
+<span class="w">  </span><span class="n">read!</span><span class="p">(</span><span class="n">stream</span><span class="o">::</span><span class="kt">IO</span><span class="p">,</span><span class="w"> </span><span class="n">array</span><span class="o">::</span><span class="kt">AbstractArray</span><span class="p">)</span>
+<span class="w">  </span><span class="n">read!</span><span class="p">(</span><span class="n">filename</span><span class="o">::</span><span class="kt">AbstractString</span><span class="p">,</span><span class="w"> </span><span class="n">array</span><span class="o">::</span><span class="kt">AbstractArray</span><span class="p">)</span>
+
+<span class="w">  </span><span class="n">Read</span><span class="w"> </span><span class="n">binary</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">an</span><span class="w"> </span><span class="n">I</span><span class="o">/</span><span class="n">O</span><span class="w"> </span><span class="n">stream</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="n">filling</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">array</span><span class="o">.</span>
+</code></pre></div>
+
+
+
+<a name="558831779"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558831779" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558831779">(Nov 22 2025 at 17:49)</a>:</h4>
+<p>For what it's worth, I'm quite unhappy with the API that Base provides, which is why I made the package <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/BufferIO">BufferIO.jl</a> to improve this area of Julia</p>
+
+
+
+<a name="558831812"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558831812" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558831812">(Nov 22 2025 at 17:49)</a>:</h4>
+<p>For a more mature, though less efficient alternative, look at <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/BufferedStreams">BufferedStreams.jl</a></p>
+
+
+
+<a name="558832083"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558832083" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558832083">(Nov 22 2025 at 17:54)</a>:</h4>
+<p>Nice! One more thing to learn when I find some time <span aria-label="slight smile" class="emoji emoji-1f642" role="img" title="slight smile">:slight_smile:</span></p>
+
+
+
+<a name="558837033"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/558837033" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#558837033">(Nov 22 2025 at 19:09)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> has marked this topic as resolved.</p>
+
+
+
+<a name="559142772"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/559142772" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Nathan Zimmerberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#559142772">(Nov 24 2025 at 20:14)</a>:</h4>
+<p>There is also <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/InputBuffers">InputBuffers.jl</a> which I made as an even faster less buggy version of <code>IOBuffer</code>. I also use this with a <code>FileArray</code> type to avoid using <code>IOStream</code> or mmap, which I have had problems with. <a href="https://github.com/JuliaIO/ZipArchives.jl/blob/c48c367b6208c9733ff0e2f3431a6b8d13939126/test/test_file-array.jl#L22">https://github.com/JuliaIO/ZipArchives.jl/blob/c48c367b6208c9733ff0e2f3431a6b8d13939126/test/test_file-array.jl#L22</a></p>
+
+
+
+<a name="559143330"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/559143330" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#559143330">(Nov 24 2025 at 20:18)</a>:</h4>
+<p>Still fighting with IO here, but seeing some progress.</p>
+
+
+
+<a name="559145224"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20When%20to%20use%20IOBuffer%3F/near/559145224" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Nathan Zimmerberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20When.20to.20use.20IOBuffer.3F.html#559145224">(Nov 24 2025 at 20:28)</a>:</h4>
+<p>If you have the memory it will almost always be nicer to just read everything into memory first and do your your processing on a big <code>Vector{UInt8}</code>. Beyond performance doing this greatly simplifies the logic for error handling, because any IO errors can be handled up front, also, unlike <code>IO</code>, the <code>Vector</code> interface is well documented.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

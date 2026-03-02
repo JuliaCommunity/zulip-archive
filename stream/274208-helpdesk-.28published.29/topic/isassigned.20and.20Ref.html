@@ -1,0 +1,217 @@
+<html>
+<head><meta charset="utf-8"><title>isassigned and Ref · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html">isassigned and Ref</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="532264949"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532264949" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Fons van der Plas <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532264949">(Aug 01 2025 at 09:21)</a>:</h4>
+<p>Hey! I'm a bit confused why some <code>Ref</code>s have <code>#undef</code> and others have a "zero" value as default:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">Ref</span><span class="p">{</span><span class="kt">Any</span><span class="p">}()</span>
+<span class="n">Base</span><span class="o">.</span><span class="kt">RefValue</span><span class="p">{</span><span class="kt">Any</span><span class="p">}(</span><span class="c">#undef)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">Ref</span><span class="p">{</span><span class="kt">Float64</span><span class="p">}()</span>
+<span class="n">Base</span><span class="o">.</span><span class="kt">RefValue</span><span class="p">{</span><span class="kt">Float64</span><span class="p">}(</span><span class="mf">0.0</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">Ref</span><span class="p">{</span><span class="kt">Bool</span><span class="p">}()</span>
+<span class="n">Base</span><span class="o">.</span><span class="kt">RefValue</span><span class="p">{</span><span class="kt">Bool</span><span class="p">}(</span><span class="nb">false</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">Ref</span><span class="p">{</span><span class="kt">Char</span><span class="p">}()</span>
+<span class="n">Base</span><span class="o">.</span><span class="kt">RefValue</span><span class="p">{</span><span class="kt">Char</span><span class="p">}(</span><span class="sc">'\0'</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">Ref</span><span class="p">{</span><span class="kt">Vector</span><span class="p">}()</span>
+<span class="n">Base</span><span class="o">.</span><span class="kt">RefValue</span><span class="p">{</span><span class="kt">Vector</span><span class="p">}(</span><span class="c">#undef)</span>
+</code></pre></div>
+<p>Can I get a <code>Ref{Bool}</code> with an undef value?</p>
+
+
+
+<a name="532265760"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532265760" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532265760">(Aug 01 2025 at 09:26)</a>:</h4>
+<p>They are only <code>#undef</code> if the <code>Ref</code> is implemented with a pointer. <code>#undef</code> represents a null pointer.</p>
+
+
+
+<a name="532266246"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532266246" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532266246">(Aug 01 2025 at 09:29)</a>:</h4>
+<p>That's a little unsatisfactory because it's an explanation of the internals. The semantics are:</p>
+<ul>
+<li>A type is a bitstype if it is a primitive type, or is immutable and contains only bitstypes.</li>
+<li>A reference to a bitstype, or unions of bitstypes, is never <code>#undef</code>. Instead, uninitialized refs contain arbitrary data. This can be read safely - it is not undefined behaviour to access it. Reading the same uninitialized data twice will always result in the same value.</li>
+<li>References that are not typed as bitstype (e.g. <code>Ref{T}</code> where T is not a bitstype) are always undef unless set. Accessing it will always throw an exception.</li>
+</ul>
+
+
+
+<a name="532266321"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532266321" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532266321">(Aug 01 2025 at 09:29)</a>:</h4>
+<p>So the answer is no: You can't have a <code>RefValue{Bool}</code> with an undef value.<br>
+Do you need it for something?</p>
+
+
+
+<a name="532267810"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532267810" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Fons van der Plas <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532267810">(Aug 01 2025 at 09:38)</a>:</h4>
+<p>Okay thanks!</p>
+<p>My use case was:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">computed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Ref</span><span class="p">{</span><span class="kt">Any</span><span class="p">}()</span>
+
+<span class="k">function</span><span class="w"> </span><span class="n">expensive</span><span class="p">()</span>
+<span class="w">    </span><span class="n">isassigned</span><span class="p">(</span><span class="n">computed</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">computed</span><span class="p">[]</span>
+<span class="w">    </span><span class="n">computed</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">let</span>
+<span class="w">        </span><span class="c"># something expensive</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="532267898"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532267898" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Fons van der Plas <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532267898">(Aug 01 2025 at 09:39)</a>:</h4>
+<p>and changing <code>Ref{Any}</code> to <code>Ref{Bool}</code> broke that code</p>
+
+
+
+<a name="532272159"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532272159" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532272159">(Aug 01 2025 at 10:04)</a>:</h4>
+<p>Ah. In this case, I would use a <code>Ref{Union{Nothing, Bool}}(nothing)</code></p>
+
+
+
+<a name="532274386"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532274386" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532274386">(Aug 01 2025 at 10:19)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="272650">Jakob Nybo Nissen</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref/near/532266321">said</a>:</p>
+<blockquote>
+<p>So the answer is no: You can't have a <code>RefValue{Bool}</code> with an undef value.<br>
+Do you need it for something?</p>
+</blockquote>
+<p>Are you sure? I'm not aware of there being any special initialization logic for bitstypes, the bitpattern is arbitrary, is it not? Not all bitpatterns are necessarily valid for all bitstypes, so reading this uninitialized memory is very much UB in the general case.</p>
+
+
+
+<a name="532282530"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532282530" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Neven Sajko <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532282530">(Aug 01 2025 at 11:10)</a>:</h4>
+<blockquote>
+<p>reading this uninitialized memory is very much UB in the general case</p>
+</blockquote>
+<p>I think Julia uses the LLVM <a href="https://llvm.org/docs/LangRef.html#freeze-instruction"><code>freeze</code></a> instruction to prevent UB from reading uninitialized memory. Some merged PRs found after a quick search:</p>
+<ul>
+<li>
+<p><a href="https://github.com/JuliaLang/julia/pull/52169">https://github.com/JuliaLang/julia/pull/52169</a></p>
+</li>
+<li>
+<p><a href="https://github.com/JuliaLang/julia/pull/54136">https://github.com/JuliaLang/julia/pull/54136</a></p>
+</li>
+</ul>
+
+
+
+<a name="532283724"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532283724" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532283724">(Aug 01 2025 at 11:17)</a>:</h4>
+<p>Yes, it was made non-UB in Julia 1.11. Of course, it can still invoke undefined behaviour yourself if you create your own type which results in undefined behaviour if it doesn't have specifit bitpatterns. I.e. if you do:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">struct</span> <span class="kt">NeverZero</span>
+<span class="w">    </span><span class="n">x</span><span class="o">::</span><span class="kt">UInt8</span>
+
+<span class="w">    </span><span class="n">NeverZero</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">UInt8</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iszero</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">error</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">new</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">NeverZero</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">iszero</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+<span class="w">        </span><span class="n">call_undefined_behaviour</span><span class="p">()</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">x</span><span class="o">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x01</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">foo</span><span class="p">(</span><span class="kt">Ref</span><span class="p">{</span><span class="kt">NeverZero</span><span class="p">}()[])</span>
+</code></pre></div>
+
+
+
+<a name="532365980"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532365980" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532365980">(Aug 01 2025 at 19:23)</a>:</h4>
+<p>I'm wondering now what the possible bitpatterns for <code>Bool</code> in particular are when accessed through that <code>RefValue</code> - I remember there being some cleanup to always make sure to have <code>Bool</code> always be one of 0 or 1 as the bitpattern, but I don't know if that applies to this case as well.</p>
+
+
+
+<a name="532371133"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532371133" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Daniel Wennberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532371133">(Aug 01 2025 at 20:03)</a>:</h4>
+<p>Even in this example,  it's not really correct to say that <em>accessing</em> the value is undefined behavior, is it? However, since the instance you get isn't guaranteed to satisfy invariants enforced by the constructor, <em>using</em> it may result in undefined behavior.</p>
+
+
+
+<a name="532424553"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532424553" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532424553">(Aug 02 2025 at 06:47)</a>:</h4>
+<p>Well, it depends. Julia is a little bit more generous than C/C++ (due to optimizing a few things differently/less, ironically), but in principle there is no difference between "accessing" and "using" when it comes to UB. Anything at all may happen, including <a href="https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633">time travel</a>! So just viewing it from the perspective of "but I haven't <em>used</em> that value for anything yet!" is not sufficient.</p>
+
+
+
+<a name="532439767"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532439767" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532439767">(Aug 02 2025 at 10:18)</a>:</h4>
+<p>No that's not right. It is not UB to access the value. I.e. if you have a program that accesses the data but does not call an unsafe function, there is no UB. E.g. in my example, the UB is from the call to <code>call_unsafe_behaviour</code>, not from loading the value.</p>
+<p>W.r.t booleans, they can be stored as any bitpattern. Loading them will only read the lowest bit. On an LLVM level this happens with loading an i1, on an assembly level the byte is loaded, and then a mask is applied.<br>
+I wonder if it's possible to somehow invoke UB using the fact that booleans can be stored in memory as any bitpattern, although when loaded, they must always have 0x01 or 0x00. I can't think of a way, though</p>
+
+
+
+<a name="532439896"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532439896" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532439896">(Aug 02 2025 at 10:20)</a>:</h4>
+<p>Maybe using <code>unsafe_load</code>? Not sure though.</p>
+
+
+
+<a name="532442583"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532442583" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532442583">(Aug 02 2025 at 10:59)</a>:</h4>
+<p>There can still be UB, even if you don't do anything with that value. That's exactly what the link I posted is about. I'm not sure it applies for the exact case of <code>RefValue{Bool}</code> in Julia, but reading something that is not initialized is generally UB. It's still not merged, but <a href="https://github.com/JuliaLang/julia/pull/54099/files#diff-cad50cf26296590b1937056ff6064bd99292b8428c0fdff1db0f682e8a48551cR34">https://github.com/JuliaLang/julia/pull/54099/files#diff-cad50cf26296590b1937056ff6064bd99292b8428c0fdff1db0f682e8a48551cR34</a> explicitly calls out the _existence_ of values other than 0x0/0x1 for a <code>Bool</code> as UB. This is irrespective of what happens later on the LLVM level.</p>
+
+
+
+<a name="532442679"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532442679" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532442679">(Aug 02 2025 at 11:00)</a>:</h4>
+<p>We should probably also check what the effects system says about reading from an uninitialized <code>RefValue{Bool}</code> - I suspect the <code>:noub</code> effect ist tainted.</p>
+
+
+
+<a name="532442878"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532442878" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532442878">(Aug 02 2025 at 11:03)</a>:</h4>
+<p>Ah, and just a few lines below, it explicitly states that reading uninitialized bitstypes is not UB.. <a href="https://github.com/JuliaLang/julia/pull/54099/files#diff-cad50cf26296590b1937056ff6064bd99292b8428c0fdff1db0f682e8a48551cR46">https://github.com/JuliaLang/julia/pull/54099/files#diff-cad50cf26296590b1937056ff6064bd99292b8428c0fdff1db0f682e8a48551cR46</a></p>
+<p>What great consistency.</p>
+
+
+
+<a name="532448914"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532448914" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532448914">(Aug 02 2025 at 12:12)</a>:</h4>
+<p>I think you're mistaken. Specifically:</p>
+<ul>
+<li>The fact that UB can cause bad behaviour even in code that is supposed to run before the UB is encountered is not relevant here. What I'm saying is that <em>loading uninitialized memory in Julia is not UB</em>. Sure, you can <em>then</em> go ahead and invoke UB with that value. But that does not make loading the data UB. This is similar to how <code>1 + 1</code> is not UB, even though you can use the resulting value <code>2</code> to invoke UB.</li>
+<li>I don't think it's possible to load a <code>Bool</code> value as something other than <code>0x01</code> or  <code>0x00</code> in Julia, even as the memory storing the bool is whatever. That is, I don't believe that it's UB to have <code>Memory{Bool}</code> filled with e.g. <code>0xff</code>. The UB would be if you did something like <code>reinterpret(Bool, unsafe_load(Ptr{UInt8}(pointer(mem)))</code> - i.e. if you actually created the <code>Bool</code>. I don't think the <code>Bool</code> really "exists" in the relevant sense before it's loaded</li>
+</ul>
+
+
+
+<a name="532449089"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532449089" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532449089">(Aug 02 2025 at 12:14)</a>:</h4>
+<p>See:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Ref</span><span class="p">{</span><span class="kt">Bool</span><span class="p">}()</span>
+<span class="n">Base</span><span class="o">.</span><span class="kt">RefValue</span><span class="p">{</span><span class="kt">Bool</span><span class="p">}(</span><span class="nb">false</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="n">infer_effects</span><span class="p">(</span><span class="n">getindex</span><span class="p">,</span><span class="w"> </span><span class="kt">Tuple</span><span class="p">{</span><span class="kt">typeof</span><span class="p">(</span><span class="kt">r</span><span class="p">)})</span>
+<span class="p">(</span><span class="o">?</span><span class="n">c</span><span class="p">,</span><span class="o">+</span><span class="n">e</span><span class="p">,</span><span class="o">+</span><span class="n">n</span><span class="p">,</span><span class="o">+</span><span class="n">t</span><span class="p">,</span><span class="o">+</span><span class="n">s</span><span class="p">,</span><span class="o">?</span><span class="n">m</span><span class="p">,</span><span class="o">+</span><span class="n">u</span><span class="p">,</span><span class="o">+</span><span class="n">o</span><span class="p">,</span><span class="o">+</span><span class="n">r</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<a name="532449497"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/isassigned%20and%20Ref/near/532449497" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/isassigned.20and.20Ref.html#532449497">(Aug 02 2025 at 12:20)</a>:</h4>
+<p>Summa summarum: As far as I can tell there is no way loading uninitialized data in Julia can cause UB, and I think we would need to see an example of this happening before it's worth considering as a problem.<br>
+That being said, it would be nice if we had something like: <a href="https://github.com/JuliaLang/julia/pull/54099#discussion_r1566982970">https://github.com/JuliaLang/julia/pull/54099#discussion_r1566982970</a></p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

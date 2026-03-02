@@ -1,0 +1,297 @@
+<html>
+<head><meta charset="utf-8"><title>Finding package that requires admin permission to install · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Finding.20package.20that.20requires.20admin.20permission.20to.20install.html">Finding package that requires admin permission to install</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="535497908"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Finding%20package%20that%20requires%20admin%20permission%20to%20install/near/535497908" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Finding.20package.20that.20requires.20admin.20permission.20to.20install.html#535497908">(Aug 21 2025 at 12:50)</a>:</h4>
+<p>I gave a short-course this last weekend and the participants reported a pop-up window asking for admin permission while installing <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/GeoStats">GeoStats.jl</a> on Windows machines from a lab. How can I identify the indirect dependency of the project that is causing this annoying installation issue?</p>
+
+
+
+<a name="535499487"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Finding%20package%20that%20requires%20admin%20permission%20to%20install/near/535499487" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Finding.20package.20that.20requires.20admin.20permission.20to.20install.html#535499487">(Aug 21 2025 at 12:59)</a>:</h4>
+<p>Presumably this would come from a build script. I would try installing GeoStats in a fresh depot (point <code>JULIA_DEPOT_PATH</code> to an empty directory) and then check which installed packages have a <code>deps/build.jl</code> file. Then either scan those for suspicious activity or try installing them one by one to see which trigger the problem.</p>
+
+
+
+<a name="535525426"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Finding%20package%20that%20requires%20admin%20permission%20to%20install/near/535525426" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Finding.20package.20that.20requires.20admin.20permission.20to.20install.html#535525426">(Aug 21 2025 at 15:09)</a>:</h4>
+<p><span class="user-mention" data-user-id="273176">@Gunnar Farnebäck</span> would it suffice to create a temp environment with <code>] activate --temp</code>, install <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/GeoStats">GeoStats.jl</a> and check the output of <code>] st -m</code>? It should list all indirect deps, right? I could then write a script to find all the packages that have a <code>deps/build.jl</code></p>
+
+
+
+<a name="535528228"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Finding%20package%20that%20requires%20admin%20permission%20to%20install/near/535528228" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Finding.20package.20that.20requires.20admin.20permission.20to.20install.html#535528228">(Aug 21 2025 at 15:24)</a>:</h4>
+<p>Here is the full list of packages installed in the fresh env:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">ADTypes</span>
+<span class="n">AbstractFFTs</span>
+<span class="n">AbstractTrees</span>
+<span class="n">Accessors</span>
+<span class="n">Adapt</span>
+<span class="n">AdaptivePredicates</span>
+<span class="n">AliasTables</span>
+<span class="n">ArnoldiMethod</span>
+<span class="n">ArrayInterface</span>
+<span class="n">AxisAlgorithms</span>
+<span class="n">AxisArrays</span>
+<span class="n">BangBang</span>
+<span class="n">Bessels</span>
+<span class="n">BitFlags</span>
+<span class="n">CRlibm</span>
+<span class="n">CategoricalArrays</span>
+<span class="n">Chain</span>
+<span class="n">ChainRules</span>
+<span class="n">ChainRulesCore</span>
+<span class="n">ChunkSplitters</span>
+<span class="n">CircularArrays</span>
+<span class="n">Clustering</span>
+<span class="n">CoDa</span>
+<span class="n">CodecZlib</span>
+<span class="n">ColorSchemes</span>
+<span class="n">ColorTypes</span>
+<span class="n">ColorVectorSpace</span>
+<span class="n">Colorfy</span>
+<span class="n">Colors</span>
+<span class="n">ColumnSelectors</span>
+<span class="n">Combinatorics</span>
+<span class="n">CommonSubexpressions</span>
+<span class="n">CommonWorldInvalidations</span>
+<span class="n">Compat</span>
+<span class="n">CompositionsBase</span>
+<span class="n">ConcurrentUtilities</span>
+<span class="n">ConstructionBase</span>
+<span class="n">CoordGridTransforms</span>
+<span class="n">CoordRefSystems</span>
+<span class="n">CpuId</span>
+<span class="n">Crayons</span>
+<span class="n">DataAPI</span>
+<span class="n">DataDeps</span>
+<span class="n">DataScienceTraits</span>
+<span class="n">DataStructures</span>
+<span class="n">DataValueInterfaces</span>
+<span class="n">DecisionTree</span>
+<span class="n">DelaunayTriangulation</span>
+<span class="n">DelimitedFiles</span>
+<span class="n">DensityRatioEstimation</span>
+<span class="n">Dictionaries</span>
+<span class="n">DiffResults</span>
+<span class="n">DiffRules</span>
+<span class="n">DifferentiationInterface</span>
+<span class="n">Distances</span>
+<span class="n">Distributions</span>
+<span class="n">DocStringExtensions</span>
+<span class="n">EnumX</span>
+<span class="n">ExactPredicates</span>
+<span class="n">ExceptionUnwrapping</span>
+<span class="n">FFTW</span>
+<span class="n">FileIO</span>
+<span class="n">FillArrays</span>
+<span class="n">FiniteDiff</span>
+<span class="n">FixedPointNumbers</span>
+<span class="n">ForwardDiff</span>
+<span class="n">GLM</span>
+<span class="n">GPUArraysCore</span>
+<span class="n">GeoStats</span>
+<span class="n">GeoStatsBase</span>
+<span class="n">GeoStatsFunctions</span>
+<span class="n">GeoStatsModels</span>
+<span class="n">GeoStatsProcesses</span>
+<span class="n">GeoStatsTransforms</span>
+<span class="n">GeoStatsValidation</span>
+<span class="n">GeoTIFF</span>
+<span class="n">GeoTables</span>
+<span class="n">HTTP</span>
+<span class="n">HashArrayMappedTries</span>
+<span class="n">HypergeometricFunctions</span>
+<span class="n">IRTools</span>
+<span class="n">IfElse</span>
+<span class="n">Indexing</span>
+<span class="n">IndirectArrays</span>
+<span class="n">Inflate</span>
+<span class="n">InitialValues</span>
+<span class="n">Interpolations</span>
+<span class="n">IntervalArithmetic</span>
+<span class="n">IntervalSets</span>
+<span class="n">InverseFunctions</span>
+<span class="n">IrrationalConstants</span>
+<span class="n">IterTools</span>
+<span class="n">IteratorInterfaceExtensions</span>
+<span class="n">JLLWrappers</span>
+<span class="n">JSON</span>
+<span class="n">LaTeXStrings</span>
+<span class="n">LineSearches</span>
+<span class="n">LogExpFunctions</span>
+<span class="n">LoggingExtras</span>
+<span class="n">LossFunctions</span>
+<span class="n">MacroTools</span>
+<span class="n">MappedArrays</span>
+<span class="n">MbedTLS</span>
+<span class="n">Meshes</span>
+<span class="n">Missings</span>
+<span class="n">NLSolversBase</span>
+<span class="n">NaNMath</span>
+<span class="n">NearestNeighbors</span>
+<span class="n">NelderMead</span>
+<span class="n">OffsetArrays</span>
+<span class="n">OhMyThreads</span>
+<span class="n">OpenSSL</span>
+<span class="n">Optim</span>
+<span class="n">OrderedCollections</span>
+<span class="n">PDMats</span>
+<span class="n">Parameters</span>
+<span class="n">Parsers</span>
+<span class="n">PkgVersion</span>
+<span class="n">PositiveFactorizations</span>
+<span class="n">PrecompileTools</span>
+<span class="n">Preferences</span>
+<span class="n">PrettyTables</span>
+<span class="n">ProgressMeter</span>
+<span class="n">PtrArrays</span>
+<span class="n">QuadGK</span>
+<span class="n">Quaternions</span>
+<span class="n">RangeArrays</span>
+<span class="n">Ratios</span>
+<span class="n">RealDot</span>
+<span class="n">Reexport</span>
+<span class="n">Requires</span>
+<span class="n">Rmath</span>
+<span class="n">Rotations</span>
+<span class="n">RoundingEmulator</span>
+<span class="n">SIMD</span>
+<span class="n">ScikitLearnBase</span>
+<span class="n">ScopedValues</span>
+<span class="n">Scratch</span>
+<span class="n">Setfield</span>
+<span class="n">ShiftedArrays</span>
+<span class="n">SimpleBufferStream</span>
+<span class="n">SortingAlgorithms</span>
+<span class="n">SparseInverseSubset</span>
+<span class="n">SpecialFunctions</span>
+<span class="n">SpectralIndices</span>
+<span class="n">SplitApplyCombine</span>
+<span class="n">StableTasks</span>
+<span class="n">Static</span>
+<span class="n">StaticArrayInterface</span>
+<span class="n">StaticArrays</span>
+<span class="n">StaticArraysCore</span>
+<span class="n">Statistics</span>
+<span class="n">StatsAPI</span>
+<span class="n">StatsBase</span>
+<span class="n">StatsFuns</span>
+<span class="n">StatsLearnModels</span>
+<span class="n">StatsModels</span>
+<span class="n">StringManipulation</span>
+<span class="n">StructArrays</span>
+<span class="n">TableDistances</span>
+<span class="n">TableTraits</span>
+<span class="n">TableTransforms</span>
+<span class="n">Tables</span>
+<span class="n">TaskLocalValues</span>
+<span class="n">TensorCore</span>
+<span class="n">TiffImages</span>
+<span class="n">TiledIteration</span>
+<span class="n">TranscodingStreams</span>
+<span class="n">TransformsBase</span>
+<span class="n">TypedTables</span>
+<span class="n">URIs</span>
+<span class="n">UnPack</span>
+<span class="n">Unitful</span>
+<span class="n">WoodburyMatrices</span>
+<span class="n">Zygote</span>
+<span class="n">ZygoteRules</span>
+<span class="n">CRlibm_jll</span>
+<span class="n">FFTW_jll</span>
+<span class="n">IntelOpenMP_jll</span>
+<span class="n">MKL_jll</span>
+<span class="n">OpenBLASConsistentFPCSR_jll</span>
+<span class="n">OpenSSL_jll</span>
+<span class="n">OpenSpecFun_jll</span>
+<span class="n">Rmath_jll</span>
+<span class="n">oneTBB_jll</span>
+<span class="n">ArgTools</span>
+<span class="n">Artifacts</span>
+<span class="n">Base64</span>
+<span class="n">Dates</span>
+<span class="n">Distributed</span>
+<span class="n">Downloads</span>
+<span class="n">FileWatching</span>
+<span class="n">Future</span>
+<span class="n">InteractiveUtils</span>
+<span class="n">LazyArtifacts</span>
+<span class="n">LibCURL</span>
+<span class="n">LibGit2</span>
+<span class="n">Libdl</span>
+<span class="n">LinearAlgebra</span>
+<span class="n">Logging</span>
+<span class="n">Markdown</span>
+<span class="n">Mmap</span>
+<span class="n">NetworkOptions</span>
+<span class="n">Pkg</span>
+<span class="n">Printf</span>
+<span class="n">REPL</span>
+<span class="n">Random</span>
+<span class="n">SHA</span>
+<span class="n">Serialization</span>
+<span class="n">SharedArrays</span>
+<span class="n">Sockets</span>
+<span class="n">SparseArrays</span>
+<span class="n">StyledStrings</span>
+<span class="n">SuiteSparse</span>
+<span class="n">TOML</span>
+<span class="n">Tar</span>
+<span class="n">Test</span>
+<span class="n">UUIDs</span>
+<span class="n">Unicode</span>
+<span class="n">CompilerSupportLibraries_jll</span>
+<span class="n">LibCURL_jll</span>
+<span class="n">LibGit2_jll</span>
+<span class="n">LibSSH2_jll</span>
+<span class="n">MbedTLS_jll</span>
+<span class="n">MozillaCACerts_jll</span>
+<span class="n">OpenBLAS_jll</span>
+<span class="n">OpenLibm_jll</span>
+<span class="n">SuiteSparse_jll</span>
+<span class="n">Zlib_jll</span>
+<span class="n">libblastrampoline_jll</span>
+<span class="n">nghttp2_jll</span>
+<span class="n">p7zip_jll</span>
+</code></pre></div>
+
+
+
+<a name="535528632"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Finding%20package%20that%20requires%20admin%20permission%20to%20install/near/535528632" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Expanding Man <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Finding.20package.20that.20requires.20admin.20permission.20to.20install.html#535528632">(Aug 21 2025 at 15:27)</a>:</h4>
+<p>That sounds bizarre to me, doesn't all the Julia stuff go in some <code>.julia</code> user directory even on windows?  What could it be asking for admin for?</p>
+
+
+
+<a name="535529383"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Finding%20package%20that%20requires%20admin%20permission%20to%20install/near/535529383" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Finding.20package.20that.20requires.20admin.20permission.20to.20install.html#535529383">(Aug 21 2025 at 15:30)</a>:</h4>
+<p>I have no idea. I am trying the identify the root of the evil.</p>
+
+
+
+<a name="535534290"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Finding%20package%20that%20requires%20admin%20permission%20to%20install/near/535534290" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Finding.20package.20that.20requires.20admin.20permission.20to.20install.html#535534290">(Aug 21 2025 at 15:56)</a>:</h4>
+<p>Apparently the <code>deps/build.jl</code> files are not stored in <code>.julia/packages</code></p>
+
+
+
+<a name="535572207"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Finding%20package%20that%20requires%20admin%20permission%20to%20install/near/535572207" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Finding.20package.20that.20requires.20admin.20permission.20to.20install.html#535572207">(Aug 21 2025 at 20:14)</a>:</h4>
+<blockquote>
+<p>It should list all indirect deps, right?</p>
+</blockquote>
+<p>You can certainly do it that way, and use <code>pathof</code> to find which of the installed versions is used. Seems a lot more difficult to me but it's your choice.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

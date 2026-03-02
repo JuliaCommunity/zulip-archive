@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269184\">Eric Hanson</span> <a href=\"#narrow/stream/274208-helpdesk-.28published.29/topic/Compiler.20having.20trouble.20with.20type.20inference/near/529173399\">said</a>:</p>\n<blockquote>\n<p>to me that looks like your Cthulhu needs old JuliaSyntax (<a href=\"https://github.com/JuliaDebug/Cthulhu.jl/blob/747aaf89e727d35563c31c48694ccc8576ffe355/Project.toml#L11\">https://github.com/JuliaDebug/Cthulhu.jl/blob/747aaf89e727d35563c31c48694ccc8576ffe355/Project.toml#L11</a>) but you likely have a different version loaded. Common issue with stacked environments, e.g. <a href=\"https://github.com/JuliaTesting/ExplicitImports.jl/issues/119\">https://github.com/JuliaTesting/ExplicitImports.jl/issues/119</a></p>\n</blockquote>\n<p>That's one of thing of stacked environments that I really don't like. Allowing incompatible versions is begging for troubles.</p>",
+        "id": 529191262,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1752718023
+    }
+]

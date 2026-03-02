@@ -1,0 +1,54 @@
+<html>
+<head><meta charset="utf-8"><title>✔ Finding `extrema` with custom order relation · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Finding.20.60extrema.60.20with.20custom.20order.20relation.html">✔ Finding `extrema` with custom order relation</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="505746660"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Finding%20%60extrema%60%20with%20custom%20order%20relation/near/505746660" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Finding.20.60extrema.60.20with.20custom.20order.20relation.html#505746660">(Mar 14 2025 at 18:54)</a>:</h4>
+<p>Suppose I have a vector of objects that implement a partial order <code>&lt;</code> It is not a total order as implemented in <code>isless</code>.</p>
+<p>How can I find the <code>extrema</code> of this vector with this custom <code>&lt;</code>? Is there an alternative function that is not hard-coded with <code>isless</code>?</p>
+
+
+
+<a name="505758894"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Finding%20%60extrema%60%20with%20custom%20order%20relation/near/505758894" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Finding.20.60extrema.60.20with.20custom.20order.20relation.html#505758894">(Mar 14 2025 at 20:11)</a>:</h4>
+<p>I think you can just write</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">my_extrema</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">itr</span><span class="p">;</span><span class="w"> </span><span class="n">kwargs</span><span class="o">...</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mapreduce</span><span class="p">(</span><span class="n">my_extrema_op</span><span class="p">,</span><span class="w"> </span><span class="n">itr</span><span class="p">;</span><span class="w"> </span><span class="n">kwargs</span><span class="o">...</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">x</span>
+<span class="w">    </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="n">my_extrema_op</span><span class="p">((</span><span class="n">min1</span><span class="p">,</span><span class="w"> </span><span class="n">max1</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="n">min2</span><span class="p">,</span><span class="w"> </span><span class="n">max2</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">my_min</span><span class="p">(</span><span class="n">min1</span><span class="p">,</span><span class="w"> </span><span class="n">min2</span><span class="p">),</span><span class="w"> </span><span class="n">my_max</span><span class="p">(</span><span class="n">max1</span><span class="p">,</span><span class="w"> </span><span class="n">max2</span><span class="p">))</span>
+
+<span class="n">my_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span>
+<span class="n">my_max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<a name="505759206"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Finding%20%60extrema%60%20with%20custom%20order%20relation/near/505759206" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Finding.20.60extrema.60.20with.20custom.20order.20relation.html#505759206">(Mar 14 2025 at 20:13)</a>:</h4>
+<p>That's a rough copy of the code here: <a href="https://github.com/JuliaLang/julia/blob/master/base/reduce.jl#L844-L854">https://github.com/JuliaLang/julia/blob/master/base/reduce.jl#L844-L854</a>  but using <code>my_min</code> and <code>my_max</code> that should utilize <code>&lt;</code> rather than <code>isless</code>.</p>
+
+
+
+<a name="505761595"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Finding%20%60extrema%60%20with%20custom%20order%20relation/near/505761595" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Finding.20.60extrema.60.20with.20custom.20order.20relation.html#505761595">(Mar 14 2025 at 20:29)</a>:</h4>
+<p>Thank you <span class="user-mention" data-user-id="269150">@Mason Protter</span>. I think the issue is still open regarding the customization of <code>isless</code> in Base functions.</p>
+
+
+
+<a name="505761600"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Finding%20%60extrema%60%20with%20custom%20order%20relation/near/505761600" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Finding.20.60extrema.60.20with.20custom.20order.20relation.html#505761600">(Mar 14 2025 at 20:29)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> has marked this topic as resolved.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

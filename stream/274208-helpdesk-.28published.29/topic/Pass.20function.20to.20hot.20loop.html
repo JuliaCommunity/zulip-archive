@@ -1,0 +1,259 @@
+<html>
+<head><meta charset="utf-8"><title>Pass function to hot loop · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html">Pass function to hot loop</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="509678027"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509678027" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509678027">(Apr 02 2025 at 12:06)</a>:</h4>
+<p>Maybe someone can help me save a few minutes of benchmarking here.</p>
+<p>I have a situation where I would like to pass a function <code>fa</code> as an argument to another function <code>fb</code> where <code>fb</code> will call <code>fa</code> in a hot loop and where <code>fa</code> is determined at runtime. </p>
+<p>Are there any performance gotchas here (I'm mainly thinking about the fact that Julia does not specialize on the function type by default)?</p>
+<p>I can see the following options:<br>
+1) Just pass it as an argument<br>
+2) Pass it as an argument but qualify the type (ie. <code>function fb(fa::F, ...) where F</code>)<br>
+3) Write a macro</p>
+<p>I'm thinking 1) might be ok since functions like <code>map</code> seem to do it, but I'm not sure here.</p>
+<p>In case more context is needed: <code>fb</code> is getting a pcap-reader which holds many captured packets. <code>fb</code> loops over all packets in the pcap-reader.  The pcap reader has a single header which tells me what protocol all the captured packets are, so my <code>fa</code> will be things like  <code>process_ipv4_packet</code>, <code>process_ethernet_packet</code> etc.</p>
+
+
+
+<a name="509682065"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509682065" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509682065">(Apr 02 2025 at 12:23)</a>:</h4>
+<p>Julia does specialize on function types used as arguments if either</p>
+<ul>
+<li>The argument function is used inside the function</li>
+<li>The type of the function is written explicitly with a <code>where</code> clause like this:</li>
+</ul>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">F</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="kt">F</span>
+<span class="w">    </span><span class="n">ys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span>
+<span class="w">    </span><span class="c"># do stuff with ys</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="509682481"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509682481" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509682481">(Apr 02 2025 at 12:25)</a>:</h4>
+<blockquote>
+<ul>
+<li>The argument function is used inside the function</li>
+</ul>
+</blockquote>
+<p>Thanks, I somehow missed/forgot about this. I guess that makes the distinction between 1) and 2) pointless in my case (and I suppose the specialization also makes the macro pointless).</p>
+
+
+
+<a name="509686663"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509686663" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Filippos Christou <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509686663">(Apr 02 2025 at 12:42)</a>:</h4>
+<p>isn't the <code>where</code> notation redundant if <code>F</code> is not used in the body ?<br>
+e.g. wouldn't this be the same ?</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">Function</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span>
+<span class="w">    </span><span class="n">ys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span>
+<span class="w">    </span><span class="c"># do stuff with ys</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="509687198"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509687198" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Filippos Christou <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509687198">(Apr 02 2025 at 12:45)</a>:</h4>
+<p>(also restricts arguments to be functions and not <code>Any</code>)</p>
+
+
+
+<a name="509687355"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509687355" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509687355">(Apr 02 2025 at 12:45)</a>:</h4>
+<p>Nope. As a latency optimisation, Julia's compiler doesn't specialize arguments whose only use in a function is to be passed on to another function. So in your <code>foo</code>, <code>foo</code> is not specialized on <code>f</code>. However, this means the type of <code>ys</code> in not inferred.</p>
+
+
+
+<a name="509687913"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509687913" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509687913">(Apr 02 2025 at 12:47)</a>:</h4>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">Function</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span>
+<span class="w">           </span><span class="n">ys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span>
+<span class="w">           </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">           </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">ys</span>
+<span class="w">               </span><span class="n">y</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">i</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">           </span><span class="n">y</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="w">       </span><span class="k">function</span><span class="w"> </span><span class="n">bar</span><span class="p">(</span><span class="n">f</span><span class="o">::</span><span class="kt">F</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="p">{</span><span class="kt">F</span><span class="w"> </span><span class="o">&lt;:</span><span class="w"> </span><span class="kt">Function</span><span class="p">}</span>
+<span class="w">           </span><span class="n">ys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span>
+<span class="w">           </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">           </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">ys</span>
+<span class="w">               </span><span class="n">y</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">i</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">           </span><span class="n">y</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">bar (generic function with 1 method)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">BenchmarkTools</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">collect</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">1000000</span><span class="p">);</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span>
+<span class="go">  33.493 ms (2998951 allocations: 53.39 MiB)</span>
+<span class="go">500000500000</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">bar</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span>
+<span class="go">  578.063 μs (4 allocations: 7.63 MiB)</span>
+<span class="go">500000500000</span>
+</code></pre></div>
+
+
+
+<a name="509688019"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509688019" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509688019">(Apr 02 2025 at 12:48)</a>:</h4>
+<p>Yeah this is a common gotcha.</p>
+
+
+
+<a name="509689067"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509689067" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Filippos Christou <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509689067">(Apr 02 2025 at 12:52)</a>:</h4>
+<p>Ahhh. yeah. now I start to remember again. It's also described here <a href="https://docs.julialang.org/en/v1/manual/performance-tips/#Be-aware-of-when-Julia-avoids-specializing">https://docs.julialang.org/en/v1/manual/performance-tips/#Be-aware-of-when-Julia-avoids-specializing</a></p>
+
+
+
+<a name="509692770"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509692770" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509692770">(Apr 02 2025 at 13:06)</a>:</h4>
+<p>Is there something with global scope here which makes this seem like a worse issue than it is?</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">63.639</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="p">(</span><span class="mi">2998951</span><span class="w"> </span><span class="n">allocations</span><span class="o">:</span><span class="w"> </span><span class="mf">53.39</span><span class="w"> </span><span class="n">MiB</span><span class="p">)</span>
+<span class="mi">500000500000</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">v</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">1.717</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="w"> </span><span class="n">allocations</span><span class="o">:</span><span class="w"> </span><span class="mf">7.63</span><span class="w"> </span><span class="n">MiB</span><span class="p">)</span>
+<span class="mi">500000500000</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">bar</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">v</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">1.710</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="w"> </span><span class="n">allocations</span><span class="o">:</span><span class="w"> </span><span class="mf">7.63</span><span class="w"> </span><span class="n">MiB</span><span class="p">)</span>
+<span class="mi">500000500000</span>
+
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fa</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span>
+<span class="n">fa</span><span class="w"> </span><span class="p">(</span><span class="n">generic</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">method</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fb</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span>
+<span class="n">fb</span><span class="w"> </span><span class="p">(</span><span class="n">generic</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">method</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="k">let</span>
+<span class="w">       </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">collect</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">100000</span><span class="p">)</span>
+<span class="w">       </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rand</span><span class="p">((</span><span class="n">fa</span><span class="p">,</span><span class="w"> </span><span class="n">fb</span><span class="p">))</span>
+<span class="w">       </span><span class="nd">@btime</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="o">$</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">v</span><span class="p">)</span>
+<span class="w">       </span><span class="nd">@btime</span><span class="w"> </span><span class="n">bar</span><span class="p">(</span><span class="o">$</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">v</span><span class="p">)</span>
+<span class="w">       </span><span class="k">end</span><span class="p">;</span>
+<span class="w">  </span><span class="mf">78.600</span><span class="w"> </span><span class="n">μs</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="w"> </span><span class="n">allocations</span><span class="o">:</span><span class="w"> </span><span class="mf">781.31</span><span class="w"> </span><span class="n">KiB</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">78.000</span><span class="w"> </span><span class="n">μs</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="w"> </span><span class="n">allocations</span><span class="o">:</span><span class="w"> </span><span class="mf">781.31</span><span class="w"> </span><span class="n">KiB</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<a name="509694407"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509694407" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509694407">(Apr 02 2025 at 13:12)</a>:</h4>
+<p>Hmmm, maybe not:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">testfun</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">fs</span><span class="o">...</span><span class="p">)</span>
+<span class="w">       </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">fs</span><span class="p">)</span>
+<span class="w">       </span><span class="n">f1</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="n">testfun</span><span class="w"> </span><span class="p">(</span><span class="n">generic</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">methods</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">testfun</span><span class="p">(</span><span class="o">$</span><span class="n">foo</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">fa</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">fb</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">56.751</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="p">(</span><span class="mi">2998951</span><span class="w"> </span><span class="n">allocations</span><span class="o">:</span><span class="w"> </span><span class="mf">53.39</span><span class="w"> </span><span class="n">MiB</span><span class="p">)</span>
+<span class="mi">500000500000</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">testfun</span><span class="p">(</span><span class="o">$</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">fa</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">fb</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">1.671</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="p">(</span><span class="mi">4</span><span class="w"> </span><span class="n">allocations</span><span class="o">:</span><span class="w"> </span><span class="mf">7.63</span><span class="w"> </span><span class="n">MiB</span><span class="p">)</span>
+<span class="mi">500000500000</span>
+</code></pre></div>
+
+
+
+<a name="509694897"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509694897" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509694897">(Apr 02 2025 at 13:14)</a>:</h4>
+<p>A bit scary that JET doesn't seem to detect the problem:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">JET</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@report_opt</span><span class="w"> </span><span class="n">testfun</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">fa</span><span class="p">,</span><span class="w"> </span><span class="n">fb</span><span class="p">)</span>
+<span class="n">No</span><span class="w"> </span><span class="n">errors</span><span class="w"> </span><span class="n">detected</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@report_opt</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">fa</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">)</span>
+<span class="n">No</span><span class="w"> </span><span class="n">errors</span><span class="w"> </span><span class="n">detected</span>
+</code></pre></div>
+
+
+
+<a name="509699229"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509699229" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509699229">(Apr 02 2025 at 13:32)</a>:</h4>
+<p>Just managed to speed up a different part of the code with about 20% thanks to this. I had assumed it was fine because JET didn't report any problems.</p>
+
+
+
+<a name="509705816"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509705816" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Nissen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509705816">(Apr 02 2025 at 13:59)</a>:</h4>
+<p>Make a bug report!</p>
+
+
+
+<a name="509709899"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509709899" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509709899">(Apr 02 2025 at 14:14)</a>:</h4>
+<p><a href="https://github.com/aviatesk/JET.jl/issues/697">https://github.com/aviatesk/JET.jl/issues/697</a></p>
+
+
+
+<a name="509736067"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509736067" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Daniel Wennberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509736067">(Apr 02 2025 at 15:56)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="300483">DrChainsaw</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop/near/509692770">said</a>:</p>
+<blockquote>
+<p>Is there something with global scope here which makes this seem like a worse issue than it is?</p>
+</blockquote>
+<p>What you're seeing here is a result of inlining. <code>@btime foo(f, v)</code> creates an anonymous function <code>() -&gt; foo(f, v)</code> and times it. When <code>v</code> is interpolated, <code>foo</code> can be inlined, so the anonymous function is compiled as <code>() -&gt; &lt;body of foo(f, v)&gt;</code>, which doesn't have the specialization problem since <code>f</code> is never actually passed as an argument to any function. Inlining does not happen when <code>v</code> is not interpolated because then <code>v</code> is an untyped global, so it's impossible to resolve which method of <code>foo</code> to inline at compile time. (Well, actually, in this case it's not impossible because <code>foo</code> only has a single method, but automatic inlining doesn't use that kind of world-splitting method resolution; it breaks function barriers, which is usually detrimental to performance.)</p>
+
+
+
+<a name="509736739"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509736739" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Daniel Wennberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509736739">(Apr 02 2025 at 15:59)</a>:</h4>
+<p>Here's one way to get around this in your timings without having to avoid interpolation:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="n">foowrap</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nd">@noinline</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span>
+<span class="go">foowrap (generic function with 1 method)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">barwrap</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nd">@noinline</span><span class="w"> </span><span class="n">bar</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">xs</span><span class="p">)</span>
+<span class="go">barwrap (generic function with 1 method)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">foowrap</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">v</span><span class="p">)</span>
+<span class="go">  20.406 ms (2998951 allocations: 53.39 MiB)</span>
+<span class="go">500000500000</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@btime</span><span class="w"> </span><span class="n">barwrap</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">v</span><span class="p">)</span>
+<span class="go">  481.709 μs (2 allocations: 7.63 MiB)</span>
+<span class="go">500000500000</span>
+</code></pre></div>
+
+
+
+<a name="509737491"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509737491" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Daniel Wennberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509737491">(Apr 02 2025 at 16:02)</a>:</h4>
+<p>That said, the fact that inlining immediately fixes the problem is kind of the point. Avoided specialization is considered a worthwhile tradeoff because this is expected to happen in many/most real-world use cases, so performance usually won't suffer.</p>
+
+
+
+<a name="509738294"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/509738294" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Daniel Wennberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#509738294">(Apr 02 2025 at 16:06)</a>:</h4>
+<p>I'm not sure I agree that it works out like that in practice. I've been bitten by this often enough that I now reflexively add the specialization parameter every time I write a method that takes a function as an argument. But that's the idea.</p>
+
+
+
+<a name="510307957"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Pass%20function%20to%20hot%20loop/near/510307957" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Flag <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Pass.20function.20to.20hot.20loop.html#510307957">(Apr 04 2025 at 23:37)</a>:</h4>
+<p>19114<br>
+167409079868000</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

@@ -1,0 +1,27 @@
+<html>
+<head><meta charset="utf-8"><title>Which stdlibs are upgradeable? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Which.20stdlibs.20are.20upgradeable.3F.html">Which stdlibs are upgradeable?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="541788215"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Which%20stdlibs%20are%20upgradeable%3F/near/541788215" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Fons van der Plas <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Which.20stdlibs.20are.20upgradeable.3F.html#541788215">(Sep 27 2025 at 09:01)</a>:</h4>
+<p>Hi! Since Julia 1.11, Statistics is an upgradeable stdlib. (This means that within the same Julia version, you can <code>Pkg.update</code> Statistics to a newer version, right?)</p>
+<p>Are there other upgradeable stdlibs? Where can I find this info?</p>
+
+
+
+<a name="541808771"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Which%20stdlibs%20are%20upgradeable%3F/near/541808771" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> James Wrigley <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Which.20stdlibs.20are.20upgradeable.3F.html#541808771">(Sep 27 2025 at 14:02)</a>:</h4>
+<p>I think this is the best reference ATM: <a href="https://github.com/JuliaLang/julia/issues/50697">https://github.com/JuliaLang/julia/issues/50697</a></p>
+<p>TL;DR, Statistics and DelimitedFiles. Distributed is also possible since it's out of the sysimage but you have to <code>dev</code> it because there's no registry entry for it (I attempted to add one but it didn't get through).</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

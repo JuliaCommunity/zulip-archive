@@ -1,0 +1,88 @@
+<html>
+<head><meta charset="utf-8"><title>what&#x27;s `@fastmath` doing here · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/what.27s.20.60.40fastmath.60.20doing.20here.html">what&#x27;s `@fastmath` doing here</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="542772289"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/what%27s%20%60%40fastmath%60%20doing%20here/near/542772289" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> wheeheee <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/what.27s.20.60.40fastmath.60.20doing.20here.html#542772289">(Oct 02 2025 at 15:30)</a>:</h4>
+<p>I found that <code>@fastmath</code> has some problems with <code>Base.Cartesian.@nexprs</code>, like so:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="nd">@nexprs</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">y_j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rand</span><span class="p">()</span>
+<span class="go">0.13646394987531396</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@fastmath</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="nd">@nexprs</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">x_j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">y_</span><span class="p">{</span><span class="kt">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
+<span class="gr">ERROR: UndefVarError: `y_` not defined in `Main`</span>
+<span class="gr">Suggestion: check for spelling errors or missing imports.</span>
+<span class="gr">Stacktrace:</span>
+<span class="gr"> [1] top-level scope</span>
+<span class="gr">   @ REPL[2]:1</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@macroexpand</span><span class="w"> </span><span class="nd">@fastmath</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="nd">@nexprs</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">x_j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">y_</span><span class="p">{</span><span class="kt">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
+<span class="go">quote</span>
+<span class="go">    x_1 = y_{Base.FastMath.add_fast(1, 1)}</span>
+<span class="go">    x_2 = y_{Base.FastMath.add_fast(2, 1)}</span>
+<span class="go">    x_3 = y_{Base.FastMath.add_fast(3, 1)}</span>
+<span class="go">    x_4 = y_{Base.FastMath.add_fast(4, 1)}</span>
+<span class="go">end</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@macroexpand</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="nd">@nexprs</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">x_j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">y_</span><span class="p">{</span><span class="kt">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
+<span class="go">quote</span>
+<span class="go">    x_1 = y_2</span>
+<span class="go">    x_2 = y_3</span>
+<span class="go">    x_3 = y_4</span>
+<span class="go">    x_4 = y_5</span>
+<span class="go">end</span>
+</code></pre></div>
+<p>It looks like it's basically <code>@fastmath(@nexprs(4, ...))</code>, so evaluating from inside to outside, shouldn't <code>@fastmath</code> just enable fastmath for the whole block after getting the output from the <code>@nexprs</code> macro? Or does macro evaluation follow a different order, like from outside in?</p>
+
+
+
+<a name="542777092"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/what%27s%20%60%40fastmath%60%20doing%20here/near/542777092" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/what.27s.20.60.40fastmath.60.20doing.20here.html#542777092">(Oct 02 2025 at 15:51)</a>:</h4>
+<p>Yes, macros evaluate outside in, because they operate on chunks of code.</p>
+
+
+
+<a name="542784610"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/what%27s%20%60%40fastmath%60%20doing%20here/near/542784610" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> wheeheee <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/what.27s.20.60.40fastmath.60.20doing.20here.html#542784610">(Oct 02 2025 at 16:26)</a>:</h4>
+<p>Can I sort of make them evaluate inside out?</p>
+
+
+
+<a name="542784721"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/what%27s%20%60%40fastmath%60%20doing%20here/near/542784721" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> wheeheee <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/what.27s.20.60.40fastmath.60.20doing.20here.html#542784721">(Oct 02 2025 at 16:26)</a>:</h4>
+<p>Or achieve that kind of effect, basically.</p>
+
+
+
+<a name="542830388"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/what%27s%20%60%40fastmath%60%20doing%20here/near/542830388" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/what.27s.20.60.40fastmath.60.20doing.20here.html#542830388">(Oct 02 2025 at 20:58)</a>:</h4>
+<p>yes, you just have to make the outer macro look for macros inside of it and then <code>macroexpand</code> them</p>
+
+
+
+<a name="542846574"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/what%27s%20%60%40fastmath%60%20doing%20here/near/542846574" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Daniel Wennberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/what.27s.20.60.40fastmath.60.20doing.20here.html#542846574">(Oct 02 2025 at 23:32)</a>:</h4>
+<p>I suppose the most general way would be to define a separate macro <code>@expandafter</code> that rewrites</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="nd">@expandafter</span><span class="w"> </span><span class="nd">@outer</span><span class="w"> </span><span class="nd">@inner</span><span class="w"> </span><span class="n">expr</span>
+</code></pre></div>
+<p>to</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="nd">@outer</span><span class="w"> </span><span class="n">inner_expr_expanded</span>
+</code></pre></div>
+<p>In TeX, which is a pure macro expansion language, this macro is built in.</p>
+
+
+
+<a name="542873513"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/what%27s%20%60%40fastmath%60%20doing%20here/near/542873513" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/what.27s.20.60.40fastmath.60.20doing.20here.html#542873513">(Oct 03 2025 at 05:56)</a>:</h4>
+<p><a href="https://jkrumbiegel.com/pages/2022-08-09-composing-macros/">https://jkrumbiegel.com/pages/2022-08-09-composing-macros/</a></p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

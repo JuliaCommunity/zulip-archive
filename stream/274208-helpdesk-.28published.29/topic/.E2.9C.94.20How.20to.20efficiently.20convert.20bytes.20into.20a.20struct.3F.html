@@ -1,0 +1,199 @@
+<html>
+<head><meta charset="utf-8"><title>✔ How to efficiently convert bytes into a struct? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html">✔ How to efficiently convert bytes into a struct?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="555665996"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555665996" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555665996">(Nov 14 2025 at 19:45)</a>:</h4>
+<p>Suppose I have a immutable struct with primitive fields (e.g., <code>UInt8</code>):</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">struct</span> <span class="kt">MyStruct</span>
+<span class="w">  </span><span class="n">field1</span><span class="o">::</span><span class="kt">UInt8</span>
+<span class="w">  </span><span class="n">field2</span><span class="o">::</span><span class="kt">UInt16</span>
+<span class="w">  </span><span class="o">...</span>
+<span class="w"> </span><span class="k">end</span>
+</code></pre></div>
+<p>What is the most efficient method to convert a vector of bytes like</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span>
+</code></pre></div>
+<p>into an instance of the struct?</p>
+<p>Do I need to loop over the fields and <code>reinterpret</code> each byte?</p>
+
+
+
+<a name="555670199"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555670199" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555670199">(Nov 14 2025 at 20:15)</a>:</h4>
+<p>I tested with <code>reinterpret(MyStruct, bytes)</code> and it apparently works, but the result is a vector with a single instance. Any way to return just the instance?</p>
+
+
+
+<a name="555671583"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555671583" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555671583">(Nov 14 2025 at 20:24)</a>:</h4>
+<p>My current solution for future reference:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">only</span><span class="p">(</span><span class="n">reinterpret</span><span class="p">(</span><span class="n">MySctruct</span><span class="p">,</span><span class="w"> </span><span class="n">bytes</span><span class="p">))</span>
+</code></pre></div>
+
+
+
+<a name="555677158"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555677158" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555677158">(Nov 14 2025 at 21:00)</a>:</h4>
+<p>I'm away from computer, going by memory you can pass a custom type to <code>read</code></p>
+
+
+
+<a name="555677589"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555677589" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555677589">(Nov 14 2025 at 21:03)</a>:</h4>
+<p>Probably &lt;<a href="https://docs.julialang.org/en/v1/base/io-network/#Base.read">https://docs.julialang.org/en/v1/base/io-network/#Base.read</a>!&gt;</p>
+
+
+
+<a name="555677632"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555677632" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555677632">(Nov 14 2025 at 21:03)</a>:</h4>
+<p>That is my current solution above, right?</p>
+
+
+
+<a name="555677679"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555677679" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555677679">(Nov 14 2025 at 21:04)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F/near/555671583">said</a>:</p>
+<blockquote>
+<p>My current solution for future reference:</p>
+<p><div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">only</span><span class="p">(</span><span class="n">reinterpret</span><span class="p">(</span><span class="n">MySctruct</span><span class="p">,</span><span class="w"> </span><span class="n">bytes</span><span class="p">))</span>
+</code></pre></div><br>
+</p>
+</blockquote>
+<p>This one <span aria-label="up" class="emoji emoji-2b06" role="img" title="up">:up:</span></p>
+
+
+
+<a name="555677711"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555677711" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555677711">(Nov 14 2025 at 21:04)</a>:</h4>
+<p>I said read, not reinterpret</p>
+
+
+
+<a name="555677780"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555677780" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555677780">(Nov 14 2025 at 21:05)</a>:</h4>
+<p>Didn't know read also supported this. Let me check...</p>
+
+
+
+<a name="555677918"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555677918" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555677918">(Nov 14 2025 at 21:06)</a>:</h4>
+<p><a href="/user_uploads/7178/j4q7xlUaVGr1JsLTywHz1sQ0/image.png">image.png</a></p>
+<div class="message_inline_image"><a href="/user_uploads/7178/j4q7xlUaVGr1JsLTywHz1sQ0/image.png" title="image.png"><img data-original-content-type="image/png" data-original-dimensions="811x145" src="/user_uploads/thumbnail/7178/j4q7xlUaVGr1JsLTywHz1sQ0/image.png/840x560.webp"></a></div><p>Would it be that method?</p>
+
+
+
+<a name="555677948"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555677948" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555677948">(Nov 14 2025 at 21:06)</a>:</h4>
+<p>Yes</p>
+
+
+
+<a name="555678016"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555678016" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555678016">(Nov 14 2025 at 21:07)</a>:</h4>
+<p>Regarding the endianness, how can I enforce <code>ntoh</code> to always convert from Big Endian?</p>
+
+
+
+<a name="555678021"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555678021" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555678021">(Nov 14 2025 at 21:07)</a>:</h4>
+<p>That wasn't what I linked actually because zulip messed up the exclamation mark, but that should work too</p>
+
+
+
+<a name="555678216"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555678216" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555678216">(Nov 14 2025 at 21:08)</a>:</h4>
+<p>If I need to enforce endianness, I need to <code>read</code> first with the original endianness, convert the endianess with <code>ntoh</code>, and then <code>reinterpret</code>?</p>
+
+
+
+<a name="555678260"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555678260" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555678260">(Nov 14 2025 at 21:08)</a>:</h4>
+<p>Or there is a direct method with just <code>read</code> + <code>ntoh</code>?</p>
+
+
+
+<a name="555678264"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555678264" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mosè Giordano <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555678264">(Nov 14 2025 at 21:08)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F/near/555678016">said</a>:</p>
+<blockquote>
+<p>Regarding the endianness, how can I enforce <code>ntoh</code> to always convert from Big Endian?</p>
+</blockquote>
+<p>If you need to invert the endianess you may have to first rest the raw bits, invert, and then reinterpret</p>
+
+
+
+<a name="555678314"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555678314" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555678314">(Nov 14 2025 at 21:09)</a>:</h4>
+<p>Yep, I think the <code>reinterpret</code> is the way to go then.</p>
+
+
+
+<a name="555679591"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555679591" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555679591">(Nov 14 2025 at 21:20)</a>:</h4>
+<p>Solution for future reference:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">only</span><span class="p">(</span><span class="n">reinterpret</span><span class="p">(</span><span class="n">MyStruct</span><span class="p">,</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">ntoh</span><span class="p">,</span><span class="w"> </span><span class="n">bytes</span><span class="p">)))</span>
+</code></pre></div>
+
+
+
+<a name="555681571"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555681571" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555681571">(Nov 14 2025 at 21:34)</a>:</h4>
+<p>The solution above doesn't work. The fact that the file endianness is different than the host machine forces reading field-by-field, converting each field with <code>ntoh</code> and then combining fields into the final struct.</p>
+
+
+
+<a name="555683088"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555683088" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555683088">(Nov 14 2025 at 21:47)</a>:</h4>
+<p>The solution that actually works:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">fields</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">MyStruct</span><span class="p">))</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">field</span>
+<span class="w">  </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fieldtype</span><span class="p">(</span><span class="n">MyStruct</span><span class="p">,</span><span class="w"> </span><span class="n">field</span><span class="p">)</span>
+<span class="w">  </span><span class="n">ntoh</span><span class="p">(</span><span class="n">read</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="p">))</span>
+<span class="k">end</span>
+<span class="n">reinterpret</span><span class="p">(</span><span class="n">MyStruct</span><span class="p">,</span><span class="w"> </span><span class="n">fields</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<a name="555683149"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555683149" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555683149">(Nov 14 2025 at 21:47)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> has marked this topic as resolved.</p>
+
+
+
+<a name="555684795"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555684795" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555684795">(Nov 14 2025 at 22:01)</a>:</h4>
+<p>You could also do </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convert</span><span class="p">(</span><span class="kt">Ptr</span><span class="p">{</span><span class="kt">MyType</span><span class="p">},</span><span class="w"> </span><span class="n">pointer</span><span class="p">(</span><span class="n">bytes</span><span class="p">))</span>
+<span class="n">unsafe_load</span><span class="p">(</span><span class="n">ptr</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<a name="555685278"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555685278" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555685278">(Nov 14 2025 at 22:05)</a>:</h4>
+<p>Make sure you're aware of julia's padding conventions though. E.g. your struct</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">struct</span> <span class="kt">MyStruct</span>
+<span class="w">  </span><span class="n">field1</span><span class="o">::</span><span class="kt">UInt8</span>
+<span class="w">  </span><span class="n">field2</span><span class="o">::</span><span class="kt">UInt16</span>
+<span class="w"> </span><span class="k">end</span>
+</code></pre></div>
+<p>actually has padding between <code>field1</code> and <code>field2</code> to give it anlignment, so <code>field2</code> is not the the 2nd and 3rd bytes of the array.</p>
+
+
+
+<a name="555690685"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20efficiently%20convert%20bytes%20into%20a%20struct%3F/near/555690685" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F.html#555690685">(Nov 14 2025 at 22:55)</a>:</h4>
+<p>Thank yo for sharing this alternative. I think I will go with the <code>reinterpret</code> approach as it is working well.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

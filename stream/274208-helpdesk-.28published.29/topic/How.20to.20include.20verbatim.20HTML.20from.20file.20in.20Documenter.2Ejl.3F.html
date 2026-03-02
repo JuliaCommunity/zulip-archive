@@ -1,0 +1,57 @@
+<html>
+<head><meta charset="utf-8"><title>How to include verbatim HTML from file in Documenter.jl? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20include.20verbatim.20HTML.20from.20file.20in.20Documenter.2Ejl.3F.html">How to include verbatim HTML from file in Documenter.jl?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="518748343"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20include%20verbatim%20HTML%20from%20file%20in%20Documenter.jl%3F/near/518748343" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20include.20verbatim.20HTML.20from.20file.20in.20Documenter.2Ejl.3F.html#518748343">(May 16 2025 at 21:11)</a>:</h4>
+<p><a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/GeoStats">GeoStats.jl</a>'s README has a section built by a bot on GitHub, which tracks contributors. How can I show this same section on a <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/Documenter">Documenter.jl</a> page?</p>
+<p><a href="https://github.com/JuliaEarth/GeoStats.jl?tab=readme-ov-file#contributors">https://github.com/JuliaEarth/GeoStats.jl?tab=readme-ov-file#contributors</a></p>
+<p>I am aware of <code>@raw html</code> blocks, but can't find a way to insert the contents in the block from the README.</p>
+<p>The following code can be used to extract the text from the README:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="w">  </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">joinpath</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="nd">@__DIR__</span><span class="p">),</span><span class="w"> </span><span class="s">"README.md"</span><span class="p">)</span>
+<span class="w">  </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="p">)</span>
+<span class="w">  </span><span class="n">html</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">last</span><span class="p">(</span><span class="n">split</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="s">"##"</span><span class="p">))</span>
+</code></pre></div>
+<p>How can I "paste" the value of <code>html</code> into the <code>@raw html</code> block?</p>
+
+
+
+<a name="518774121"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20include%20verbatim%20HTML%20from%20file%20in%20Documenter.jl%3F/near/518774121" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sundar R <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20include.20verbatim.20HTML.20from.20file.20in.20Documenter.2Ejl.3F.html#518774121">(May 17 2025 at 02:27)</a>:</h4>
+<p>It <a href="https://allcontributors.org/docs/en/bot/configuration">looks</a> like you can use the all-contributors bot itself to do the bulk of the work: </p>
+<ul>
+<li>add a new <code>contributors.md</code> file under your <code>docs</code> folder</li>
+<li>paste into it the same <code>ALL-CONTRIBUTORS-LIST:START</code> <a href="https://allcontributors.org/docs/en/bot/installation#3-create-a-readmemd">template</a> as in the readme</li>
+<li>add that to the <code>file</code> key in your <a href="https://github.com/JuliaEarth/GeoStats.jl/blob/master/.all-contributorsrc#L2">.all-contributorsrc</a> file </li>
+<li>include this <code>contributors.md</code> in your <code>makedocs</code> call</li>
+</ul>
+<p>That would avoid having to do any hacky copy-paste script or anything, and seems a well supported way of doing it.</p>
+
+
+
+<a name="518774449"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20include%20verbatim%20HTML%20from%20file%20in%20Documenter.jl%3F/near/518774449" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sundar R <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20include.20verbatim.20HTML.20from.20file.20in.20Documenter.2Ejl.3F.html#518774449">(May 17 2025 at 02:31)</a>:</h4>
+<p>I guess your contributors.md should start out looking something like</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="sb">```@raw html</span>
+<span class="sb">&lt;!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section --&gt;</span>
+<span class="sb">&lt;!-- prettier-ignore-start --&gt;</span>
+<span class="sb">&lt;!-- markdownlint-disable --&gt;</span>
+
+<span class="sb">&lt;!-- markdownlint-restore --&gt;</span>
+<span class="sb">&lt;!-- prettier-ignore-end --&gt;</span>
+
+<span class="sb">&lt;!-- ALL-CONTRIBUTORS-LIST:END --&gt;</span>
+<span class="sb">```</span>
+</code></pre></div>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

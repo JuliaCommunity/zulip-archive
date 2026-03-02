@@ -1,0 +1,125 @@
+<html>
+<head><meta charset="utf-8"><title>Break/continue statements error inside a do block · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Break.2Fcontinue.20statements.20error.20inside.20a.20do.20block.html">Break/continue statements error inside a do block</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="504754948"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Break/continue%20statements%20error%20inside%20a%20do%20block/near/504754948" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Moorits Muru <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Break.2Fcontinue.20statements.20error.20inside.20a.20do.20block.html#504754948">(Mar 11 2025 at 06:50)</a>:</h4>
+<p>I found out that using break/continue statements inside a do block (for example, <code>open(file) do f ... end</code>) produces an error. Is there a work-around or should I just avoid do blocks when I want to use these jump statements?</p>
+<p>A MWE:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="mi">10</span>
+<span class="w">  </span><span class="n">map</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">j</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">      </span><span class="k">continue</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="mi">2</span><span class="n">j</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>which produces</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">ERROR</span><span class="o">:</span><span class="w"> </span><span class="n">syntax</span><span class="o">:</span><span class="w"> </span><span class="k">break</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="k">continue</span><span class="w"> </span><span class="n">outside</span><span class="w"> </span><span class="n">loop</span>
+<span class="n">Stacktrace</span><span class="o">:</span>
+<span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="n">top</span><span class="o">-</span><span class="n">level</span><span class="w"> </span><span class="n">scope</span>
+<span class="w">   </span><span class="err">@</span><span class="w"> </span><span class="n">REPL</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">:</span><span class="mi">1</span>
+</code></pre></div>
+
+
+
+<a name="504771456"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Break/continue%20statements%20error%20inside%20a%20do%20block/near/504771456" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Break.2Fcontinue.20statements.20error.20inside.20a.20do.20block.html#504771456">(Mar 11 2025 at 08:30)</a>:</h4>
+<p>The do syntax is sugar to convert <code>map(f, xs)</code> into</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">map</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">x</span>
+<span class="w">  </span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Your <code>f</code> is not a valid Julia function.</p>
+
+
+
+<a name="504781889"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Break/continue%20statements%20error%20inside%20a%20do%20block/near/504781889" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Moorits Muru <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Break.2Fcontinue.20statements.20error.20inside.20a.20do.20block.html#504781889">(Mar 11 2025 at 09:18)</a>:</h4>
+<p>This is just an example to show the behaviour of the continue statement, and it does seem like a valid function to me.</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">f</span>
+<span class="w">       </span><span class="mi">2</span><span class="n">f</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">5-element Vector{Int64}:</span>
+<span class="go">  2</span>
+<span class="go">  4</span>
+<span class="go">  6</span>
+<span class="go">  8</span>
+<span class="go"> 10</span>
+</code></pre></div>
+
+
+
+<a name="504784242"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Break/continue%20statements%20error%20inside%20a%20do%20block/near/504784242" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Break.2Fcontinue.20statements.20error.20inside.20a.20do.20block.html#504784242">(Mar 11 2025 at 09:28)</a>:</h4>
+<p>What would you expect <code>continue</code> to do inside the <code>map</code> body?</p>
+
+
+
+<a name="504786119"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Break/continue%20statements%20error%20inside%20a%20do%20block/near/504786119" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Break.2Fcontinue.20statements.20error.20inside.20a.20do.20block.html#504786119">(Mar 11 2025 at 09:36)</a>:</h4>
+<blockquote>
+<p>and it does seem like a valid function to me.</p>
+</blockquote>
+<p>Júlio was referring specifically to your use of <code>continue</code> in the function body. To be clear, when you write</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">map</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="n">j</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">        </span><span class="k">continue</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="mi">2</span><span class="n">j</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>that is basically syntax sugar for</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">_f</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">        </span><span class="k">continue</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="mi">2</span><span class="n">j</span>
+<span class="k">end</span>
+
+<span class="n">map</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="mi">5</span><span class="p">)</span>
+</code></pre></div>
+<p>The <code>continue</code> belongs lexically to the function body, not to the outer <code>for</code> loop.</p>
+
+
+
+<a name="504787365"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Break/continue%20statements%20error%20inside%20a%20do%20block/near/504787365" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Break.2Fcontinue.20statements.20error.20inside.20a.20do.20block.html#504787365">(Mar 11 2025 at 09:41)</a>:</h4>
+<p>This gives me a dejavu to <a href="https://discourse.julialang.org/t/use-break-or-continue-statement-with-pmap/126425">https://discourse.julialang.org/t/use-break-or-continue-statement-with-pmap/126425</a></p>
+
+
+
+<a name="504787378"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Break/continue%20statements%20error%20inside%20a%20do%20block/near/504787378" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Moorits Muru <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Break.2Fcontinue.20statements.20error.20inside.20a.20do.20block.html#504787378">(Mar 11 2025 at 09:41)</a>:</h4>
+<p>I was hoping that in a loop the <code>i</code> is also in the scope of the do block. My real life case is that I have loop over file paths, open them using a do block and check whether the file contains certain info, if it doesn't, continue with the next file.</p>
+
+
+
+<a name="504787591"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Break/continue%20statements%20error%20inside%20a%20do%20block/near/504787591" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Break.2Fcontinue.20statements.20error.20inside.20a.20do.20block.html#504787591">(Mar 11 2025 at 09:42)</a>:</h4>
+<p>If you just want to continue, a return from the implicit anonymous function does just that.</p>
+
+
+
+<a name="504787946"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Break/continue%20statements%20error%20inside%20a%20do%20block/near/504787946" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Moorits Muru <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Break.2Fcontinue.20statements.20error.20inside.20a.20do.20block.html#504787946">(Mar 11 2025 at 09:44)</a>:</h4>
+<p>I could try that, thanks!</p>
+
+
+
+<a name="504788958"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Break/continue%20statements%20error%20inside%20a%20do%20block/near/504788958" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Break.2Fcontinue.20statements.20error.20inside.20a.20do.20block.html#504788958">(Mar 11 2025 at 09:48)</a>:</h4>
+<p>yeah, <code>map</code> was a confusing example here because the mapping function is meant to be called multiple times, and the results are all supposed to be collected in order, so it wasn't clear to me what you expected to happen in the iterations where you <code>continue</code>. (i.e. should the output vector be shorter, should it contain <code>nothing</code>s, etc?)</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

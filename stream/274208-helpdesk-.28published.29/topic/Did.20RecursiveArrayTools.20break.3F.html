@@ -1,0 +1,89 @@
+<html>
+<head><meta charset="utf-8"><title>Did RecursiveArrayTools break? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html">Did RecursiveArrayTools break?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="569077755"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Did%20RecursiveArrayTools%20break%3F/near/569077755" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html#569077755">(Jan 20 2026 at 16:42)</a>:</h4>
+<p>Our tests broke during the winter break with the following error:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="kt">MethodError</span><span class="o">:</span><span class="w"> </span><span class="n">no</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="n">matching</span><span class="w"> </span><span class="n">isless</span><span class="p">(</span><span class="o">::</span><span class="kt">RecursiveArrayTools</span><span class="o">.</span><span class="n">RaggedEnd</span><span class="p">,</span><span class="w"> </span><span class="o">::</span><span class="kt">RecursiveArrayTools</span><span class="o">.</span><span class="n">RaggedEnd</span><span class="p">)</span>
+</code></pre></div>
+<p>There are no changes in the sources so I guess they cannot be blamed. Did something change on the side of <a href="https://github.com/SciML/RecursiveArrayTools.jl"><code>RecursiveArrayTools.jl</code></a>? <code>isless</code> yields no match on their release or issue tracker.</p>
+
+
+
+<a name="569078529"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Did%20RecursiveArrayTools%20break%3F/near/569078529" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Joshua Lampert <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html#569078529">(Jan 20 2026 at 16:45)</a>:</h4>
+<p>Yes, I did add the <code>RaggedEnd</code> to <a href="https://github.com/SciML/RecursiveArrayTools.jl"><code>RecursiveArrayTools.jl</code></a> recently. Sorry if it broke something for you. I'll see if I can fix that. Do you maybe have some MWE or a link to a failing CI run?</p>
+
+
+
+<a name="569078688"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Did%20RecursiveArrayTools%20break%3F/near/569078688" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html#569078688">(Jan 20 2026 at 16:46)</a>:</h4>
+<p>I don't have a MWE yet (still investigating) but I think I do have a failed CI, lemme check..</p>
+
+
+
+<a name="569079037"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Did%20RecursiveArrayTools%20break%3F/near/569079037" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html#569079037">(Jan 20 2026 at 16:47)</a>:</h4>
+<p>There we go : <a href="https://github.com/econetoolbox/EcologicalNetworksDynamics.jl/actions/runs/20956577919/job/60229506395#step:6:1785">https://github.com/econetoolbox/EcologicalNetworksDynamics.jl/actions/runs/20956577919/job/60229506395#step:6:1785</a></p>
+
+
+
+<a name="569079216"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Did%20RecursiveArrayTools%20break%3F/near/569079216" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html#569079216">(Jan 20 2026 at 16:48)</a>:</h4>
+<p>Sorry for the deep dive: the package is undergoing deep changes atm, I have no simple way to reproduce yet, but I'll keep you posted asap &lt;3</p>
+
+
+
+<a name="569079291"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Did%20RecursiveArrayTools%20break%3F/near/569079291" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Joshua Lampert <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html#569079291">(Jan 20 2026 at 16:48)</a>:</h4>
+<p>Thanks! I'll take a look later or tomorrow.</p>
+
+
+
+<a name="569080839"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Did%20RecursiveArrayTools%20break%3F/near/569080839" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html#569080839">(Jan 20 2026 at 16:55)</a>:</h4>
+<p>Yop, got closer. It fails as I try to index into a diffeq solution value like <code>sol[:,end:end]</code>. Working on a mwe (compiling <span aria-label="hourglass" class="emoji emoji-23f3" role="img" title="hourglass">:hourglass:</span> ..)</p>
+
+
+
+<a name="569082352"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Did%20RecursiveArrayTools%20break%3F/near/569082352" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html#569082352">(Jan 20 2026 at 17:02)</a>:</h4>
+<p>Here is a mwe <span class="user-mention" data-user-id="689273">@Joshua Lampert</span>. I <em>think</em> this used to work?</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">DifferentialEquations</span>
+<span class="n">dudt!</span><span class="p">(</span><span class="n">du</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="o">...</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">du</span><span class="w"> </span><span class="o">.=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="n">pb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ODEProblem</span><span class="p">(</span><span class="n">dudt!</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span>
+<span class="n">sol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solve</span><span class="p">(</span><span class="n">pb</span><span class="p">)</span>
+<span class="n">sol</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="o">:</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="c"># Fine.</span>
+<span class="n">sol</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">]</span><span class="w"> </span><span class="c"># Broken.</span>
+</code></pre></div>
+
+
+
+<a name="569085045"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Did%20RecursiveArrayTools%20break%3F/near/569085045" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html#569085045">(Jan 20 2026 at 17:14)</a>:</h4>
+<p>Should I report to <a href="https://github.com/SciML/RecursiveArrayTools.jl"><code>RecursiveArrayTools.jl</code></a>?</p>
+
+
+
+<a name="569087056"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Did%20RecursiveArrayTools%20break%3F/near/569087056" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Joshua Lampert <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html#569087056">(Jan 20 2026 at 17:22)</a>:</h4>
+<p>Thanks! Yes, that should work. I hope to have a fix soon, but I first need to get back to my work laptop<span aria-label="sweat smile" class="emoji emoji-1f605" role="img" title="sweat smile">:sweat_smile:</span></p>
+
+
+
+<a name="569134785"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Did%20RecursiveArrayTools%20break%3F/near/569134785" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Joshua Lampert <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Did.20RecursiveArrayTools.20break.3F.html#569134785">(Jan 20 2026 at 21:54)</a>:</h4>
+<p>A fix should be released soon. Thanks for reporting.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

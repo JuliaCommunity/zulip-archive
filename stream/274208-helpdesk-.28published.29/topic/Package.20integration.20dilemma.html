@@ -1,0 +1,81 @@
+<html>
+<head><meta charset="utf-8"><title>Package integration dilemma · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Package.20integration.20dilemma.html">Package integration dilemma</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="548126163"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Package%20integration%20dilemma/near/548126163" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Package.20integration.20dilemma.html#548126163">(Oct 31 2025 at 10:48)</a>:</h4>
+<div class="codehilite"><pre><span></span><code>
+</code></pre></div>
+
+<p>Not exactly a dilemma, but more of an open-ended question around package extensions (or maybe just package interaction in general) and how to think about APIs then.</p>
+<p>Suppose I have a package <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/CarSimulation">CarSimulation.jl</a> (actual project is not for cars, but this hopefully makes it easier to understand what I’m after) which comes with a few built-in cars so that users can do things like</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">crashtest</span><span class="p">(</span><span class="n">CarModels</span><span class="o">.</span><span class="n">TypicalSemiTruck</span><span class="p">(),</span><span class="w"> </span><span class="mi">50</span><span class="n">kmh</span><span class="p">)</span>
+</code></pre></div>
+<p>Where the whole point of <code>CarModels</code> is that users can type it in the REPL and then use tab to autocomplete and list available models.</p>
+<p>I now learned that there is a database where I can get accurate parameters for real car models and I’d like to integrate that <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/CarSimulation">CarSimulation.jl</a>.</p>
+<p>I could of course do something like this</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="w"> </span><span class="n">crashtest</span><span class="p">(</span><span class="n">fetch_from_database</span><span class="p">(</span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">“Honda</span><span class="w"> </span><span class="n">Civic”</span><span class="p">,</span><span class="w"> </span><span class="n">year</span><span class="o">=…</span><span class="p">),</span><span class="w"> </span><span class="mi">50</span><span class="n">kmh</span><span class="p">)</span>
+</code></pre></div>
+<p>But that would lose the nice autocomplete properties. I would much rather have something like</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">crashtest</span><span class="p">(</span><span class="n">CarModels</span><span class="o">.</span><span class="n">HondaCivic</span><span class="p">(</span><span class="n">year</span><span class="o">=…</span><span class="p">),</span><span class="w"> </span><span class="mi">50</span><span class="n">kmh</span><span class="p">)</span>
+</code></pre></div>
+<p>This would make the integration seamless and the autocomplete workflow will still work.  Question is basically how best to accomplish this.</p>
+<p>The first things that some to mind is to generate structs based on entries in the database into a module called CarModels.</p>
+<p>One complication is that since database is optional (maybe users don’t even have access) I don’t want to add the database stuff directly to <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/CarSimulations">CarSimulations.jl</a>. The nicest would be to have an extension since I will anyway be creating a package for just the interaction with the database since this is needed in other contexts. </p>
+<p>However, extensions tend to be quite insulated from the main package (and probably for good reasons) and seem to mostly want to work with types owned by the extended package. I guess trying to eval stuff into the parent package is asking for trouble (if it even works at all)?</p>
+<p>Another option could be to make CarModels an constant instance of some struct (which might need some pretty convoluted implementations of getproperty to make the syntax above work) which the extension modifies when initialized. Or is this almost as bad as the above?</p>
+<p>Last resort option I can think of is to compromise a bit and have something like <code>DataBaseCarModels.HondaCivic</code> in the database package as some struct which just wraps the database output and then let the extension (in <code>CarSimulation.jl</code>) translate the database output into some generic <code>CarModel</code> which the <code>CarSimulations.jl</code> code can work with. </p>
+<p>This is probably perfectly fine from the user perspective, but I’m worried about the maintenance since <code>CarSimulation.jl</code> exports a quite large number of functions which take a car model as input which all would need to be implemented for the wrapped database output. </p>
+<p>Having a function to convert a database struct to a <code>CarModel</code> could alleviate this maintenance burden at the cost of user inconvenience. This also create the dilemma of where the conversion function shall live, but I suppose it could be owned by <code>CarSimulations.jl</code> and just default to an error.</p>
+<p>A to me much less attractive last resort option I can think of is to have a combination package (<code>DataBaseCarSimulation.jl</code>) which depends on both <code>CarSimulation</code> and the database package. I guess this would allow <code>DataBaseCarModels</code> to have autocompletable car models on the format which <code>CarSimulation.jl</code> expects. Maybe this is actually the idiomatic solution to this problem? I’d still like to avoid it if possible, but I won’t die on that hill.</p>
+
+
+
+<a name="548233915"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Package%20integration%20dilemma/near/548233915" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sundar R <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Package.20integration.20dilemma.html#548233915">(Oct 31 2025 at 19:41)</a>:</h4>
+<p>Can you show the base setup of this in code - is <code>CarModels</code> a module? What type is <code>TypicalSemiTruck</code>? (Maybe you're rethinking those in the face of this database idea, but understanding the original structure you were thinking of without that would still help understand the context better.)</p>
+<p>Btw, dictionaries also get auto-complete in the REPL, so that might be a convenient option here.</p>
+
+
+
+<a name="548236727"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Package%20integration%20dilemma/near/548236727" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Package.20integration.20dilemma.html#548236727">(Oct 31 2025 at 19:58)</a>:</h4>
+<blockquote>
+<p>Can you show the base setup of this in code - is <code>CarModels</code> a module? What type is <code>TypicalSemiTruck</code>?</p>
+</blockquote>
+<p>Yeah, at the moment <code>CarModels</code> is a baremodule (just so it does not show anything except the things I have decalared in it) and <code>TypicalSemiTruck</code> is a type (which just wraps a few generic parameter containing other structs), but the only reason for this design is to get the auto-complete discovery aspect.</p>
+<p>I am indeed rethinking the design as I would assume that eval-ing stuff into <code>CarModels</code> from a package extension is not a workable design.</p>
+<p>I didn't know dicts auto-complete. It would make a simpler version of the second option I thought ot. That could very well be the simplest option then.</p>
+
+
+
+<a name="554151141"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Package%20integration%20dilemma/near/554151141" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Package.20integration.20dilemma.html#554151141">(Nov 06 2025 at 17:33)</a>:</h4>
+<p>In my view it would be better to have your own CarModels and the DatabaseCarModels as separate objects instead of having DatabaseCarModels optionally hide inside CarModels. This gives you the freedom of not having to maintain a possible abstraction layer between the two if they ever diverge in their api, which sounds as a decent headache. </p>
+<p>You could define DatabaseCarModels as a struct and play around with Base.propertynames for the tab completion and Base.getproperty for retrieving the models.</p>
+<p>If you want “callable” properties, it might be a bit tricky, it would probably need you to generate functor stubs of all the database models in the extension, which could be done with, admittedly, a probably rather involved macro.<br>
+But at that point you can have the translation happen automatically in the functor.</p>
+<p>P.S.: apologies for the unformatted code, Zulip on mobile is a disgrace</p>
+
+
+
+<a name="554165268"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Package%20integration%20dilemma/near/554165268" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> DrChainsaw <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Package.20integration.20dilemma.html#554165268">(Nov 06 2025 at 18:45)</a>:</h4>
+<p>Thanks,</p>
+<p>I think I've come to the same conclusion w.r.t the namespace separation. </p>
+<p>It was perhaps a bit obscured in the question, but a big part of what I'm struggling with is a good way to cross the mainpackage - extension border. For example, it seems as if DatabaseCarModels would either need to be owned by the main package and created as a global empty instance or returned through a function call which the main package owns (and the extension implements a method which takes some type owned by the extended package).</p>
+<p>For now I have used the latter method so there is an empty generate_carmodels function in the main package which the extension implements. I made the database package just wrap all the downloaded data in structs so that it has own types which can be used for this dispatch.</p>
+<p>All in all I'm not too unhappy about this. </p>
+<p>I couldn't really let go of how nice it would be (from the end users perspective) to have the database models as types, so for now this function returns an expression which the main package evals to create DatabaseCarModels as a submodule to the main package, although I do have a feeling I will regret this choice soon. The logic to handle the database output is quite generic though so it should not be too much effort to change it so it just returns some collection of non-unique-type instances.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

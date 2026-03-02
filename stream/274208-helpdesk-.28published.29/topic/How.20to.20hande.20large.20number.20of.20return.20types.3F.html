@@ -1,0 +1,775 @@
+<html>
+<head><meta charset="utf-8"><title>How to hande large number of return types? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html">How to hande large number of return types?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="558761826"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558761826" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558761826">(Nov 21 2025 at 22:36)</a>:</h4>
+<p>The compiler gives up  type inference when the number of return types is large:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="kt">Int64</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="kt">Int32</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">    </span><span class="kt">Int16</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">4</span>
+<span class="w">    </span><span class="kt">Int8</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">    </span><span class="kt">UInt64</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">6</span>
+<span class="w">    </span><span class="kt">UInt32</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">7</span>
+<span class="w">    </span><span class="kt">UInt16</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">8</span>
+<span class="w">    </span><span class="kt">UInt8</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">9</span>
+<span class="w">    </span><span class="kt">Float64</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">10</span>
+<span class="w">    </span><span class="kt">Float32</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">    </span><span class="n">error</span><span class="p">(</span><span class="s">"Unsupported code"</span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="nd">@code_warntype</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">MethodInstance</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="o">::</span><span class="kt">Int64</span><span class="p">)</span>
+<span class="w">  </span><span class="n">from</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="err">@</span><span class="w"> </span><span class="n">Main</span><span class="w"> </span><span class="n">REPL</span><span class="p">[</span><span class="mi">35</span><span class="p">]</span><span class="o">:</span><span class="mi">1</span>
+<span class="n">Arguments</span>
+<span class="w">  </span><span class="c">#self#::Core.Const(Main.f)</span>
+<span class="w">  </span><span class="n">i</span><span class="o">::</span><span class="kt">Int64</span>
+<span class="n">Body</span><span class="o">::</span><span class="kt">Type</span>
+</code></pre></div>
+<p>However, I have an application that needs to support that many number types. What can we do to workaround this compiler limitation?</p>
+
+
+
+<a name="558762235"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558762235" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558762235">(Nov 21 2025 at 22:41)</a>:</h4>
+<p>I know the union-splitting trick in the calling function when it needs to deal with a subset of types:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">g</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">  </span><span class="c"># union-splitting optimization reduces</span>
+<span class="w">  </span><span class="c"># the number of possible branches to</span>
+<span class="w">  </span><span class="c"># help the compiler perform inference</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="kt">T</span><span class="w"> </span><span class="o">&lt;:</span><span class="w"> </span><span class="kt">Float64</span>
+<span class="w">    </span><span class="s">"float64"</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">    </span><span class="s">"other"</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="558762283"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558762283" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558762283">(Nov 21 2025 at 22:42)</a>:</h4>
+<p>Any other solution?</p>
+
+
+
+<a name="558763904"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558763904" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558763904">(Nov 21 2025 at 23:01)</a>:</h4>
+<p>Have you tried with a sum type package? SumTypes, LightSumTypes, Moshi, WrappedUnions for example?</p>
+
+
+
+<a name="558763974"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558763974" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558763974">(Nov 21 2025 at 23:02)</a>:</h4>
+<p>Never used it. Any recommendation from the list of packages?</p>
+
+
+
+<a name="558764160"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558764160" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558764160">(Nov 21 2025 at 23:05)</a>:</h4>
+<p>Related question: could <code>Val{T}</code> help in this situation?</p>
+
+
+
+<a name="558764220"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558764220" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558764220">(Nov 21 2025 at 23:05)</a>:</h4>
+<p>I’ve been using WrappedUnions recently to try it out. It’s from the same author of LightSumTypes and he thinks it should be the successor but I think is not as well trodden as LightSumTypes. WrappedUnions is pretty barebones though. SumTypes or Moshi might have a bit more niceties</p>
+
+
+
+<a name="558764387"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558764387" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558764387">(Nov 21 2025 at 23:07)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558764160">said</a>:</p>
+<blockquote>
+<p>Related question: could <code>Val{T}</code> help in this situation?</p>
+</blockquote>
+<p>You’d need to have the Val be really a compile time value. Otherwise you’re just moving the type instability around.</p>
+
+
+
+<a name="558764973"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558764973" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558764973">(Nov 21 2025 at 23:13)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="921827">cschen</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558764220">said</a>:</p>
+<blockquote>
+<p>I’ve been using WrappedUnions recently to try it out. It’s from the same author of LightSumTypes and he thinks it should be the successor but I think is not as well trodden as LightSumTypes. WrappedUnions is pretty barebones though. SumTypes or Moshi might have a bit more niceties</p>
+</blockquote>
+<p>I will experiment <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/SumTypes">SumTypes.jl</a> and <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/LightSumTypes">LightSumTypes.jl</a></p>
+
+
+
+<a name="558765238"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558765238" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558765238">(Nov 21 2025 at 23:17)</a>:</h4>
+<p><span class="user-mention" data-user-id="921827">@cschen</span> how would you rewrite the function <code>f</code> in terms of <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/SumTypes">SumTypes.jl</a> for example? I see that the <code>@sum_types</code> macro expects symbols as the options, but in this case we have integer literals.</p>
+
+
+
+<a name="558765696"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558765696" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558765696">(Nov 21 2025 at 23:23)</a>:</h4>
+<p>The ideai had was to have the function return always the same sumtype containing different variants. You would then have to union split on the resulting argument.<br>
+Can’t go much into the details as I both am not so handy with SumTypes and Am not at the keyboard either :)</p>
+
+
+
+<a name="558766106"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558766106" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558766106">(Nov 21 2025 at 23:28)</a>:</h4>
+<p>Yes, I am just finding it difficult to create such sum type in this case. Tried reading the examples in <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/SumTypes">SumTypes.jl</a> and <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/LightSumTypes">LightSumTypes.jl</a> but still can't figure it out.</p>
+
+
+
+<a name="558770239"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558770239" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Daniel Wennberg <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558770239">(Nov 22 2025 at 00:21)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558761826">said</a>:</p>
+<blockquote>
+<p>What can we do to workaround this compiler limitation?</p>
+</blockquote>
+<p>Accept that there will be a dynamic dispatch here (because you're literally dynamically dispatching on the runtime value of <code>i</code>), and use function barriers to contain the type instability.</p>
+
+
+
+<a name="558787315"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558787315" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558787315">(Nov 22 2025 at 05:39)</a>:</h4>
+<p>I tried function barriers but they didn't solve the issue. The downstream algorithm performance is impacted.</p>
+
+
+
+<a name="558796423"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558796423" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558796423">(Nov 22 2025 at 08:13)</a>:</h4>
+<p>You don't actually necessarily need to accept that. The trick to take advantage of here is that Julia tries <strong>way</strong> harder to deal with large unions if they are "enclosed" in a struct:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">struct</span> <span class="kt">MyWrapper</span>
+<span class="w">    </span><span class="n">T</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int16</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int8</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt16</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt8</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Float32</span><span class="p">}}</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="kt">Int64</span>
+<span class="w">    </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">        </span><span class="kt">Int32</span>
+<span class="w">    </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">        </span><span class="kt">Int16</span>
+<span class="w">    </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">4</span>
+<span class="w">        </span><span class="kt">Int8</span>
+<span class="w">    </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">        </span><span class="kt">UInt64</span>
+<span class="w">    </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">6</span>
+<span class="w">        </span><span class="kt">UInt32</span>
+<span class="w">    </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">7</span>
+<span class="w">        </span><span class="kt">UInt16</span>
+<span class="w">    </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">8</span>
+<span class="w">        </span><span class="kt">UInt8</span>
+<span class="w">    </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">9</span>
+<span class="w">        </span><span class="kt">Float64</span>
+<span class="w">    </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">10</span>
+<span class="w">        </span><span class="kt">Float32</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">error</span><span class="p">(</span><span class="s">"Unsupported code"</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="n">MyWrapper</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>and then e.g. you might have a <code>g</code> function that calls <code>f</code>:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">g</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">    </span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>and we see here that julia does work through all the union variants:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="w"> </span><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">code_warntype</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="w"> </span><span class="kt">Tuple</span><span class="p">{</span><span class="kt">Int</span><span class="p">})</span>
+<span class="n">MethodInstance</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">g</span><span class="p">(</span><span class="o">::</span><span class="kt">Int64</span><span class="p">)</span>
+<span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">g</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="err">@</span><span class="w"> </span><span class="n">Main</span><span class="w"> </span><span class="n">REPL</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">:</span><span class="mi">1</span>
+<span class="n">Arguments</span>
+<span class="w"> </span><span class="c">#self#::Core.Const(Main.g)</span>
+<span class="w"> </span><span class="n">i</span><span class="o">::</span><span class="kt">Int64</span>
+<span class="n">Body</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Float32</span><span class="p">,</span><span class="w"> </span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="kt">Int16</span><span class="p">,</span><span class="w"> </span><span class="kt">Int32</span><span class="p">,</span><span class="w"> </span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="kt">Int8</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt16</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt32</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt64</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt8</span><span class="p">}</span>
+<span class="mi">1</span><span class="w"> </span><span class="n">─</span><span class="w"> </span><span class="o">%</span><span class="mi">1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Main</span><span class="o">.</span><span class="n">f</span><span class="o">::</span><span class="kt">Core</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="n">Main</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>
+<span class="n">│</span><span class="w">   </span><span class="o">%</span><span class="mi">2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="mi">1</span><span class="p">)(</span><span class="n">i</span><span class="p">)</span><span class="o">::</span><span class="kt">MyWrapper</span>
+<span class="n">│</span><span class="w">   </span><span class="o">%</span><span class="mi">3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="n">getproperty</span><span class="p">(</span><span class="o">%</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="ss">:T</span><span class="p">)</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Type</span><span class="p">{</span><span class="kt">Float32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int16</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int8</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt16</span><span class="p">},</span><span class="w"> </span><span class="kt">Ty</span>
+<span class="kt">pe</span><span class="p">{</span><span class="kt">UInt32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt8</span><span class="p">}}</span>
+<span class="n">│</span><span class="w">   </span><span class="o">%</span><span class="mi">4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="mi">3</span><span class="p">)(</span><span class="n">i</span><span class="p">)</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Float32</span><span class="p">,</span><span class="w"> </span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="kt">Int16</span><span class="p">,</span><span class="w"> </span><span class="kt">Int32</span><span class="p">,</span><span class="w"> </span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="kt">Int8</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt16</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt32</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt64</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt8</span><span class="p">}</span>
+<span class="n">└──</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="o">%</span><span class="mi">4</span>
+</code></pre></div>
+
+
+
+<a name="558797057"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558797057" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558797057">(Nov 22 2025 at 08:23)</a>:</h4>
+<p>Nice trick. I'll try it locally, thank you.</p>
+
+
+
+<a name="558797628"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558797628" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558797628">(Nov 22 2025 at 08:34)</a>:</h4>
+<p>By the way, the package WrappedUnions takes advantage of exactly this trick and gives a few helper functions to invoke the unionsplit. It’s very lightweight at ~100 lines of code</p>
+
+
+
+<a name="558797782"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558797782" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558797782">(Nov 22 2025 at 08:36)</a>:</h4>
+<p>Will take a look too.</p>
+
+
+
+<a name="558805528"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558805528" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558805528">(Nov 22 2025 at 10:44)</a>:</h4>
+<p>Really liked the <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/WrappedUnions">WrappedUnions.jl</a> solution:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="nd">@wrapped</span><span class="w"> </span><span class="k">struct</span> <span class="kt">NumberType</span><span class="w"> </span><span class="o">&lt;:</span><span class="w"> </span><span class="kt">WrappedUnion</span>
+<span class="w">  </span><span class="n">union</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int64</span><span class="p">},</span><span class="w"> </span><span class="o">...</span><span class="p">}</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="kt">Int32</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="kt">Int64</span>
+<span class="w">  </span><span class="k">elseif</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="w">  </span><span class="n">NumberType</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>It unwraps the type automatically when I call <code>f(1)</code> in another function.</p>
+
+
+
+<a name="558805540"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558805540" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558805540">(Nov 22 2025 at 10:44)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> has marked this topic as resolved.</p>
+
+
+
+<a name="558805724"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558805724" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558805724">(Nov 22 2025 at 10:47)</a>:</h4>
+<p>Curious question: why the Julia compiler doesn't perform this union-split by default?</p>
+
+
+
+<a name="558805881"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558805881" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558805881">(Nov 22 2025 at 10:50)</a>:</h4>
+<p>It does perform the union split by default. If you look at the code I wrote, you could just as easily have re-written </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">unwrap</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">MyWrapper</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="o">.</span><span class="n">T</span>
+<span class="k">function</span><span class="w"> </span><span class="n">g</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">    </span><span class="n">unwrap</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">))(</span><span class="n">i</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>and it'd be equivalent to the <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/WrappedUnions">WrappedUnions.jl</a> code</p>
+
+
+
+<a name="558806033"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558806033" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558806033">(Nov 22 2025 at 10:53)</a>:</h4>
+<p>What julia doesn't do by default is try to preserve large unions that get emitted out of function bodies. </p>
+<p>i.e. your original <code>f</code> got inferred as <code>Any</code> rather than a big union because heuristically, it's usually a waste of compile time to try and deal with really large "open unions" like that because those unions tend to multiply. E.g. if you have <code>h(x)</code> that calls <code>f(x)</code> if <code>h</code> also has a very wide number of return types, then you have <code>N_return_types(h) * N_return_types(f)</code> different return types to reason about, on and on and on, so the compile times tend to explode</p>
+
+
+
+<a name="558806085"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558806085" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558806085">(Nov 22 2025 at 10:54)</a>:</h4>
+<p>By wrapping the output into a struct, you're basically signalling to the compiler "This is all the possible return types, I want you to actually think about them and not give up early"</p>
+
+
+
+<a name="558806282"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558806282" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558806282">(Nov 22 2025 at 10:57)</a>:</h4>
+<p>Makes total sense. It would be really nice if we could mark a function with a single macro from Base to signal this behavior:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="nd">@dontgiveup</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="558808410"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558808410" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558808410">(Nov 22 2025 at 11:34)</a>:</h4>
+<p>Encountered something weird. The <code>NumberType</code> above is not always "unwrapped" in the calling site. For some inputs it gets unwrapped and for other inputs it is not unwrapped. What is the safest method to always unwrap?</p>
+
+
+
+<a name="558810741"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558810741" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558810741">(Nov 22 2025 at 12:14)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> has marked this topic as unresolved.</p>
+
+
+
+<a name="558810894"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558810894" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558810894">(Nov 22 2025 at 12:17)</a>:</h4>
+<p>If going with the WrappedUnions approach you need to use the @unionsplit macro in front of the function calls that take your wrapped union as argument.</p>
+
+
+
+<a name="558810899"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558810899" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558810899">(Nov 22 2025 at 12:17)</a>:</h4>
+<p>I actually missed an early <code>return</code> in the function.</p>
+<p>The current implementation looks like this:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="n">rand</span><span class="p">(</span><span class="kt">Bool</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">NumberType</span><span class="p">(</span><span class="kt">Float32</span><span class="p">)</span>
+
+<span class="w">  </span><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="kt">Int32</span>
+<span class="w">  </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="kt">Int64</span>
+<span class="w">  </span><span class="k">elseif</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="w">  </span><span class="n">NumberType</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>However, it doesn't automatically unwraps the <code>NumberType</code>. I tried to call <code>unwrap</code> in the <code>return</code> statements of the function <code>f</code> and in the calling site, but none worked.</p>
+
+
+
+<a name="558810932"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558810932" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558810932">(Nov 22 2025 at 12:18)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="921827">cschen</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558810894">said</a>:</p>
+<blockquote>
+<p>If going with the WrappedUnions approach you need to use the @unionsplit macro in front of the function calls that take your wrapped union as argument.</p>
+</blockquote>
+<p>So we need to do <code>@unionsplit identity(f(i))</code>?</p>
+
+
+
+<a name="558810962"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558810962" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558810962">(Nov 22 2025 at 12:19)</a>:</h4>
+<p>You can also define a method that unwraps automatically f(n::NumberType) = @unionsplit f(n)</p>
+
+
+
+<a name="558811193"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558811193" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558811193">(Nov 22 2025 at 12:23)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="921827">cschen</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558810894">said</a>:</p>
+<blockquote>
+<p>If going with the WrappedUnions approach you need to use the @unionsplit macro in front of the function calls that take your wrapped union as argument.</p>
+</blockquote>
+<p>not necessarily. That just makes it try extra hard, but in practice julia will just unwrap the whole union and split it anyways. <code>unwrap</code> is enough here</p>
+
+
+
+<a name="558811225"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558811225" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558811225">(Nov 22 2025 at 12:23)</a>:</h4>
+<p>Couldn't find a way to make it work with <code>unwrap</code> so far.</p>
+
+
+
+<a name="558811647"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558811647" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558811647">(Nov 22 2025 at 12:29)</a>:</h4>
+<p>Well, I don't know how the package could be screwing up something so simple, but you could just do it yourself as I showed before:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">struct</span> <span class="kt">MyWrapper</span>
+<span class="w">           </span><span class="n">T</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int16</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int8</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt16</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt8</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Float32</span><span class="p">}}</span>
+<span class="w">       </span><span class="k">end</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">           </span><span class="n">rand</span><span class="p">(</span><span class="kt">Bool</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">MyWrapper</span><span class="p">(</span><span class="kt">Float32</span><span class="p">)</span>
+<span class="w">           </span><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">               </span><span class="kt">Int64</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">               </span><span class="kt">Int32</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">               </span><span class="kt">Int16</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">4</span>
+<span class="w">               </span><span class="kt">Int8</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">               </span><span class="kt">UInt64</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">6</span>
+<span class="w">               </span><span class="kt">UInt32</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">7</span>
+<span class="w">               </span><span class="kt">UInt16</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">8</span>
+<span class="w">               </span><span class="kt">UInt8</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">9</span>
+<span class="w">               </span><span class="kt">Float64</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">10</span>
+<span class="w">               </span><span class="kt">Float32</span>
+<span class="w">           </span><span class="k">else</span>
+<span class="w">               </span><span class="n">error</span><span class="p">(</span><span class="s">"Unsupported code"</span><span class="p">)</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">           </span><span class="n">MyWrapper</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="w">       </span><span class="k">end</span><span class="p">;</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">unwrap</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">MyWrapper</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">;</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">g</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">unwrap</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">))(</span><span class="n">i</span><span class="p">);</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">Core</span><span class="o">.</span><span class="n">Compiler</span><span class="o">.</span><span class="n">return_type</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="w"> </span><span class="kt">Tuple</span><span class="p">{</span><span class="kt">Int</span><span class="p">})</span>
+<span class="go">Union{Float32, Float64, Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}</span>
+</code></pre></div>
+
+
+
+<a name="558811786"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558811786" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558811786">(Nov 22 2025 at 12:32)</a>:</h4>
+<p>Can we call <code>unwrap</code> inside the function <code>f</code> instead of returning <code>MyWrapper</code>? Or we need the additional call outside the function to make it work?</p>
+
+
+
+<a name="558811792"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558811792" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558811792">(Nov 22 2025 at 12:32)</a>:</h4>
+<p>Okay, I installed <code>WrappedUnions</code> and it seems to work fine for this too:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">WrappedUnions</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="nd">@wrapped</span><span class="w"> </span><span class="k">struct</span> <span class="kt">MyWrapper</span><span class="w"> </span><span class="o">&lt;:</span><span class="w"> </span><span class="kt">WrappedUnion</span>
+<span class="w">           </span><span class="n">union</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int16</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int8</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt16</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt8</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Float32</span><span class="p">}}</span>
+<span class="w">       </span><span class="k">end</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">           </span><span class="n">rand</span><span class="p">(</span><span class="kt">Bool</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">MyWrapper</span><span class="p">(</span><span class="kt">Float32</span><span class="p">)</span>
+<span class="w">           </span><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">               </span><span class="kt">Int64</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">               </span><span class="kt">Int32</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">               </span><span class="kt">Int16</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">4</span>
+<span class="w">               </span><span class="kt">Int8</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">               </span><span class="kt">UInt64</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">6</span>
+<span class="w">               </span><span class="kt">UInt32</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">7</span>
+<span class="w">               </span><span class="kt">UInt16</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">8</span>
+<span class="w">               </span><span class="kt">UInt8</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">9</span>
+<span class="w">               </span><span class="kt">Float64</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">10</span>
+<span class="w">               </span><span class="kt">Float32</span>
+<span class="w">           </span><span class="k">else</span>
+<span class="w">               </span><span class="n">error</span><span class="p">(</span><span class="s">"Unsupported code"</span><span class="p">)</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">           </span><span class="n">MyWrapper</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="w">       </span><span class="k">end</span><span class="p">;</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">g</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nd">@unionsplit</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)(</span><span class="n">i</span><span class="p">)</span>
+<span class="n">g</span><span class="w"> </span><span class="p">(</span><span class="n">generic</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">method</span><span class="p">)</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Core</span><span class="o">.</span><span class="n">Compiler</span><span class="o">.</span><span class="n">return_type</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="w"> </span><span class="kt">Tuple</span><span class="p">{</span><span class="kt">Int</span><span class="p">})</span>
+<span class="kt">Union</span><span class="p">{</span><span class="kt">Float32</span><span class="p">,</span><span class="w"> </span><span class="kt">Float64</span><span class="p">,</span><span class="w"> </span><span class="kt">Int16</span><span class="p">,</span><span class="w"> </span><span class="kt">Int32</span><span class="p">,</span><span class="w"> </span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="kt">Int8</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt16</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt32</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt64</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt8</span><span class="p">}</span>
+</code></pre></div>
+
+
+
+<a name="558811825"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558811825" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558811825">(Nov 22 2025 at 12:32)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558811786">said</a>:</p>
+<blockquote>
+<p>Can we call <code>unwrap</code> inside the function <code>f</code> instead of returning <code>MyWrapper</code>? Or we need the additional call outside the function to make it work?</p>
+</blockquote>
+<p>then you'd just be back where you started</p>
+
+
+
+<a name="558812126"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812126" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812126">(Nov 22 2025 at 12:38)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="269150">Mason Protter</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558811193">said</a>:</p>
+<blockquote>
+<p><span class="user-mention silent" data-user-id="921827">cschen</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558810894">said</a>:</p>
+<blockquote>
+<p>If going with the WrappedUnions approach you need to use the @unionsplit macro in front of the function calls that take your wrapped union as argument.</p>
+</blockquote>
+<p>not necessarily. That just makes it try extra hard, but in practice julia will just unwrap the whole union and split it anyways. <code>unwrap</code> is enough here</p>
+</blockquote>
+<p>Oh good to know!</p>
+
+
+
+<a name="558812217"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812217" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812217">(Nov 22 2025 at 12:39)</a>:</h4>
+<p>This is what my <code>@code_warntype</code> looks like:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">Arguments</span>
+<span class="w">  </span><span class="c">#self#::Core.Const(Segy.numbertype)</span>
+<span class="w">  </span><span class="n">fname</span><span class="o">::</span><span class="kt">String</span>
+<span class="n">Body</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Type</span><span class="p">{</span><span class="kt">Float32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Float64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int16</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">Int8</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt16</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt32</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt64</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">UInt8</span><span class="p">},</span><span class="w"> </span><span class="kt">Type</span><span class="p">{</span><span class="kt">IBMFloat32</span><span class="p">}}</span>
+</code></pre></div>
+<p>It shows the union in red color. Is that ok?</p>
+
+
+
+<a name="558812244"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812244" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812244">(Nov 22 2025 at 12:39)</a>:</h4>
+<p>Yes</p>
+
+
+
+<a name="558812282"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812282" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812282">(Nov 22 2025 at 12:40)</a>:</h4>
+<p>I am using <code>g(i) = unwrap(f(i))</code>, is that ok?</p>
+
+
+
+<a name="558812326"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812326" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812326">(Nov 22 2025 at 12:41)</a>:</h4>
+<p>Apparently we need <code>@unionsplit</code></p>
+
+
+
+<a name="558812342"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812342" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812342">(Nov 22 2025 at 12:41)</a>:</h4>
+<p>Otherwise the calling site becomes type unstable.</p>
+
+
+
+<a name="558812419"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812419" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812419">(Nov 22 2025 at 12:42)</a>:</h4>
+<p>What are you actually trying to do with the output?</p>
+
+
+
+<a name="558812500"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812500" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812500">(Nov 22 2025 at 12:43)</a>:</h4>
+<p>I am doing the following basically:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">g</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="n">F</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">T</span><span class="w"> </span><span class="o">&lt;:</span><span class="w"> </span><span class="kt">Float32</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="kt">Float64</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">T</span>
+
+<span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">F</span><span class="p">}(</span><span class="nb">undef</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<a name="558812539"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812539" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812539">(Nov 22 2025 at 12:44)</a>:</h4>
+<p>and then?</p>
+
+
+
+<a name="558812559"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812559" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812559">(Nov 22 2025 at 12:44)</a>:</h4>
+<p>Testing a few more things locally to see if the issue is fully solved...</p>
+
+
+
+<a name="558812578"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812578" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812578">(Nov 22 2025 at 12:44)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="269150">Mason Protter</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558812539">said</a>:</p>
+<blockquote>
+<p>and then?</p>
+</blockquote>
+<p>Then I populate the matrix with multiple <code>convert(F, read(io, T))</code> calls.</p>
+
+
+
+<a name="558812934"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812934" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812934">(Nov 22 2025 at 12:50)</a>:</h4>
+<p>okay, well I'm not going to force you to describe every step of the process until we get somewhere, but the important thing to know is whether all the different paths eventually converge somewhere that has a stable type</p>
+
+
+
+<a name="558812996"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558812996" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558812996">(Nov 22 2025 at 12:51)</a>:</h4>
+<p>Could this be related to the number of types and the fact that I also have some custom types in the list?</p>
+
+
+
+<a name="558813022"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813022" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813022">(Nov 22 2025 at 12:52)</a>:</h4>
+<p>if at the end of all the function calls, you're just going to end up returning a value whose type depends on the input value, then yeah, this will just be fundamentally brittle and easily pop back into <code>Any</code> territory</p>
+
+
+
+<a name="558813060"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813060" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813060">(Nov 22 2025 at 12:53)</a>:</h4>
+<p>if you are going to <em>do</em> something with those matrices and converge back to some sort of finite, knowable return type that's the same for all the branches (including maybe wrapping some other big union into a new wrapper) then it's fine</p>
+
+
+
+<a name="558813126"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813126" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813126">(Nov 22 2025 at 12:54)</a>:</h4>
+<p>At the end of the day I just want to return this matrix. So it should be a single type.</p>
+
+
+
+<a name="558813144"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813144" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813144">(Nov 22 2025 at 12:54)</a>:</h4>
+<p>But for some reason I still can't get the code to work reliably.</p>
+
+
+
+<a name="558813180"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813180" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813180">(Nov 22 2025 at 12:55)</a>:</h4>
+<p>okay, then this is going to be type unstable</p>
+
+
+
+<a name="558813199"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813199" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813199">(Nov 22 2025 at 12:55)</a>:</h4>
+<p>but if you're doing matrix operations I doubt the type instability really matters</p>
+
+
+
+<a name="558813281"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813281" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813281">(Nov 22 2025 at 12:57)</a>:</h4>
+<p>If you <em>do</em> need it to be type stable, return a </p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">struct</span> <span class="kt">MatrixWrapper</span>
+<span class="w">    </span><span class="n">union</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Int</span><span class="p">},</span><span class="w"> </span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Int32</span><span class="p">},</span><span class="w"> </span><span class="o">...</span><span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>and instruct the reciever of the wrapper to unwrap it before they use it.</p>
+
+
+
+<a name="558813340"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813340" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813340">(Nov 22 2025 at 12:58)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="269150">Mason Protter</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558813180">said</a>:</p>
+<blockquote>
+<p>okay, then this is going to be type unstable</p>
+</blockquote>
+<p>So the trick with <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/WrappedUnions">WrappedUnions.jl</a> doesn't really help here? I thought that <code>@unionsplit</code> would unwrap the type and make everything onwards type stable?</p>
+
+
+
+<a name="558813366"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813366" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813366">(Nov 22 2025 at 12:58)</a>:</h4>
+<p>I am confused with the behavior.</p>
+
+
+
+<a name="558813442"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813442" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813442">(Nov 22 2025 at 12:59)</a>:</h4>
+<p>everything in the branches downstream of the <code>unwrap</code> will be type stable, but that's not what you're doing, you're just returning the object, so the wrapping doesn't help unless the compiler can actually see the end points</p>
+
+
+
+<a name="558813556"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813556" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813556">(Nov 22 2025 at 13:01)</a>:</h4>
+<p>You are saying that I should at least perform some function call on the object that is different than <code>identity</code>?</p>
+
+
+
+<a name="558813574"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558813574" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558813574">(Nov 22 2025 at 13:01)</a>:</h4>
+<p>In the WrappedUnions readme the last example is exactly what mason is suggesting. You need to also wrap the matrix you are returning into a closed union</p>
+
+
+
+<a name="558814112"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558814112" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558814112">(Nov 22 2025 at 13:10)</a>:</h4>
+<p>I did read the example, but can't fully understand the reason why we need an additional wrapper if the function argument is already wrapped into a stable type.</p>
+<p>Can I help the compiler with a type annotation  when returning the matrix?</p>
+
+
+
+<a name="558815800"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558815800" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558815800">(Nov 22 2025 at 13:40)</a>:</h4>
+<p>Ok, I decided for a design that always returns <code>Matrix{Float64}</code> regardless of the input type. I also removed a bunch of input types and the <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/WrappedUnions">WrappedUnions.jl</a> dependency as it really doesn't solve the issue at hand.</p>
+
+
+
+<a name="558815834"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558815834" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558815834">(Nov 22 2025 at 13:40)</a>:</h4>
+<p>The Julia compiler can do a much better job with just 3 input types that are subtypes of <code>AbstractFloat</code>, inferring things perfectly.</p>
+
+
+
+<a name="558815848"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558815848" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558815848">(Nov 22 2025 at 13:41)</a>:</h4>
+<p>It is a shame that we don't have a way in Base Julia to <code>@dontgiveup</code> with more types.</p>
+
+
+
+<a name="558833249"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558833249" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558833249">(Nov 22 2025 at 18:11)</a>:</h4>
+<p>I don't understand why Julia doesn't infer the large union even when it's not wrapped in a struct:</p>
+<ul>
+<li>It's probably quite rare that a function returns a big union, and when it does, it's probably intentional</li>
+<li>If the issue is that big unions tend to multiply, then the compiler could just bail out at the later stage when you apply some <code>f(::Union{Lots, Of, Members...})</code>, and hence stop the big union from growing</li>
+</ul>
+<p>It seems backwards that we should wrap the union in a struct, then unwrap it, just to make Julia treat it as the union it already is.</p>
+
+
+
+<a name="558877502"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558877502" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Sukera <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558877502">(Nov 23 2025 at 08:34)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558815848">said</a>:</p>
+<blockquote>
+<p>It is a shame that we don't have a way in Base Julia to <code>@dontgiveup</code> with more types.</p>
+</blockquote>
+<p>I'd love to tell the julia compiler encouraging messages like this</p>
+
+
+
+<a name="558878101"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558878101" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Timothy <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558878101">(Nov 23 2025 at 08:44)</a>:</h4>
+<p>we could also have <code>@youcandoit</code> and <code>@tryalittleharder</code> <span aria-label="wink" class="emoji emoji-1f609" role="img" title="wink">:wink:</span></p>
+
+
+
+<a name="558903039"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/558903039" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mark Kittisopikul <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#558903039">(Nov 23 2025 at 15:38)</a>:</h4>
+<p>It would feel like talking to a LLM.</p>
+
+
+
+<a name="560216744"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/560216744" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#560216744">(Nov 25 2025 at 17:45)</a>:</h4>
+<p>I managed to add the support for all number types with a ~2x slowdown.</p>
+<p>Here is the PR with the <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/WrappedUnions">WrappedUnions.jl</a> changes: <a href="https://github.com/JuliaEarth/SeisKit.jl/pull/3/files">https://github.com/JuliaEarth/SeisKit.jl/pull/3/files</a></p>
+<p>You can benchmark the PR against the main branch with the following code:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">SeisKit</span>
+
+<span class="nd">@btime</span><span class="w"> </span><span class="n">Segy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">"test/data/stacked2Drev1.sgy"</span><span class="p">);</span>
+</code></pre></div>
+<p>where <code>stacked2Drev1.sgy</code> is a small sample file. In practice we need to load Gb of data on these files, so any speedup counts.</p>
+
+
+
+<a name="560216823"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/560216823" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#560216823">(Nov 25 2025 at 17:46)</a>:</h4>
+<p>Any trick to get back the original performance and still support all number types?</p>
+
+
+
+<a name="560217782"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/560217782" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#560217782">(Nov 25 2025 at 17:51)</a>:</h4>
+<p><span class="user-mention" data-user-id="269150">@Mason Protter</span> your package <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/FieldViews">FieldViews.jl</a> was really useful to access fields in multiple file header structs.</p>
+
+
+
+<a name="560225554"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/560225554" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#560225554">(Nov 25 2025 at 18:31)</a>:</h4>
+<p>yay!</p>
+
+
+
+<a name="560934979"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/560934979" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#560934979">(Nov 29 2025 at 18:24)</a>:</h4>
+<p>Is there a mechanism to precompile a package with a subset of types by default, but give users the ability to enable a larger set on demand? The large union issue is slowing down the performance by a 2x factor still. It would be great if we could erase a bunch of "rare" types by default.</p>
+
+
+
+<a name="560935010"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/560935010" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#560935010">(Nov 29 2025 at 18:25)</a>:</h4>
+<p>In that specific package I would like to compile with <code>IBMFloat32</code>, <code>Float32</code>, and <code>Float64</code> support by default.</p>
+
+
+
+<a name="560935064"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/560935064" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#560935064">(Nov 29 2025 at 18:26)</a>:</h4>
+<p>And when a user encounters a dataset in the industry with the exotic integer types, he/she could enable the larger list.</p>
+
+
+
+<a name="560935114"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/How%20to%20hande%20large%20number%20of%20return%20types%3F/near/560935114" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F.html#560935114">(Nov 29 2025 at 18:27)</a>:</h4>
+<p>I am thinking about creating a separate function with the exact same body, but with a different list of supported types.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>

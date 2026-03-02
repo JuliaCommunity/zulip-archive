@@ -1,0 +1,71 @@
+<html>
+<head><meta charset="utf-8"><title>✔ How to hande large number of return types? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20hande.20large.20number.20of.20return.20types.3F.html">✔ How to hande large number of return types?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="561011445"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20hande%20large%20number%20of%20return%20types%3F/near/561011445" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20hande.20large.20number.20of.20return.20types.3F.html#561011445">(Nov 30 2025 at 16:08)</a>:</h4>
+<p>You can manually check the common types, and if it's none of those, you can call a noinlined function that checks the other types</p>
+
+
+
+<a name="561011731"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20hande%20large%20number%20of%20return%20types%3F/near/561011731" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20hande.20large.20number.20of.20return.20types.3F.html#561011731">(Nov 30 2025 at 16:12)</a>:</h4>
+<p>Could you please share an example? I'm not sure I'm following the approach you have in mind.</p>
+
+
+
+<a name="561013970"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20hande%20large%20number%20of%20return%20types%3F/near/561013970" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20hande.20large.20number.20of.20return.20types.3F.html#561013970">(Nov 30 2025 at 16:42)</a>:</h4>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="w">       </span><span class="k">struct</span> <span class="kt">Foo</span>
+<span class="w">           </span><span class="n">x</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Int</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt</span><span class="p">,</span><span class="w"> </span><span class="kt">Int32</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt32</span><span class="p">,</span><span class="w"> </span><span class="kt">Int8</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt8</span><span class="p">,</span><span class="w"> </span><span class="kt">Int16</span><span class="p">,</span><span class="w"> </span><span class="kt">UInt16</span><span class="p">}</span>
+<span class="w">       </span><span class="k">end</span>
+
+<span class="w">       </span><span class="k">function</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">Foo</span><span class="p">)</span>
+<span class="w">           </span><span class="n">xx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="o">.</span><span class="n">x</span>
+<span class="w">           </span><span class="c"># Handle the most common types</span>
+<span class="w">           </span><span class="k">return</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">xx</span><span class="w"> </span><span class="k">isa</span><span class="w"> </span><span class="kt">Int</span>
+<span class="w">               </span><span class="n">xx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">           </span><span class="k">elseif</span><span class="w"> </span><span class="n">xx</span><span class="w"> </span><span class="k">isa</span><span class="w"> </span><span class="kt">UInt</span>
+<span class="w">               </span><span class="p">(</span><span class="n">xx</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="kt">Int</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">           </span><span class="k">else</span>
+<span class="w">               </span><span class="n">foo_outlined</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">       </span><span class="k">end</span>
+
+<span class="w">       </span><span class="nd">@noinline</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">foo_outlined</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="w">           </span><span class="n">xx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="o">.</span><span class="n">x</span>
+<span class="w">           </span><span class="k">return</span><span class="w"> </span><span class="n">xx</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="kt">Int</span>
+<span class="w">           </span><span class="c"># Handle all other types than Int and UInt here</span>
+<span class="w">       </span><span class="k">end</span>
+</code></pre></div>
+<p>This makes <code>foo</code> very efficient, since it just checks two types.</p>
+
+
+
+<a name="561014029"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20hande%20large%20number%20of%20return%20types%3F/near/561014029" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20hande.20large.20number.20of.20return.20types.3F.html#561014029">(Nov 30 2025 at 16:43)</a>:</h4>
+<p>Note that in the case above, it's efficient partly because it always returns an <code>Int</code>. If it needs to return some large union, it's slow, and you'd need to return a struct wrapping the union instead</p>
+
+
+
+<a name="561040336"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20hande%20large%20number%20of%20return%20types%3F/near/561040336" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20hande.20large.20number.20of.20return.20types.3F.html#561040336">(Nov 30 2025 at 23:04)</a>:</h4>
+<p>I did some tests locally and the gain is too small to justify the optimization. I will keep the code as is for now. Thank you!</p>
+
+
+
+<a name="561040342"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20How%20to%20hande%20large%20number%20of%20return%20types%3F/near/561040342" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20How.20to.20hande.20large.20number.20of.20return.20types.3F.html#561040342">(Nov 30 2025 at 23:04)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="273172">Júlio Hoffimann</span> has marked this topic as resolved.</p>
+
+
+
+<hr><p>Last updated: Mar 02 2026 at 05:32 UTC</p>
+</html>
