@@ -1,0 +1,68 @@
+[
+    {
+        "content": "<p>Our tests broke during the winter break with the following error:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"kt\">MethodError</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"n\">no</span><span class=\"w\"> </span><span class=\"n\">method</span><span class=\"w\"> </span><span class=\"n\">matching</span><span class=\"w\"> </span><span class=\"n\">isless</span><span class=\"p\">(</span><span class=\"o\">::</span><span class=\"kt\">RecursiveArrayTools</span><span class=\"o\">.</span><span class=\"n\">RaggedEnd</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"o\">::</span><span class=\"kt\">RecursiveArrayTools</span><span class=\"o\">.</span><span class=\"n\">RaggedEnd</span><span class=\"p\">)</span>\n</code></pre></div>\n<p>There are no changes in the sources so I guess they cannot be blamed. Did something change on the side of <a href=\"https://github.com/SciML/RecursiveArrayTools.jl\"><code>RecursiveArrayTools.jl</code></a>? <code>isless</code> yields no match on their release or issue tracker.</p>",
+        "id": 569077755,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1768927357
+    },
+    {
+        "content": "<p>Yes, I did add the <code>RaggedEnd</code> to <a href=\"https://github.com/SciML/RecursiveArrayTools.jl\"><code>RecursiveArrayTools.jl</code></a> recently. Sorry if it broke something for you. I'll see if I can fix that. Do you maybe have some MWE or a link to a failing CI run?</p>",
+        "id": 569078529,
+        "sender_full_name": "Joshua Lampert",
+        "timestamp": 1768927542
+    },
+    {
+        "content": "<p>I don't have a MWE yet (still investigating) but I think I do have a failed CI, lemme check..</p>",
+        "id": 569078688,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1768927580
+    },
+    {
+        "content": "<p>There we go : <a href=\"https://github.com/econetoolbox/EcologicalNetworksDynamics.jl/actions/runs/20956577919/job/60229506395#step:6:1785\">https://github.com/econetoolbox/EcologicalNetworksDynamics.jl/actions/runs/20956577919/job/60229506395#step:6:1785</a></p>",
+        "id": 569079037,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1768927675
+    },
+    {
+        "content": "<p>Sorry for the deep dive: the package is undergoing deep changes atm, I have no simple way to reproduce yet, but I'll keep you posted asap &lt;3</p>",
+        "id": 569079216,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1768927719
+    },
+    {
+        "content": "<p>Thanks! I'll take a look later or tomorrow.</p>",
+        "id": 569079291,
+        "sender_full_name": "Joshua Lampert",
+        "timestamp": 1768927739
+    },
+    {
+        "content": "<p>Yop, got closer. It fails as I try to index into a diffeq solution value like <code>sol[:,end:end]</code>. Working on a mwe (compiling <span aria-label=\"hourglass\" class=\"emoji emoji-23f3\" role=\"img\" title=\"hourglass\">:hourglass:</span> ..)</p>",
+        "id": 569080839,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1768928140
+    },
+    {
+        "content": "<p>Here is a mwe <span class=\"user-mention\" data-user-id=\"689273\">@Joshua Lampert</span>. I <em>think</em> this used to work?</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">DifferentialEquations</span>\n<span class=\"n\">dudt!</span><span class=\"p\">(</span><span class=\"n\">du</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">_</span><span class=\"o\">...</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"n\">du</span><span class=\"w\"> </span><span class=\"o\">.=</span><span class=\"w\"> </span><span class=\"mi\">0</span><span class=\"p\">)</span>\n<span class=\"n\">pb</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">ODEProblem</span><span class=\"p\">(</span><span class=\"n\">dudt!</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"p\">[</span><span class=\"mi\">0</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">0</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">0</span><span class=\"p\">],</span><span class=\"w\"> </span><span class=\"mi\">100</span><span class=\"p\">)</span>\n<span class=\"n\">sol</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">solve</span><span class=\"p\">(</span><span class=\"n\">pb</span><span class=\"p\">)</span>\n<span class=\"n\">sol</span><span class=\"p\">[</span><span class=\"o\">:</span><span class=\"p\">,</span><span class=\"mi\">2</span><span class=\"o\">:</span><span class=\"mi\">3</span><span class=\"p\">]</span><span class=\"w\"> </span><span class=\"c\"># Fine.</span>\n<span class=\"n\">sol</span><span class=\"p\">[</span><span class=\"o\">:</span><span class=\"p\">,</span><span class=\"k\">end</span><span class=\"o\">-</span><span class=\"mi\">1</span><span class=\"o\">:</span><span class=\"k\">end</span><span class=\"p\">]</span><span class=\"w\"> </span><span class=\"c\"># Broken.</span>\n</code></pre></div>",
+        "id": 569082352,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1768928527
+    },
+    {
+        "content": "<p>Should I report to <a href=\"https://github.com/SciML/RecursiveArrayTools.jl\"><code>RecursiveArrayTools.jl</code></a>?</p>",
+        "id": 569085045,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1768929244
+    },
+    {
+        "content": "<p>Thanks! Yes, that should work. I hope to have a fix soon, but I first need to get back to my work laptop<span aria-label=\"sweat smile\" class=\"emoji emoji-1f605\" role=\"img\" title=\"sweat smile\">:sweat_smile:</span></p>",
+        "id": 569087056,
+        "sender_full_name": "Joshua Lampert",
+        "timestamp": 1768929778
+    },
+    {
+        "content": "<p>A fix should be released soon. Thanks for reporting.</p>",
+        "id": 569134785,
+        "sender_full_name": "Joshua Lampert",
+        "timestamp": 1768946082
+    }
+]
