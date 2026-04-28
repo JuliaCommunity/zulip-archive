@@ -1,0 +1,45 @@
+<html>
+<head><meta charset="utf-8"><title>ScopedValues are allocating in specific contexts · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/ScopedValues.20are.20allocating.20in.20specific.20contexts.html">ScopedValues are allocating in specific contexts</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="585304057"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/ScopedValues%20are%20allocating%20in%20specific%20contexts/near/585304057" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/ScopedValues.20are.20allocating.20in.20specific.20contexts.html#585304057">(Apr 14 2026 at 00:12)</a>:</h4>
+<p>We use <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/ScopedValues">ScopedValues.jl</a> to customize tolerances in our codebase as you can see here:</p>
+<p><a href="https://github.com/JuliaGeometry/Meshes.jl/blob/e9207dfcf0b1edc7f18e0ab955409cc8802f15dc/src/tolerances.jl#L5-L25">https://github.com/JuliaGeometry/Meshes.jl/blob/e9207dfcf0b1edc7f18e0ab955409cc8802f15dc/src/tolerances.jl#L5-L25</a></p>
+<p>but for some reason calling <code>Meshes.atol(Float64)</code> allocates.</p>
+
+
+
+<a name="585304141"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/ScopedValues%20are%20allocating%20in%20specific%20contexts/near/585304141" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/ScopedValues.20are.20allocating.20in.20specific.20contexts.html#585304141">(Apr 14 2026 at 00:12)</a>:</h4>
+<p>The same code doesn't allocate when copied/pasted in the REPL.</p>
+
+
+
+<a name="585304541"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/ScopedValues%20are%20allocating%20in%20specific%20contexts/near/585304541" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/ScopedValues.20are.20allocating.20in.20specific.20contexts.html#585304541">(Apr 14 2026 at 00:13)</a>:</h4>
+<p><span class="user-mention" data-user-id="773583">@Jeffrey Chandler</span> has tried <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/Cthulhu">Cthulhu.jl</a> as you can see here: <a class="message-link" href="/#narrow/channel/275558-meshes.2Ejl/topic//near/585237291">#meshes.jl &gt; <em>general chat</em> @ 💬</a></p>
+
+
+
+<a name="585304848"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/ScopedValues%20are%20allocating%20in%20specific%20contexts/near/585304848" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/ScopedValues.20are.20allocating.20in.20specific.20contexts.html#585304848">(Apr 14 2026 at 00:15)</a>:</h4>
+<p>Appreciate it if someone with experience in <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/ScopedValues">ScopedValues.jl</a> could share what might be happening.</p>
+
+
+
+<a name="585304958"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/ScopedValues%20are%20allocating%20in%20specific%20contexts/near/585304958" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/ScopedValues.20are.20allocating.20in.20specific.20contexts.html#585304958">(Apr 14 2026 at 00:15)</a>:</h4>
+<p>We also tried with the ScopedValues stdlib, and there is no difference in behavior.</p>
+
+
+
+<hr><p>Last updated: Apr 28 2026 at 07:12 UTC</p>
+</html>

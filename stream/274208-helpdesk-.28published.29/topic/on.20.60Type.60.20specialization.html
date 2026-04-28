@@ -1,0 +1,19 @@
+<html>
+<head><meta charset="utf-8"><title>on `Type` specialization · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/on.20.60Type.60.20specialization.html">on `Type` specialization</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="583446587"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/on%20%60Type%60%20specialization/near/583446587" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Rafael Fourquet <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/on.20.60Type.60.20specialization.html#583446587">(Apr 03 2026 at 12:31)</a>:</h4>
+<p>I've long thought that <code>f(x::Type)</code> would not specialize on <code>x</code>, whereas <code>g(::Type{x}) where x</code> would. And indeed, <code>methods(g)[1].specializations</code> shows specializations on the few types that I called <code>g</code> on, unlike for <code>f</code>. But in <a href="https://github.com/JuliaLang/julia/pull/61156/changes">https://github.com/JuliaLang/julia/pull/61156/changes</a>, <code>x::Type</code> is changed to <code>@nospecialize(x::Type)</code>, with clear results. Why is <code>@nospecialize</code> useful on <code>x::Type</code> ?</p>
+
+
+
+<hr><p>Last updated: Apr 28 2026 at 07:12 UTC</p>
+</html>

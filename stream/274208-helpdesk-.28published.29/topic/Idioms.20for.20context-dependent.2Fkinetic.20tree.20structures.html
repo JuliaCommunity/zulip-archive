@@ -1,0 +1,26 @@
+<html>
+<head><meta charset="utf-8"><title>Idioms for context-dependent/kinetic tree structures · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Idioms.20for.20context-dependent.2Fkinetic.20tree.20structures.html">Idioms for context-dependent/kinetic tree structures</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="590249110"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Idioms%20for%20context-dependent/kinetic%20tree%20structures/near/590249110" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jeffrey Chandler <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Idioms.20for.20context-dependent.2Fkinetic.20tree.20structures.html#590249110">(Apr 22 2026 at 15:53)</a>:</h4>
+<p>Hello, I'm interested in writing more performant and scalable code for various geospatial and database uses and I'm curious about what the standard idioms are for a context-dependent tree (defined as: A tree that has it's ordering defined from either an extrinsic property, or as the children move and some internal property changes). The textbook examples of these are geometric sweep line algorithms (using a binary search tree) or a region tree of moving planets/stars/etc. </p>
+<p>I have tried multiple strategies from linking children to the parent tree (so I can call the tree's fields from a child) to tracking "last known state"s within the children. All of these just end up with lots of allocations and code complexity that surely I'm missing something solved. All this to say, what is a Julia idiom for writing context-dependent trees?</p>
+
+
+
+<a name="590897816"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Idioms%20for%20context-dependent/kinetic%20tree%20structures/near/590897816" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Júlio Hoffimann <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Idioms.20for.20context-dependent.2Fkinetic.20tree.20structures.html#590897816">(Apr 25 2026 at 18:38)</a>:</h4>
+<p>It is definitely tricky to get recursive data structures right in the language. I struggled writing our HalfEdgeTopology in <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/Meshes">Meshes.jl</a> and it might still have some potential optimizations left to do. I would start looking into it to get inspiration.</p>
+
+
+
+<hr><p>Last updated: Apr 28 2026 at 07:12 UTC</p>
+</html>
