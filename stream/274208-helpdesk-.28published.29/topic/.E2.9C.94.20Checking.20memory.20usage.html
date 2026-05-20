@@ -1,0 +1,73 @@
+<html>
+<head><meta charset="utf-8"><title>✔ Checking memory usage · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Checking.20memory.20usage.html">✔ Checking memory usage</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="591719397"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Checking%20memory%20usage/near/591719397" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Rasmus Henningsson <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Checking.20memory.20usage.html#591719397">(Apr 29 2026 at 08:28)</a>:</h4>
+<p>Is there any reliable way to probe the amount of memory available for allocation? <code>Sys.free_memory()</code> is not enough, because if I understand things correctly, Julia's GC can keep memory around that is available for allocation within the Julia process, but not available for the OS.</p>
+<p>I've tried to make an MVE to investigate this:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">Random</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="n">format_bytes</span><span class="p">(</span><span class="n">Sys</span><span class="o">.</span><span class="n">free_memory</span><span class="p">())</span>
+<span class="go">"58.672 GiB"</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">zeros</span><span class="p">(</span><span class="kt">UInt8</span><span class="p">,</span><span class="w"> </span><span class="mi">50_000</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="mi">400_000</span><span class="p">];</span><span class="w"> </span><span class="c"># Alloc many chunks</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">[</span><span class="n">randperm</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">v</span><span class="p">))[</span><span class="mi">1</span><span class="o">:</span><span class="mi">40_000</span><span class="p">]];</span><span class="w"> </span><span class="c"># Keep some random chunks</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="n">format_bytes</span><span class="p">(</span><span class="n">Sys</span><span class="o">.</span><span class="n">free_memory</span><span class="p">())</span>
+<span class="go">"39.935 GiB"</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">GC</span><span class="o">.</span><span class="n">gc</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="n">format_bytes</span><span class="p">(</span><span class="n">Sys</span><span class="o">.</span><span class="n">free_memory</span><span class="p">())</span>
+<span class="go">"39.935 GiB"</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="n">format_bytes</span><span class="p">(</span><span class="n">Base</span><span class="o">.</span><span class="n">summarysize</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+<span class="go">"1.864 GiB"</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nothing</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">GC</span><span class="o">.</span><span class="n">gc</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="n">format_bytes</span><span class="p">(</span><span class="n">Sys</span><span class="o">.</span><span class="n">free_memory</span><span class="p">())</span>
+<span class="go">"41.208 GiB"</span>
+</code></pre></div>
+<p>For some reason, Julia doesn't return the memory to the system, even though I've removed everything I've allocated. I'm fine with that. <span aria-label="slight smile" class="emoji emoji-1f642" role="img" title="slight smile">:slight_smile:</span>  But I would like to check how much memory that Julia has claimed and I cannot find any function for doing that.</p>
+
+
+
+<a name="591783848"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Checking%20memory%20usage/near/591783848" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Checking.20memory.20usage.html#591783848">(Apr 29 2026 at 12:42)</a>:</h4>
+<p>I don't think Julia has functionality for that. I would imagine that information is in the system malloc implementation.</p>
+
+
+
+<a name="591796767"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Checking%20memory%20usage/near/591796767" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Rasmus Henningsson <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Checking.20memory.20usage.html#591796767">(Apr 29 2026 at 13:30)</a>:</h4>
+<p>Ah, I see. So maybe I could ask the system somehow how much memory the Julia process uses and subtract  Base.gc_live_bytes() from that.<br>
+It wouldn't be perfect either, because any malloc call not tracked by the GC would be counted incorrectly.</p>
+
+
+
+<a name="591875165"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Checking%20memory%20usage/near/591875165" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Checking.20memory.20usage.html#591875165">(Apr 29 2026 at 19:01)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="285705">Rasmus Henningsson</span> has marked this topic as resolved.</p>
+
+
+
+<a name="591882801"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/%E2%9C%94%20Checking%20memory%20usage/near/591882801" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mark Kittisopikul <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Checking.20memory.20usage.html#591882801">(Apr 29 2026 at 19:41)</a>:</h4>
+<p>My experience with this is that it can be very platform specific. For example, if you are using HPC, it might be better to ask the scheduler rather than the system.</p>
+
+
+
+<hr><p>Last updated: May 20 2026 at 07:59 UTC</p>
+</html>

@@ -1,0 +1,38 @@
+[
+    {
+        "content": "<p>yeah. I think with JuliaSyntax and JuliaLowering, dev tools are now commonly depending on them (since they are really useful) and they are still in-development with breaking changes, so this is more of an issue now. Before I don't think there were many in-development shared deps between dev tools and it was less commonly an issue (except for the \"everything in default env\" situation).</p>",
+        "id": 529272059,
+        "sender_full_name": "Eric Hanson",
+        "timestamp": 1752756587
+    },
+    {
+        "content": "<p>it would be nice if it were easy for dev tools to have their own copies of their deps loaded <a href=\"https://github.com/julia-vscode/julia-vscode/blob/main/scripts/packages/VSCodeServer/src/VSCodeServer.jl\">like VSCodeServer does</a>. E.g. ExplicitImports does not need to share the JuliaSyntax module or methodtable with Cthulhu, we just each need to be able to parse stuff. So if I could load my own copy of JS and skip the compat problems that would be better.</p>",
+        "id": 529272663,
+        "sender_full_name": "Eric Hanson",
+        "timestamp": 1752756793
+    },
+    {
+        "content": "<p><a href=\"https://github.com/JuliaTesting/ExplicitImports.jl/pull/121\">https://github.com/JuliaTesting/ExplicitImports.jl/pull/121</a></p>",
+        "id": 529303226,
+        "sender_full_name": "Eric Hanson",
+        "timestamp": 1752765576
+    },
+    {
+        "content": "<p>The absolute state of my dev tools <span aria-label=\"woozy face\" class=\"emoji emoji-1f974\" role=\"img\" title=\"woozy face\">:woozy_face:</span></p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">help</span><span class=\"o\">?&gt;</span><span class=\"w\"> </span><span class=\"n\">JET</span><span class=\"o\">.</span><span class=\"n\">report_package</span>\n<span class=\"w\">  </span><span class=\"n\">No</span><span class=\"w\"> </span><span class=\"n\">documentation</span><span class=\"w\"> </span><span class=\"n\">found</span><span class=\"o\">.</span>\n\n<span class=\"w\">  </span><span class=\"n\">Binding</span><span class=\"w\"> </span><span class=\"n\">JET</span><span class=\"o\">.</span><span class=\"n\">report_package</span><span class=\"w\"> </span><span class=\"n\">does</span><span class=\"w\"> </span><span class=\"n\">not</span><span class=\"w\"> </span><span class=\"n\">exist</span><span class=\"o\">.</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">JET</span><span class=\"o\">.</span><span class=\"n\">report</span>\n<span class=\"n\">report_call</span><span class=\"w\">     </span><span class=\"n\">report_color</span>\n<span class=\"n\">report_file</span><span class=\"w\">     </span><span class=\"n\">report_opt</span>\n<span class=\"n\">report_package</span><span class=\"w\">  </span><span class=\"n\">report_text</span>\n<span class=\"n\">reportkey</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"ss\">:report_package</span><span class=\"w\"> </span><span class=\"o\">∈</span><span class=\"w\"> </span><span class=\"n\">propertynames</span><span class=\"p\">(</span><span class=\"n\">JET</span><span class=\"p\">)</span>\n<span class=\"nb\">true</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">JET</span><span class=\"o\">.</span><span class=\"n\">report_package</span>\n<span class=\"n\">ERROR</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"kt\">UndefVarError</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"sb\">`report_package`</span><span class=\"w\"> </span><span class=\"n\">not</span><span class=\"w\"> </span><span class=\"n\">defined</span><span class=\"w\"> </span><span class=\"k\">in</span><span class=\"w\"> </span><span class=\"sb\">`JET`</span>\n<span class=\"n\">Suggestion</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"n\">check</span><span class=\"w\"> </span><span class=\"k\">for</span><span class=\"w\"> </span><span class=\"n\">spelling</span><span class=\"w\"> </span><span class=\"n\">errors</span><span class=\"w\"> </span><span class=\"n\">or</span><span class=\"w\"> </span><span class=\"nb\">missing</span><span class=\"w\"> </span><span class=\"n\">imports</span><span class=\"o\">.</span>\n<span class=\"n\">Stacktrace</span><span class=\"o\">:</span>\n</code></pre></div>",
+        "id": 529334894,
+        "sender_full_name": "jar",
+        "timestamp": 1752776894
+    },
+    {
+        "content": "<p>for ExplicitImports I think my manual vendoring will work OK but in general it's very annoying if the version of the dependency you need depends on the Julia version (like PrecompileTools). Because in that case you're vendoring in multiple source copies and doing <code>if VERSION</code>s to decide which to load etc - basically a manual reinvention of <code>Pkg.resolve</code>. Or if the dep itself has lots of dependencies and you need to vendor them all, or not.</p>\n<p>I think the semantics I want is basically \"add DepXYZ as a dependency to my project, but pretend it has a new name/UUID and is a separate package\", and the same for all of its dependent packages. Maybe <code>pkg&gt; add DepXYZ --private</code> or something could do that, with a <code>[private-deps]</code> toml section.</p>",
+        "id": 529341378,
+        "sender_full_name": "Eric Hanson",
+        "timestamp": 1752779689
+    },
+    {
+        "content": "<p><a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/ExplicitImports\">ExplicitImports.jl</a> v1.13 now vendors JuliaSyntax (and AbstractTrees): <a href=\"https://discourse.julialang.org/t/ann-explicitimports-jl-tooling-to-help-use-and-maintain-explicit-imports-in-your-package/110973/20\">https://discourse.julialang.org/t/ann-explicitimports-jl-tooling-to-help-use-and-maintain-explicit-imports-in-your-package/110973/20</a></p>",
+        "id": 529593501,
+        "sender_full_name": "Eric Hanson",
+        "timestamp": 1752945194
+    }
+]
