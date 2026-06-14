@@ -1,0 +1,20 @@
+[
+    {
+        "content": "<p>Is there a way to memory-map a file on disk with Big-Endian bytes?</p>",
+        "id": 558530613,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763673447
+    },
+    {
+        "content": "<p>No, the endianness is deeply tied to the memory architecture of the hardware.</p>",
+        "id": 558533020,
+        "sender_full_name": "Sukera",
+        "timestamp": 1763674299
+    },
+    {
+        "content": "<p>The order bytes are read in from a disk is, for almost all architectures, hardcoded. If the data you have stored on disk is stored with a different endianness, you'll have to decode that at some point to use it for regular code expecting the native endianness of your CPU.</p>",
+        "id": 558533442,
+        "sender_full_name": "Sukera",
+        "timestamp": 1763674443
+    }
+]
