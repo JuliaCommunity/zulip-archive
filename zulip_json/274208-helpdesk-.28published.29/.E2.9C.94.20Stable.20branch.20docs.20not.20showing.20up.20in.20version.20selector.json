@@ -1,0 +1,26 @@
+[
+    {
+        "content": "<p>I switched one of my packages over to <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Documenter\">Documenter.jl</a>, and it seems that the <code>dev</code> branch of the docs is deploying fine, but the tagged branches aren't showing up, and aren't selectable from the docs website.</p>\n<p>I'm probably just doing something very simple wrong, but could anyone help me figure this out? This is the git repo: <a href=\"https://github.com/MasonProtter/FieldViews.jl\">https://github.com/MasonProtter/FieldViews.jl</a></p>\n<p>Here's the dev branch of the docs: <a href=\"https://masonprotter.github.io/FieldViews.jl/dev/\">https://masonprotter.github.io/FieldViews.jl/dev/</a> note that when you click the version selector, only the dev version is shown.</p>\n<p>However, the <code>gh-pages</code> branch does have folders for tags I've made: <a href=\"https://github.com/MasonProtter/FieldViews.jl/tree/gh-pages\">https://github.com/MasonProtter/FieldViews.jl/tree/gh-pages</a>, and I can manually navigate to one of them: <a href=\"https://masonprotter.github.io/FieldViews.jl/v0.2.3-doc1/\">https://masonprotter.github.io/FieldViews.jl/v0.2.3-doc1/</a> which works, but <a href=\"https://masonprotter.github.io/FieldViews.jl/stable\">https://masonprotter.github.io/FieldViews.jl/stable</a> doesn't work.</p>",
+        "id": 555739062,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763207729
+    },
+    {
+        "content": "<p>Any ideas or advice?</p>",
+        "id": 555739067,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763207736
+    },
+    {
+        "content": "<p>Nevermind, apparently the problem was that I followed some advice I found online that I could re-tag old releases like <code>v0.2.3-docs1</code> to retrigger the building of docs for that release, but documenter didn't like the <code>-</code>. Switching it to <code>v0.2.3+docs1</code> did work.</p>",
+        "id": 555739427,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763208094
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> has marked this topic as resolved.</p>",
+        "id": 555739433,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1763208104
+    }
+]

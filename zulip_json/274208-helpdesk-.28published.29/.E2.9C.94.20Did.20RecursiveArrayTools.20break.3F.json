@@ -1,0 +1,26 @@
+[
+    {
+        "content": "<p>Watching <a href=\"https://github.com/SciML/RecursiveArrayTools.jl/pull/527\">https://github.com/SciML/RecursiveArrayTools.jl/pull/527</a> :)</p>",
+        "id": 569191945,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1768983197
+    },
+    {
+        "content": "<p>Should be fixed with v3.45.0. Sorry again for introducing that bug <span aria-label=\"slight smile\" class=\"emoji emoji-1f642\" role=\"img\" title=\"slight smile\">:slight_smile:</span></p>",
+        "id": 569202537,
+        "sender_full_name": "Joshua Lampert",
+        "timestamp": 1768986891
+    },
+    {
+        "content": "<p>Fixed indeed! Thank you for the fast response &lt;3</p>",
+        "id": 569281960,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1769008678
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"590870\">iago-lito</span> has marked this topic as resolved.</p>",
+        "id": 569281986,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1769008682
+    }
+]
