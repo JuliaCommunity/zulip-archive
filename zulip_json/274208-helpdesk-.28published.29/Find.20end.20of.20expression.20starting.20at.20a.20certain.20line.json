@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>If I have a file name and line number where I know there's a top-level julia expression, what would be the best way to find the line where that expression ends?</p>\n<p>e.g. if I have a file <code>my_file.jl</code></p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">a</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"n\">b</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">foo</span><span class=\"p\">()</span>\n<span class=\"w\">    </span><span class=\"n\">bar</span><span class=\"p\">()</span>\n<span class=\"w\">    </span><span class=\"n\">baz</span><span class=\"p\">()</span>\n<span class=\"k\">end</span>\n<span class=\"n\">c</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">3</span>\n<span class=\"n\">d</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">4</span>\n</code></pre></div>\n<p>I want a function <code>find_expr_end_at(file, line)</code> such that <code>find_expr_end_at(\"my_file.jl\", 3)</code> returns <code>7</code> (i.e. the line after the end of the <code>function</code> definition)</p>",
+        "id": 531690418,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1753819724
+    },
+    {
+        "content": "<p>I think that info is accessible from <code>JuliaSyntax.parseall(SyntaxNode, s))</code>. I'm not that familiar with querying the structure, but it should be possible.</p>",
+        "id": 531695197,
+        "sender_full_name": "jar",
+        "timestamp": 1753821636
+    }
+]

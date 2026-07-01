@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"278025\">Marcelo (mforets)</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/.5BJuliaReach.5D.20How.20to.20specify.20nonlinear.20guard.20conditions.3F/near/531640187\">said</a>:</p>\n<blockquote>\n<blockquote>\n<p>For what it's worth, Zulip is relatively underused, so if you don't get a reply here, you might get more traction on <a href=\"https://discourse.julialang.org/\">https://discourse.julialang.org/</a></p>\n</blockquote>\n<p>i wish there was a way to get email notification on Julia Discourse keyword names, eg. notify me of any new post has \"juliareach\"  on it.  is that possible already?</p>\n</blockquote>\n<p>It seems like that feature is available via <a href=\"https://github.com/discourse/discourse-saved-searches\">this official Discourse plugin</a>, but the Admins have to install it server-side to enable it. They also have to decide who to enable the feature for -  every saved search is automatically run once a day everyday (and then email notifications possibly sent out), and over many thousands of members that might end up costly in terms of server compute. But in practice it might not be that heavily used anyway, so it's worth asking on Discourse if they're open to adding this plugin and enabling it.</p>",
+        "id": 531672603,
+        "sender_full_name": "Sundar R",
+        "timestamp": 1753812965
+    }
+]
