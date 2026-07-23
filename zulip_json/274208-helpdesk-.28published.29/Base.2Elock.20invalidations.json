@@ -1,0 +1,188 @@
+[
+    {
+        "content": "<p>Does anyone know what could be done about these invalidations from defining a Base.lock method for a new IO type? <a href=\"https://github.com/JuliaLang/IJulia.jl/issues/1192#issuecomment-3390755056\">https://github.com/JuliaLang/IJulia.jl/issues/1192#issuecomment-3390755056</a></p>\n<p>I have a very vague understanding of invalidations but the code in IJulia/the MWE looks ok to me so I don't fully grok why it causes so many of them.</p>",
+        "id": 544239754,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1760126829
+    },
+    {
+        "content": "<p>It's hard to tell precisely without digging into it, but it looks very much like an ordinary invalidation due to world splitting. <br>\nThere is nothing you can do about it. It's an explicit tradeoff in the Julia compiler. The compiler does a bunch of speculative compilation, that just sometimes gets invalidation without anyone having done anything wrong.</p>\n<p>The upside is that a lot of poorly inferred code runs fast due to this speculative compilation.</p>\n<p>You can try to lobby the core devs to make the compiler stop doing this kind of speculative compilation, but that's kind of it.</p>",
+        "id": 544306854,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1760177476
+    },
+    {
+        "content": "<p>Alas <span aria-label=\"tear\" class=\"emoji emoji-1f972\" role=\"img\" title=\"tear\">:tear:</span> Thanks for the help.</p>",
+        "id": 544312902,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1760183383
+    },
+    {
+        "content": "<p>This should be easy to fix by setting <code>max_methods</code> to one for <code>Base.lock</code>. However that needs to be done in <code>Base</code>. I have some relevant PRs I want to get back to some time. This one, specifically:</p>\n<ul>\n<li><a href=\"https://github.com/JuliaLang/julia/pull/59377\">https://github.com/JuliaLang/julia/pull/59377</a></li>\n</ul>",
+        "id": 544324855,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1760192194
+    },
+    {
+        "content": "<p>The other, more laborious, approach is to fix the code that is actually vulnerable to invalidation (because of type instability).</p>",
+        "id": 544324967,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1760192314
+    },
+    {
+        "content": "<p>IO code in particular is often intentionally despecialized - e.g. with types having a field marked ::IO, so I doubt it can be fixed</p>",
+        "id": 544325540,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1760192916
+    },
+    {
+        "content": "<p>As I said, it's just a matter of disabling world-splitting for <code>lock</code>.</p>",
+        "id": 544327186,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1760194544
+    },
+    {
+        "content": "<p>However I feel like this should be done more comprehensively, instead of on a function-by-function basis, thus the linked PR. The PR does not currently include any changes for <code>lock</code>, though.</p>",
+        "id": 544327268,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1760194625
+    },
+    {
+        "content": "<p>Coming back to this, if I understand correctly world splitting is this optimization where if there's some small number of methods then the compiler will speculatively compile versions of functions for all those different methods. But isn't that global <code>max_methods</code> set to 3 ATM? And there are many more <code>lock()</code> methods just in Base:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">length</span><span class=\"p\">(</span><span class=\"n\">methods</span><span class=\"p\">(</span><span class=\"n\">lock</span><span class=\"p\">))</span>\n<span class=\"go\">16</span>\n</code></pre></div>\n<p>So how could world splitting be causing this?</p>",
+        "id": 546423795,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1761130274
+    },
+    {
+        "content": "<p>And how would setting <code>max_methods</code> to 1 solve it?</p>",
+        "id": 546423917,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1761130311
+    },
+    {
+        "content": "<p><code>max_methods</code> says \"if more than <code>max_methods</code> exist, give up on world splitting and do dynamic dispatch\" so if <code>max_methods</code> is set to 1 this is equivalent to entirely disabling world splitting. but whether <code>max_methods</code> were 2, 3, 16, 100 as long as it is &gt; 1 is when you can see invalidations</p>",
+        "id": 546439536,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761134549
+    },
+    {
+        "content": "<p>the smaller it is above 1 the more likely you are to see invalidations. if it were set to like, a billion, you would never see invalidations but you would also see shitty (generated) code</p>",
+        "id": 546439711,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761134607
+    },
+    {
+        "content": "<p>Ok, but in the case where it falls back on dynamic dispatch, doesn't that mean that there will be no invalidations?</p>",
+        "id": 546442114,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1761135277
+    },
+    {
+        "content": "<p>Because it's dynamically looking up the right method at runtime, it's not compiling different versions specialized for different methods.</p>",
+        "id": 546442334,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1761135342
+    },
+    {
+        "content": "<p>yeah, the invalidations happen when you cross the boundary</p>",
+        "id": 546442843,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761135481
+    },
+    {
+        "content": "<p>Right, makes sense. But then I don't understand how creating a new <code>Base.lock</code> method in a package could cause invalidations, because the number of methods in Base is already well above <code>max_methods</code> <span aria-label=\"thinking\" class=\"emoji emoji-1f914\" role=\"img\" title=\"thinking\">:thinking:</span></p>",
+        "id": 546443272,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1761135592
+    },
+    {
+        "content": "<p>Could it have something to do with the type of the arguments? Looking at the methods in Base there are indeed 3 methods that take in an <code>IO</code>:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">methods</span><span class=\"p\">(</span><span class=\"n\">lock</span><span class=\"p\">)</span>\n<span class=\"go\"># 16 methods for generic function \"lock\" from Base:</span>\n<span class=\"go\">  [1] lock(c::Condition)</span>\n<span class=\"go\">     @ condition.jl:201</span>\n<span class=\"go\">  [2] lock(rl::ReentrantLock)</span>\n<span class=\"go\">     @ lock.jl:194</span>\n<span class=\"go\">  [3] lock(l::Base.Threads.SpinLock)</span>\n<span class=\"go\">     @ locks-mt.jl:41</span>\n<span class=\"go\">  [4] lock(l::Base.AlwaysLockedST)</span>\n<span class=\"go\">     @ condition.jl:49</span>\n<span class=\"go\">  [5] lock(s::Base.LibuvStream)</span>\n<span class=\"go\">     @ stream.jl:283</span>\n<span class=\"go\">  [6] lock(c::Base.GenericCondition)</span>\n<span class=\"go\">     @ condition.jl:75</span>\n<span class=\"go\">  [7] lock(c::Channel)</span>\n<span class=\"go\">     @ channels.jl:642</span>\n<span class=\"go\">  [8] lock(io::IOContext)</span>\n<span class=\"go\">     @ show.jl:424</span>\n<span class=\"go\">  [9] lock(::IO)</span>\n<span class=\"go\">     @ io.jl:26</span>\n<span class=\"go\"> [10] lock(l::Lockable)</span>\n<span class=\"go\">     @ lock.jl:453</span>\n<span class=\"go\"> [11] lock(wkh::WeakKeyDict)</span>\n<span class=\"go\">     @ weakkeydict.jl:79</span>\n<span class=\"go\"> [12] lock(f, wkh::WeakKeyDict)</span>\n<span class=\"go\">     @ weakkeydict.jl:81</span>\n<span class=\"go\"> [13] lock(f, c::Channel)</span>\n<span class=\"go\">     @ channels.jl:643</span>\n<span class=\"go\"> [14] lock(f, l::Lockable)</span>\n<span class=\"go\">     @ lock.jl:446</span>\n<span class=\"go\"> [15] lock(f, l::Base.AbstractLock)</span>\n<span class=\"go\">     @ lock.jl:332</span>\n<span class=\"go\"> [16] lock(f, c::Base.GenericCondition)</span>\n<span class=\"go\">     @ condition.jl:80</span>\n</code></pre></div>\n<p>If that's part of the heuristic it makes sense adding a fourth in IJulia would cause invalidations.</p>",
+        "id": 546444192,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1761135853
+    },
+    {
+        "content": "<p>oh hmmm</p>",
+        "id": 546445044,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761136110
+    },
+    {
+        "content": "<p>yeah good point. maybe it's per-arity?</p>",
+        "id": 546445070,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761136118
+    },
+    {
+        "content": "<p>Yep I think that's it, I tried replacing <code>lock(::IJuliaStdio)</code> with <code>lock(::OtherType)</code> and that fixed the invalidations <span aria-label=\"octopus\" class=\"emoji emoji-1f419\" role=\"img\" title=\"octopus\">:octopus:</span></p>",
+        "id": 546446105,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1761136415
+    },
+    {
+        "content": "<p>(and also discovered an absolute <em>slew</em> of new invalidations from <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/JSON\">JSON.jl</a> v1 <span aria-label=\"fear\" class=\"emoji emoji-1f628\" role=\"img\" title=\"fear\">:fear:</span> )</p>",
+        "id": 546446246,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1761136474
+    },
+    {
+        "content": "<p>there is <a href=\"https://github.com/JuliaLang/julia/pull/59091\">https://github.com/JuliaLang/julia/pull/59091</a> a speculative proposal to just delete this feature</p>",
+        "id": 546446505,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761136557
+    },
+    {
+        "content": "<p>since the invalidations are a steep price to pay for the benefit it gives</p>",
+        "id": 546446577,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761136575
+    },
+    {
+        "content": "<p>would probably create approximately a bajillion performance regressions the first release out, but arguably leads to healthier code ecosystem in the long term</p>",
+        "id": 546446732,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761136616
+    },
+    {
+        "content": "<p>ah wait</p>",
+        "id": 546449196,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761137342
+    },
+    {
+        "content": "<p>I think it's not total methods</p>",
+        "id": 546449209,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761137346
+    },
+    {
+        "content": "<p>The price is not only paid in invalidations, steep as that already is. It's also paid as unreliable runtime performance, since package code is likely to depend on world splitting for runtime performance, but the world splitting gets disabled once the method gets invalidated.<br>\nThe best time to disable world splitting was before Julia 1.0. The second best time is now.<br>\nUnfortunately we're in a fairly deep world splitting hole, so it'd going to be very hard to dig out of it by now.</p>",
+        "id": 546533301,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1761160450
+    },
+    {
+        "content": "<p>One potential way for digging us out of the hole is for inlining the dynamic dispatch itself when compiling with juliac, since then you don't pay the FFI &amp; method chasing costs anymore, but only the \"which function do I jump to?\" cost. Of course, that won't solve anything for interactive uses..</p>",
+        "id": 546545299,
+        "sender_full_name": "Sukera",
+        "timestamp": 1761164800
+    },
+    {
+        "content": "<p>I'd like to add a cli flag to make it easier to try out your code with this disabled</p>",
+        "id": 546545780,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761164996
+    },
+    {
+        "content": "<p>people can't help dig out of the hole if they don't have shovels</p>",
+        "id": 546545829,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1761165012
+    },
+    {
+        "content": "<p>I think that would definitely be useful <span aria-label=\"thumbs up\" class=\"emoji emoji-1f44d\" role=\"img\" title=\"thumbs up\">:thumbs_up:</span> I also like Cody's idea of using interfaces as a heuristic for world splitting: <a href=\"https://pretalx.com/juliacon-2025/talk/DCDEQV/\">https://pretalx.com/juliacon-2025/talk/DCDEQV/</a></p>\n<p>But I recall from previous discussions that it might not be possible to apply an <code>interface</code> to existing interfaces in v1.</p>",
+        "id": 546547360,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1761165599
+    }
+]
