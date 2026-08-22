@@ -1,0 +1,522 @@
+<html>
+<head><meta charset="utf-8"><title>Accessing __source__ in a generated macro. · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html">Accessing __source__ in a generated macro.</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="613653482"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613653482" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613653482">(Jul 30 2026 at 13:58)</a>:</h4>
+<p>I've just stumbled upon the following:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">macro</span><span class="w"> </span><span class="n">simple</span><span class="p">()</span>
+<span class="w">    </span><span class="n">println</span><span class="p">(</span><span class="n">__source__</span><span class="p">)</span><span class="w"> </span><span class="c"># -&gt;&gt;--</span>
+<span class="k">end</span><span class="w">                     </span><span class="c">#     | this line (4)</span>
+<span class="nd">@simple</span><span class="w"> </span><span class="c"># &lt;&lt;-------------------</span>
+
+<span class="k">macro</span><span class="w"> </span><span class="n">make</span><span class="p">()</span>
+<span class="w">    </span><span class="n">println</span><span class="p">(</span><span class="n">__source__</span><span class="p">)</span><span class="w"> </span><span class="c">#-&gt;&gt;--------</span>
+<span class="w">    </span><span class="k">quote</span><span class="w">                        </span><span class="c"># | this line(14)</span>
+<span class="w">        </span><span class="k">macro</span><span class="w"> </span><span class="n">made</span><span class="p">()</span><span class="w">             </span><span class="c"># |</span>
+<span class="w">            </span><span class="n">println</span><span class="p">(</span><span class="n">__source__</span><span class="p">)</span><span class="w">  </span><span class="c"># | -&gt;&gt;--</span>
+<span class="w">        </span><span class="k">end</span><span class="w">                      </span><span class="c"># |     |</span>
+<span class="w">    </span><span class="k">end</span><span class="w">                          </span><span class="c"># |     | expected this line (15)</span>
+<span class="k">end</span><span class="w">                              </span><span class="c"># |     | got instead: UndefVarError: `__source__`.</span>
+<span class="nd">@make</span><span class="w"> </span><span class="c"># &lt;&lt;--------------------------     |</span>
+<span class="nd">@made</span><span class="w"> </span><span class="c"># &lt;&lt;--------------------------------</span>
+</code></pre></div>
+<p>Is this expected? Can somebody explain?</p>
+<p><code>__source__</code> is <a href="https://docs.julialang.org/en/v1/base/base/#__source__">documented to be a keyword</a>, but the experiment below is suggesting otherwise:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="n">xp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="k">macro</span><span class="w"> </span><span class="n">m</span><span class="p">()</span><span class="w"> </span><span class="n">__source__</span><span class="w"> </span><span class="k">end</span><span class="p">)</span>
+<span class="go">:(macro m()</span>
+<span class="go">      #= REPL[2]:1 =#</span>
+<span class="go">      #= REPL[2]:1 =#</span>
+<span class="go">      __source__</span>
+<span class="go">  end)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">xp</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">:__source__</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="k">isa</span><span class="w"> </span><span class="cm">#= regular =#</span><span class="w"> </span><span class="kt">Symbol</span>
+<span class="go">true</span>
+</code></pre></div>
+<p>How come julia seems to be wanting to evaluate <code>__source__</code> in <code>Main</code> within <code>@made()</code> whereas it is understanding it correctly as the special argument within <code>@simple()</code> and <code>@make()</code>?</p>
+
+
+
+<a name="613655448"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613655448" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613655448">(Jul 30 2026 at 14:06)</a>:</h4>
+<p>It's not a keyword, it's a secret argument to a macro. </p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">macro</span><span class="w"> </span><span class="n">simple</span><span class="p">()</span>
+<span class="w">           </span><span class="p">(;</span><span class="w"> </span><span class="n">__source__</span><span class="p">,</span><span class="w"> </span><span class="n">__module__</span><span class="p">)</span>
+<span class="w">       </span><span class="k">end</span><span class="p">;</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">methods</span><span class="p">(</span><span class="sa">var</span><span class="s">"@simple"</span><span class="p">)</span>
+<span class="go"># 1 method for macro "@simple" from Main:</span>
+<span class="go"> [1] var"@simple"(__source__::LineNumberNode, __module__::Module)</span>
+<span class="go">     @ REPL[16]:1</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="sa">var</span><span class="s">"@simple"</span><span class="p">(</span><span class="kt">LineNumberNode</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">"boo!"</span><span class="p">),</span><span class="w"> </span><span class="n">Base</span><span class="o">.</span><span class="n">Math</span><span class="p">)</span>
+<span class="go">(__source__ = :(#= boo!:-10 =#), __module__ = Base.Math)</span>
+</code></pre></div>
+
+
+
+<a name="613655681"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613655681" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613655681">(Jul 30 2026 at 14:07)</a>:</h4>
+<p>Oh, I didn't know you could invoke the macro like this. That's interesting :)</p>
+
+
+
+<a name="613655851"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613655851" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613655851">(Jul 30 2026 at 14:08)</a>:</h4>
+<p>Yeah, this is what the frontend does when it lowers an expression with a macro in it. It calls this function, and then inserts the returned expression into the code</p>
+
+
+
+<a name="613656029"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656029" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656029">(Jul 30 2026 at 14:09)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="269150">Mason Protter</span> <a href="#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613655448">said</a>:</p>
+<blockquote>
+<p>It's not a keyword, it's a secret argument to a macro.</p>
+</blockquote>
+<p>Maybe the docs should not name it a "keyword" but rather a "parameter" then?</p>
+
+
+
+<a name="613656163"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656163" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656163">(Jul 30 2026 at 14:09)</a>:</h4>
+<p>your example will work if you <code>esc</code> the output.</p>
+
+
+
+<a name="613656292"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656292" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656292">(Jul 30 2026 at 14:10)</a>:</h4>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">macro</span><span class="w"> </span><span class="n">make</span><span class="p">()</span>
+<span class="w">           </span><span class="n">println</span><span class="p">(</span><span class="n">__source__</span><span class="p">)</span>
+<span class="w">           </span><span class="k">quote</span>
+<span class="w">               </span><span class="k">macro</span><span class="w"> </span><span class="n">made</span><span class="p">()</span>
+<span class="w">                   </span><span class="n">println</span><span class="p">(</span><span class="n">__source__</span><span class="p">)</span>
+<span class="w">               </span><span class="k">end</span>
+<span class="w">           </span><span class="k">end</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">esc</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">@make (macro with 1 method)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@make</span>
+<span class="go">#= REPL[26]:1 =#</span>
+<span class="go">@made (macro with 1 method)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@made</span>
+<span class="go">#= REPL[27]:1 =#</span>
+</code></pre></div>
+
+
+
+<a name="613656303"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656303" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656303">(Jul 30 2026 at 14:10)</a>:</h4>
+<p>Hm. It does, but I can't make sense of it :\</p>
+
+
+
+<a name="613656419"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656419" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656419">(Jul 30 2026 at 14:11)</a>:</h4>
+<p>Let's try to only <code>esc</code> the <code>__source__</code> maybe?</p>
+
+
+
+<a name="613656494"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656494" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656494">(Jul 30 2026 at 14:11)</a>:</h4>
+<p><code>@macroexpand</code> is our friend here:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">macro</span><span class="w"> </span><span class="n">make</span><span class="p">()</span>
+<span class="w">           </span><span class="n">println</span><span class="p">(</span><span class="n">__source__</span><span class="p">)</span>
+<span class="w">           </span><span class="k">quote</span>
+<span class="w">               </span><span class="k">macro</span><span class="w"> </span><span class="n">made</span><span class="p">()</span>
+<span class="w">                   </span><span class="n">println</span><span class="p">(</span><span class="n">__source__</span><span class="p">)</span>
+<span class="w">               </span><span class="k">end</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">@make (macro with 1 method)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@macroexpand</span><span class="w"> </span><span class="nd">@make</span><span class="p">()</span>
+<span class="go">#= REPL[29]:1 =#</span>
+<span class="go">quote</span>
+<span class="go">    #= REPL[28]:4 =#</span>
+<span class="go">    macro Main.made()</span>
+<span class="go">        #= REPL[28]:4 =#</span>
+<span class="go">        #= REPL[28]:5 =#</span>
+<span class="go">        Main.println(Main.__source__)</span>
+<span class="go">    end</span>
+<span class="go">end</span>
+</code></pre></div>
+
+
+
+<a name="613656568"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656568" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656568">(Jul 30 2026 at 14:11)</a>:</h4>
+<p>The hygiene pass turned <code>__source__</code> into <code>Main.__source__</code></p>
+
+
+
+<a name="613656575"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656575" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656575">(Jul 30 2026 at 14:11)</a>:</h4>
+<p>Yay:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">macro</span><span class="w"> </span><span class="n">make</span><span class="p">()</span>
+<span class="w">    </span><span class="n">println</span><span class="p">(</span><span class="n">__source__</span><span class="p">)</span>
+<span class="w">    </span><span class="n">src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">esc</span><span class="p">(</span><span class="ss">:__source__</span><span class="p">)</span>
+<span class="w">    </span><span class="k">quote</span>
+<span class="w">        </span><span class="k">macro</span><span class="w"> </span><span class="n">made</span><span class="p">()</span>
+<span class="w">            </span><span class="n">println</span><span class="p">(</span><span class="o">$</span><span class="n">src</span><span class="p">)</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+<span class="nd">@make</span>
+<span class="nd">@made</span><span class="w"> </span><span class="c"># Works as expected.</span>
+</code></pre></div>
+
+
+
+<a name="613656792"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656792" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656792">(Jul 30 2026 at 14:13)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="269150">Mason Protter</span> <a href="#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613656568">said</a>:</p>
+<blockquote>
+<p>The hygiene pass turned <code>__source__</code> into <code>Main.__source__</code></p>
+</blockquote>
+<p>Okay, the problem and the solution are both making sense to me now, thanks :)</p>
+
+
+
+<a name="613656818"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656818" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656818">(Jul 30 2026 at 14:13)</a>:</h4>
+<p>Now..</p>
+
+
+
+<a name="613656873"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656873" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656873">(Jul 30 2026 at 14:13)</a>:</h4>
+<p><del>Note that your example does something slightly different (but ends up the same). You threaded the <code>__source__</code> of <code>@make</code> into <code>@made</code>, but in my example, <code>@made</code> returns its own <code>__source__</code>.</del></p>
+
+
+
+<a name="613656896"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613656896" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613656896">(Jul 30 2026 at 14:13)</a>:</h4>
+<p>Why would the hygiene pass do this? Feels like a bug.</p>
+
+
+
+<a name="613657104"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613657104" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613657104">(Jul 30 2026 at 14:14)</a>:</h4>
+<p>Seems like it is incorrectly assuming that <code>__source__</code> should be taken from enclosing scope, whereas it is a local variable of <code>made</code>, right?</p>
+
+
+
+<a name="613657155"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613657155" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613657155">(Jul 30 2026 at 14:14)</a>:</h4>
+<p><em>reads through <del><code>esc</code></del> hygiene docs again</em></p>
+
+
+
+<a name="613657179"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613657179" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613657179">(Jul 30 2026 at 14:14)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="269150">Mason Protter</span> <a href="#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613656873">said</a>:</p>
+<blockquote>
+<p>Note that your example does something slightly different (but ends up the same). You threaded the <code>__source__</code> of <code>@make</code> into <code>@made</code>, but in my example, <code>@made</code> returns its own <code>__source__</code>.</p>
+</blockquote>
+<p>sorry, scratch that, you did <code>esc(:__source__)</code>, not <code>esc(__source__)</code>, I misread.</p>
+
+
+
+<a name="613657465"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613657465" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613657465">(Jul 30 2026 at 14:16)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="590870">iago-lito</span> <a href="#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613657104">said</a>:</p>
+<blockquote>
+<p>Seems like it is incorrectly assuming that <code>__source__</code> should be taken from enclosing scope, whereas it is a local variable of <code>made</code>, right?</p>
+</blockquote>
+<p>You didn't pass a local variable from <code>made</code> though, you just passed the bare expression that has a contextless symbol <code>:__source__</code> in it, so it assumes it was some global variable.</p>
+
+
+
+<a name="613657547"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613657547" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613657547">(Jul 30 2026 at 14:16)</a>:</h4>
+<p>From <a href="https://docs.julialang.org/en/v1/manual/metaprogramming/#Hygiene">the docs</a>:</p>
+<blockquote>
+<p><em>A variable is considered local if it is assigned to (and not declared global), declared local, or used as a function argument name. Otherwise, it is considered global.</em></p>
+</blockquote>
+
+
+
+<a name="613657587"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613657587" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613657587">(Jul 30 2026 at 14:16)</a>:</h4>
+<p>Maybe this helps:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">macro</span><span class="w"> </span><span class="n">foo</span><span class="p">()</span>
+<span class="w">           </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">           </span><span class="o">:</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">@foo (macro with 1 method)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@foo</span>
+<span class="gr">ERROR: UndefVarError: `x` not defined in `Main`</span>
+<span class="gr">Suggestion: check for spelling errors or missing imports.</span>
+<span class="gr">Stacktrace:</span>
+<span class="gr"> [1] top-level scope</span>
+<span class="gr">   @ REPL[31]:1</span>
+</code></pre></div>
+
+
+
+<a name="613657745"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613657745" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613657745">(Jul 30 2026 at 14:17)</a>:</h4>
+<p>also</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">           </span><span class="nd">@foo</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="gr">ERROR: UndefVarError: `x` not defined in `Main`</span>
+<span class="gr">Suggestion: check for spelling errors or missing imports.</span>
+<span class="gr">Stacktrace:</span>
+<span class="gr"> [1] top-level scope</span>
+<span class="gr">   @ REPL[32]:2</span>
+</code></pre></div>
+
+
+
+<a name="613657786"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613657786" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613657786">(Jul 30 2026 at 14:17)</a>:</h4>
+<p>I think <a href="#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613657547">this</a> misses the case of <code>__source__</code> and <code>__module__</code>, right? They are incorrectyl considered "global" by the hygiene pass, whereas they are actually local parameters?</p>
+
+
+
+<a name="613657893"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613657893" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613657893">(Jul 30 2026 at 14:18)</a>:</h4>
+<p>It's not incorrect</p>
+
+
+
+<a name="613657959"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613657959" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613657959">(Jul 30 2026 at 14:18)</a>:</h4>
+<p>the error was that <em>you</em> didn't tell it that you didn't want them to be considered globals</p>
+
+
+
+<a name="613658046"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613658046" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613658046">(Jul 30 2026 at 14:18)</a>:</h4>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">macro</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="w">           </span><span class="k">quote</span>
+<span class="w">               </span><span class="n">x</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">@foo (macro with 2 methods)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@foo</span><span class="w"> </span><span class="mi">1</span>
+<span class="gr">ERROR: UndefVarError: `x` not defined in `Main`</span>
+<span class="gr">Suggestion: check for spelling errors or missing imports.</span>
+<span class="gr">Stacktrace:</span>
+<span class="gr"> [1] top-level scope</span>
+<span class="gr">   @ REPL[34]:1</span>
+<span class="gr"> [2] macro expansion</span>
+<span class="gr">   @ REPL[33]:3 [inlined]</span>
+</code></pre></div>
+
+
+
+<a name="613658160"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613658160" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613658160">(Jul 30 2026 at 14:19)</a>:</h4>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@macroexpand</span><span class="w"> </span><span class="nd">@foo</span><span class="w"> </span><span class="mi">1</span>
+<span class="go">quote</span>
+<span class="go">    #= REPL[33]:3 =#</span>
+<span class="go">    Main.x</span>
+<span class="go">end</span>
+</code></pre></div>
+
+
+
+<a name="613658437"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613658437" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613658437">(Jul 30 2026 at 14:20)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="269150">Mason Protter</span> <a href="#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613657959">said</a>:</p>
+<blockquote>
+<p>the error was that <em>you</em> didn't tell it that you didn't want them to be considered globals</p>
+</blockquote>
+<p>I agree that it is my mistake to not have specified that I intended to use the local <code>__source__</code>.<br>
+My point is that I believe the hygiene pass should special-case <code>__source__</code> and <code>__macro__</code> just like <code>macro</code> does, don't you agree?</p>
+
+
+
+<a name="613658592"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613658592" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613658592">(Jul 30 2026 at 14:21)</a>:</h4>
+<p>This is why controlling hygiene is important. Consider the following two different macros:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">macro</span><span class="w"> </span><span class="n">foo</span><span class="p">()</span>
+<span class="w">           </span><span class="k">quote</span>
+<span class="w">               </span><span class="n">x</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">@foo (macro with 2 methods)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="k">macro</span><span class="w"> </span><span class="n">bar</span><span class="p">()</span>
+<span class="w">           </span><span class="k">quote</span>
+<span class="w">               </span><span class="o">$</span><span class="p">(</span><span class="n">esc</span><span class="p">(</span><span class="ss">:x</span><span class="p">))</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">@bar (macro with 1 method)</span>
+</code></pre></div>
+<p>both correctly tell you there's no global named <code>x</code>:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@foo</span>
+<span class="gr">ERROR: UndefVarError: `x` not defined in `Main`</span>
+<span class="gr">Suggestion: check for spelling errors or missing imports.</span>
+<span class="gr">Stacktrace:</span>
+<span class="gr"> [1] top-level scope</span>
+<span class="gr">   @ REPL[38]:1</span>
+<span class="gr"> [2] macro expansion</span>
+<span class="gr">   @ REPL[36]:3 [inlined]</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@bar</span>
+<span class="gr">ERROR: UndefVarError: `x` not defined in `Main`</span>
+<span class="gr">Suggestion: check for spelling errors or missing imports.</span>
+<span class="gr">Stacktrace:</span>
+<span class="gr"> [1] top-level scope</span>
+<span class="gr">   @ REPL[39]:1</span>
+<span class="gr"> [2] macro expansion</span>
+<span class="gr">   @ REPL[37]:3 [inlined]</span>
+</code></pre></div>
+<p>but only <code>bar</code> looks for an <code>x</code> in the local scope:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">           </span><span class="nd">@foo</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="gr">ERROR: UndefVarError: `x` not defined in `Main`</span>
+<span class="gr">Suggestion: check for spelling errors or missing imports.</span>
+<span class="gr">Stacktrace:</span>
+<span class="gr"> [1] top-level scope</span>
+<span class="gr">   @ REPL[40]:2</span>
+<span class="gr"> [2] macro expansion</span>
+<span class="gr">   @ REPL[36]:3 [inlined]</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">           </span><span class="nd">@bar</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">1</span>
+</code></pre></div>
+
+
+
+<a name="613658644"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613658644" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613658644">(Jul 30 2026 at 14:21)</a>:</h4>
+<p><code>__source__</code> is not assigned to, not declared local, and not used as a function argument name BUT it is still a local.</p>
+
+
+
+<a name="613658686"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613658686" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613658686">(Jul 30 2026 at 14:21)</a>:</h4>
+<p>I don't agree at all</p>
+
+
+
+<a name="613659035"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613659035" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613659035">(Jul 30 2026 at 14:23)</a>:</h4>
+<p><a href="#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613658644">I mean</a> at least it would be a sensible default expectation for these two "special" symbols at least within a <code>macro</code> body.</p>
+
+
+
+<a name="613659175"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613659175" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613659175">(Jul 30 2026 at 14:23)</a>:</h4>
+<p>I would expect them to be treated like other arguments</p>
+
+
+
+<a name="613659258"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613659258" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613659258">(Jul 30 2026 at 14:24)</a>:</h4>
+<p>But they're not. Other arguments are considered local.</p>
+
+
+
+<a name="613659347"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613659347" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613659347">(Jul 30 2026 at 14:24)</a>:</h4>
+<p>no they arent?</p>
+
+
+
+<a name="613659528"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613659528" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613659528">(Jul 30 2026 at 14:25)</a>:</h4>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">macro</span><span class="w"> </span><span class="n">foo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="w">           </span><span class="k">quote</span>
+<span class="w">               </span><span class="n">x</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">@foo (macro with 2 methods)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@foo</span><span class="w"> </span><span class="mi">1</span>
+<span class="gr">ERROR: UndefVarError: `x` not defined in `Main`</span>
+<span class="gr">Suggestion: check for spelling errors or missing imports.</span>
+<span class="gr">Stacktrace:</span>
+<span class="gr"> [1] top-level scope</span>
+<span class="gr">   @ REPL[34]:1</span>
+<span class="gr"> [2] macro expansion</span>
+<span class="gr">   @ REPL[33]:3 [inlined]</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">           </span><span class="nd">@foo</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="gr">ERROR: UndefVarError: `x` not defined in `Main`</span>
+<span class="gr">Suggestion: check for spelling errors or missing imports.</span>
+<span class="gr">Stacktrace:</span>
+<span class="gr"> [1] top-level scope</span>
+<span class="gr">   @ REPL[44]:2</span>
+<span class="gr"> [2] macro expansion</span>
+<span class="gr">   @ REPL[42]:3 [inlined]</span>
+</code></pre></div>
+
+
+
+<a name="613659547"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613659547" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613659547">(Jul 30 2026 at 14:25)</a>:</h4>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">macro</span><span class="w"> </span><span class="n">make</span><span class="p">()</span>
+<span class="w">    </span><span class="k">quote</span>
+<span class="w">        </span><span class="k">macro</span><span class="w"> </span><span class="n">made</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+<span class="w">            </span><span class="n">println</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="c"># &lt;- Considered local by the hygiene pass.</span>
+<span class="w">            </span><span class="n">println</span><span class="p">(</span><span class="n">__source__</span><span class="p">)</span><span class="w"> </span><span class="c"># &lt;- Considered global.</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+<span class="nd">@make</span>
+<span class="nd">@made</span><span class="w"> </span><span class="mi">5</span>
+</code></pre></div>
+
+
+
+<a name="613659802"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613659802" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613659802">(Jul 30 2026 at 14:26)</a>:</h4>
+<p>Ah, I see what you mean now. Yeah, that would make sense! This is probably able to be considered a bug</p>
+
+
+
+<a name="613659984"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613659984" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613659984">(Jul 30 2026 at 14:27)</a>:</h4>
+<p>I'm glad we agree :) I'll report that then let's see :)</p>
+
+
+
+<a name="613662790"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613662790" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613662790">(Jul 30 2026 at 14:38)</a>:</h4>
+<p><a href="https://github.com/JuliaLang/julia/issues/62572">https://github.com/JuliaLang/julia/issues/62572</a></p>
+
+
+
+<a name="613753877"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613753877" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613753877">(Jul 30 2026 at 22:51)</a>:</h4>
+<p>This topic was moved here from <a class="stream-topic" data-stream-id="137791" href="/#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E">#general &gt; Accessing __source__ in a generated macro.</a> by <span class="user-mention silent" data-user-id="269150">Mason Protter</span>.</p>
+
+
+
+<a name="613803938"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613803938" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613803938">(Jul 31 2026 at 07:32)</a>:</h4>
+<p>(sure <span class="user-mention" data-user-id="269150">@Mason Protter</span>, I'd even agree to upgrade it to #**helpdesk (published)&gt;?) (I can't)</p>
+
+
+
+<a name="613819166"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Accessing%20__source__%20in%20a%20generated%20macro./near/613819166" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E.html#613819166">(Jul 31 2026 at 09:11)</a>:</h4>
+<p>This topic was moved here from <a class="stream-topic" data-stream-id="225542" href="/#narrow/channel/225542-helpdesk/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E">#helpdesk &gt; Accessing __source__ in a generated macro.</a> by <span class="user-mention silent" data-user-id="269150">Mason Protter</span>.</p>
+
+
+
+<hr><p>Last updated: Aug 22 2026 at 04:57 UTC</p>
+</html>

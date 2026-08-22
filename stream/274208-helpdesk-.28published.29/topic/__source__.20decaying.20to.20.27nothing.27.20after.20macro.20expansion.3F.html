@@ -1,0 +1,265 @@
+<html>
+<head><meta charset="utf-8"><title>__source__ decaying to &#x27;nothing&#x27; after macro expansion? · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html">__source__ decaying to &#x27;nothing&#x27; after macro expansion?</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="613691439"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613691439" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613691439">(Jul 30 2026 at 16:48)</a>:</h4>
+<p>Yaay another funny one ^ ^" Can someone explain what's happening to variable <code>a</code> in there? ^ ^"</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">macro</span><span class="w"> </span><span class="n">m</span><span class="p">()</span>
+<span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__source__</span>
+<span class="w">    </span><span class="n">println</span><span class="p">(</span><span class="s">"during expansion: "</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">)</span>
+<span class="w">    </span><span class="n">xp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">quote</span>
+<span class="w">        </span><span class="n">println</span><span class="p">(</span><span class="s">"during execution: "</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="n">a</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="n">println</span><span class="p">(</span><span class="s">"in the generated xp: "</span><span class="p">,</span><span class="w"> </span><span class="n">xp</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="w">    </span><span class="n">xp</span>
+<span class="k">end</span>
+<span class="nd">@m</span><span class="w"> </span><span class="c"># (line 10)</span>
+</code></pre></div>
+<div class="codehilite" data-code-language="Text only"><pre><span></span><code>during expansion: #= ./test.jl:10 =#
+in the generated xp: #= ./test.jl:10 =# still there: so it's not "killed" by the `$`-injection
+during execution: nothing               .. !? where did it go?
+</code></pre></div>
+
+
+
+<a name="613691702"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613691702" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613691702">(Jul 30 2026 at 16:49)</a>:</h4>
+<p>(tried <code>a = deepcopy(__source__)</code> with no success)</p>
+
+
+
+<a name="613692888"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613692888" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613692888">(Jul 30 2026 at 16:55)</a>:</h4>
+<p>(ended up just collecting the desired <code>(; file, line) = __source__</code> instead with no problem, just curious why this happens)</p>
+
+
+
+<a name="613693113"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613693113" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613693113">(Jul 30 2026 at 16:56)</a>:</h4>
+<p>I think it's that lowering strips line number nodes out of code.</p>
+
+
+
+<a name="613693173"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613693173" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613693173">(Jul 30 2026 at 16:56)</a>:</h4>
+<p>Oh, by replacing them with <code>nothing</code> :)</p>
+
+
+
+<a name="613693261"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613693261" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613693261">(Jul 30 2026 at 16:57)</a>:</h4>
+<p>That makes sense. I just need to protect it from stripping somehow then.</p>
+
+
+
+<a name="613693323"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613693323" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613693323">(Jul 30 2026 at 16:57)</a>:</h4>
+<p>Yup: <code>a = Ref(__source__)</code> does the trick :)</p>
+
+
+
+<a name="613693419"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613693419" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613693419">(Jul 30 2026 at 16:58)</a>:</h4>
+<p>Thanks &lt;3</p>
+
+
+
+<a name="613693459"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613693459" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613693459">(Jul 30 2026 at 16:58)</a>:</h4>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">quote</span>
+<span class="w">           </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">           </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">quote</span>
+<span class="go">    #= REPL[15]:2 =#</span>
+<span class="go">    x + 1</span>
+<span class="go">    #= REPL[15]:3 =#</span>
+<span class="go">    x + 2</span>
+<span class="go">end</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="n">Meta</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="n">Main</span><span class="p">,</span><span class="w"> </span><span class="n">ans</span><span class="p">)</span>
+<span class="go">:($(Expr(:thunk, CodeInfo(</span>
+<span class="go">    @ REPL[15]:2 within `unknown scope`</span>
+<span class="go">1 ─ %1 = Main.:+</span>
+<span class="go">│   %2 = Main.x</span>
+<span class="go">│          dynamic (%1)(%2, 1)</span>
+<span class="go">│   @ REPL[15]:3 within `unknown scope`</span>
+<span class="go">│   %4 = Main.:+</span>
+<span class="go">│   %5 = Main.x</span>
+<span class="go">│   %6 =   dynamic (%4)(%5, 2)</span>
+<span class="go">└──      return %6</span>
+<span class="go">))))</span>
+</code></pre></div>
+
+
+
+<a name="613693528"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613693528" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613693528">(Jul 30 2026 at 16:59)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="590870">iago-lito</span> <a href="#narrow/channel/137791-general/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F/near/613693323">said</a>:</p>
+<blockquote>
+<p>Yup: <code>a = Ref(__source__)</code> does the trick <span aria-label="slight smile" class="emoji emoji-1f642" role="img" title="slight smile">:slight_smile:</span></p>
+</blockquote>
+<p>You can use <code>QuoteNode</code> for this too</p>
+
+
+
+<a name="613693663"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613693663" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613693663">(Jul 30 2026 at 16:59)</a>:</h4>
+<p>Or just <code>(__source__,)</code>.. really anything.</p>
+
+
+
+<a name="613693664"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613693664" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613693664">(Jul 30 2026 at 16:59)</a>:</h4>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">macro</span><span class="w"> </span><span class="n">m</span><span class="p">()</span>
+<span class="w">           </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__source__</span>
+<span class="w">           </span><span class="n">println</span><span class="p">(</span><span class="s">"during expansion: "</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">)</span>
+<span class="w">           </span><span class="n">xp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">quote</span>
+<span class="w">               </span><span class="n">println</span><span class="p">(</span><span class="s">"during execution: "</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="p">(</span><span class="kt">QuoteNode</span><span class="p">(</span><span class="n">a</span><span class="p">)))</span>
+<span class="w">           </span><span class="k">end</span>
+<span class="w">           </span><span class="n">println</span><span class="p">(</span><span class="s">"in the generated xp: "</span><span class="p">,</span><span class="w"> </span><span class="n">xp</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="w">               </span><span class="n">xp</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">@m (macro with 1 method)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@m</span>
+<span class="go">during expansion: #= REPL[18]:1 =#</span>
+<span class="go">in the generated xp: $(QuoteNode(:(#= REPL[18]:1 =#)))</span>
+<span class="go">during execution: #= REPL[18]:1 =#</span>
+</code></pre></div>
+
+
+
+<a name="613693861"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613693861" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613693861">(Jul 30 2026 at 17:00)</a>:</h4>
+<p><code>QuoteNode</code> IMO is the preferred mechanism, because it's like how you'd put a literal symbol in generated code</p>
+
+
+
+<a name="613693916"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613693916" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613693916">(Jul 30 2026 at 17:00)</a>:</h4>
+<p>Ok. What's the difference with <code>Meta.quot</code>?</p>
+
+
+
+<a name="613694056"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613694056" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613694056">(Jul 30 2026 at 17:01)</a>:</h4>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="gp">julia&gt;</span><span class="w"> </span><span class="k">macro</span><span class="w"> </span><span class="n">foo</span><span class="p">()</span>
+<span class="w">           </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">:blah</span>
+<span class="w">           </span><span class="o">:</span><span class="p">(</span><span class="n">show</span><span class="p">(</span><span class="o">$</span><span class="n">x</span><span class="p">))</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">@foo (macro with 1 method)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@foo</span>
+<span class="gr">ERROR: UndefVarError: `blah` not defined in `Main`</span>
+<span class="gr">Suggestion: check for spelling errors or missing imports.</span>
+<span class="gr">Stacktrace:</span>
+<span class="gr"> [1] top-level scope</span>
+<span class="gr">   @ REPL[20]:1</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="k">macro</span><span class="w"> </span><span class="n">foo</span><span class="p">()</span>
+<span class="w">           </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">QuoteNode</span><span class="p">(</span><span class="ss">:blah</span><span class="p">)</span>
+<span class="w">           </span><span class="o">:</span><span class="p">(</span><span class="n">show</span><span class="p">(</span><span class="o">$</span><span class="n">x</span><span class="p">))</span>
+<span class="w">       </span><span class="k">end</span>
+<span class="go">@foo (macro with 1 method)</span>
+
+<span class="gp">julia&gt;</span><span class="w"> </span><span class="nd">@foo</span>
+<span class="go">:blah</span>
+</code></pre></div>
+
+
+
+<a name="613694349"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613694349" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613694349">(Jul 30 2026 at 17:02)</a>:</h4>
+<p>Oh I see: <a href="https://docs.julialang.org/en/v1/manual/metaprogramming/#man-quote-node">https://docs.julialang.org/en/v1/manual/metaprogramming/#man-quote-node</a>.</p>
+
+
+
+<a name="613694595"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613694595" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613694595">(Jul 30 2026 at 17:04)</a>:</h4>
+<p>I never really got the difference tbh. Never needed <code>Meta.quot</code></p>
+
+
+
+<a name="613694742"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613694742" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613694742">(Jul 30 2026 at 17:04)</a>:</h4>
+<p>The difference is that <code>Meta.quot</code> still does interpolation, while <code>QuoteNode</code> doesn't even. As per the example in the docs:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">eval</span><span class="p">(</span><span class="n">Meta</span><span class="o">.</span><span class="n">quot</span><span class="p">(</span><span class="kt">Expr</span><span class="p">(</span><span class="o">:$</span><span class="p">,</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="p">))))</span>
+<span class="mi">3</span>
+
+<span class="n">julia</span><span class="o">&gt;</span><span class="w"> </span><span class="n">eval</span><span class="p">(</span><span class="kt">QuoteNode</span><span class="p">(</span><span class="kt">Expr</span><span class="p">(</span><span class="o">:$</span><span class="p">,</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="p">))))</span>
+<span class="o">:</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="kt">Expr</span><span class="p">(</span><span class="o">:$</span><span class="p">,</span><span class="w"> </span><span class="o">:</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">))))</span>
+</code></pre></div>
+
+
+
+<a name="613694856"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613694856" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613694856">(Jul 30 2026 at 17:05)</a>:</h4>
+<p>It is <em>even more litteral</em> :P</p>
+
+
+
+<a name="613695054"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613695054" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613695054">(Jul 30 2026 at 17:06)</a>:</h4>
+<p>Honestly I am finding that julia macro system is by far the most ergonomic and sophisticated I know.</p>
+
+
+
+<a name="613695175"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613695175" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613695175">(Jul 30 2026 at 17:07)</a>:</h4>
+<p>It's quirky and complex for sure, but I think this is inherent to codegen. I think that is just the irreducible complexity part of metaprogramming. I love it &lt;3</p>
+
+
+
+<a name="613695301"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613695301" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613695301">(Jul 30 2026 at 17:07)</a>:</h4>
+<p>(or maybe I should move that to <a class="stream" data-stream-id="225583" href="/#narrow/channel/225583-appreciation">#appreciation</a>? ;)</p>
+
+
+
+<a name="613697368"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613697368" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613697368">(Jul 30 2026 at 17:19)</a>:</h4>
+<p>yeah it's quite good</p>
+
+
+
+<a name="613697413"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613697413" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613697413">(Jul 30 2026 at 17:19)</a>:</h4>
+<p>the new macro system being developed seems quite neat too</p>
+
+
+
+<a name="613697928"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613697928" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613697928">(Jul 30 2026 at 17:22)</a>:</h4>
+<p><a href="https://github.com/JuliaLang/julia/tree/master/JuliaLowering#problems-with-hygiene-in-julias-exiting-macro-system">https://github.com/JuliaLang/julia/tree/master/JuliaLowering#problems-with-hygiene-in-julias-exiting-macro-system</a></p>
+
+
+
+<a name="613753848"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613753848" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613753848">(Jul 30 2026 at 22:51)</a>:</h4>
+<p>This topic was moved here from <a class="stream-topic" data-stream-id="137791" href="/#narrow/channel/137791-general/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F">#general &gt; __source__ decaying to 'nothing' after macro expansion?</a> by <span class="user-mention silent" data-user-id="269150">Mason Protter</span>.</p>
+
+
+
+<a name="613819223"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/613819223" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Notification Bot <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#613819223">(Jul 31 2026 at 09:11)</a>:</h4>
+<p>This topic was moved here from <a class="stream-topic" data-stream-id="225542" href="/#narrow/channel/225542-helpdesk/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F">#helpdesk &gt; __source__ decaying to 'nothing' after macro expansion?</a> by <span class="user-mention silent" data-user-id="269150">Mason Protter</span>.</p>
+
+
+
+<a name="614245861"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/__source__%20decaying%20to%20%27nothing%27%20after%20macro%20expansion%3F/near/614245861" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Em <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F.html#614245861">(Aug 03 2026 at 06:32)</a>:</h4>
+<p>Recently updated at <a href="https://github.com/JuliaLang/julia/pull/62587">https://github.com/JuliaLang/julia/pull/62587</a> if either of you want to try examples (feel free to leave comments if anything is unclear).  Many things were changed or figured out in <a href="https://github.com/JuliaLang/julia/pull/62221">https://github.com/JuliaLang/julia/pull/62221</a>.  I still need a good (ergonomic) way of constructing the new syntax type.</p>
+
+
+
+<hr><p>Last updated: Aug 22 2026 at 04:57 UTC</p>
+</html>

@@ -1,0 +1,104 @@
+[
+    {
+        "content": "<p>I need to make sure that the number of bytes written to the file is always N, regardless of the content of the string. What is the most idiomatic method to achieve that goal with the Julia IO stdlib?</p>",
+        "id": 561896631,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764859570
+    },
+    {
+        "content": "<p>What do you want to happen when the string representation is shorter or longer than N bytes?</p>",
+        "id": 561904641,
+        "sender_full_name": "Gunnar Farnebäck",
+        "timestamp": 1764861182
+    },
+    {
+        "content": "<p>If it is shorter, we could append some special character that is not visible when decoding the bytes in a posterior read. Like a null character.</p>",
+        "id": 561907064,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764861796
+    },
+    {
+        "content": "<p>If it is longer, I will throw an error. We can ignore this case.</p>",
+        "id": 561907496,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764861894
+    },
+    {
+        "content": "<p>There is a <code>truncate</code> function in <code>Base</code> that sounds related.</p>",
+        "id": 561913093,
+        "sender_full_name": "Vincent Laporte",
+        "timestamp": 1764863200
+    },
+    {
+        "content": "<p>Nice. It seems very related indeed.</p>",
+        "id": 561913606,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764863330
+    },
+    {
+        "content": "<p>We need something like that, but for writing into an <code>IO</code> as opposed to modifying the content of an existing <code>IO</code> with the string.</p>",
+        "id": 561913831,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764863382
+    },
+    {
+        "content": "<p>From the docstring, it uses <code>'\\0'</code> as the null character.</p>",
+        "id": 561914410,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764863499
+    },
+    {
+        "content": "<p>You can do things like </p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">padded_write</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"o\">::</span><span class=\"kt\">IO</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">args</span><span class=\"o\">...</span><span class=\"p\">;</span><span class=\"w\"> </span><span class=\"n\">N</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">n</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">write</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">args</span><span class=\"o\">...</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">write</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">fill</span><span class=\"p\">(</span><span class=\"mh\">0x00</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">N</span><span class=\"w\"> </span><span class=\"o\">-</span><span class=\"w\"> </span><span class=\"n\">n</span><span class=\"p\">))</span>\n<span class=\"k\">end</span>\n\n<span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">close_with_padding</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"o\">::</span><span class=\"kt\">IO</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">N</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">n</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">position</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">write</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">fill</span><span class=\"p\">(</span><span class=\"mh\">0x00</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">N</span><span class=\"w\"> </span><span class=\"o\">-</span><span class=\"w\"> </span><span class=\"n\">n</span><span class=\"p\">))</span>\n<span class=\"w\">    </span><span class=\"n\">close</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>but <code>truncate</code> is almost certainly better.</p>",
+        "id": 561914949,
+        "sender_full_name": "Gunnar Farnebäck",
+        "timestamp": 1764863631
+    },
+    {
+        "content": "<p>One option is to create a vector of N zero UInt8 as a buffer, copy in the string data, write out with <code>write</code>, and then finally error if <code>write</code> doesn't return N.</p>",
+        "id": 561916137,
+        "sender_full_name": "Nathan Zimmerberg",
+        "timestamp": 1764863901
+    },
+    {
+        "content": "<p>Avoid position function when writing as some IO do not have this implemented in the way you would think</p>",
+        "id": 561917012,
+        "sender_full_name": "Nathan Zimmerberg",
+        "timestamp": 1764864081
+    },
+    {
+        "content": "<p>So if I want to use <code>truncate</code>, I need to create an empty <code>IO</code>, copy the string there, call <code>truncate</code> and then finally write to the final <code>IO</code> that corresponds to the file on disk? Something like the following:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">io</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">IOBuffer</span><span class=\"p\">()</span>\n<span class=\"n\">write</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">string</span><span class=\"p\">)</span>\n<span class=\"n\">truncate</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">N</span><span class=\"p\">)</span>\n<span class=\"n\">newstring</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">read</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">N</span><span class=\"p\">)</span>\n<span class=\"n\">write</span><span class=\"p\">(</span><span class=\"n\">iofinal</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">newstring</span><span class=\"p\">)</span>\n</code></pre></div>",
+        "id": 561919591,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764864671
+    },
+    {
+        "content": "<p>The <code>padded_write</code> function seems more intuitive.</p>",
+        "id": 561920038,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764864785
+    },
+    {
+        "content": "<p>Yeah, ideally the underlying IO interface would support this like zig now does with the splat argument in <a href=\"https://ziglang.org/documentation/master/std/#std.Io.Writer.VTable\">https://ziglang.org/documentation/master/std/#std.Io.Writer.VTable</a> but currently IO goes through <code>unsafe_write</code> which just takes a pointer and a size.</p>\n<p>I do<br>\n<a href=\"https://github.com/JuliaIO/ZipArchives.jl/blob/c48c367b6208c9733ff0e2f3431a6b8d13939126/src/writer.jl#L253\">https://github.com/JuliaIO/ZipArchives.jl/blob/c48c367b6208c9733ff0e2f3431a6b8d13939126/src/writer.jl#L253</a></p>",
+        "id": 561924065,
+        "sender_full_name": "Nathan Zimmerberg",
+        "timestamp": 1764865743
+    },
+    {
+        "content": "<p>Why can't you just do <code>truncate(iofinal, N)</code> once you have written what you want to it?</p>",
+        "id": 561931707,
+        "sender_full_name": "Gunnar Farnebäck",
+        "timestamp": 1764867679
+    },
+    {
+        "content": "<p>I could do that in this case I think. Will try it.</p>",
+        "id": 561942055,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764870637
+    },
+    {
+        "content": "<p>Write a view of the string. For the padding, I don't think we have any good abstractions for that.<br>\nAnother good reason for my <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/BufferIO\">BufferIO.jl</a> where this can be done efficiently and allocation free <span aria-label=\"wink\" class=\"emoji emoji-1f609\" role=\"img\" title=\"wink\">:wink:</span></p>",
+        "id": 561942676,
+        "sender_full_name": "Jakob Nybo Andersen",
+        "timestamp": 1764870829
+    }
+]

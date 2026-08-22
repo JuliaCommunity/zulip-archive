@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>I noticed that unlike other packages, <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Makie\">Makie.jl</a>, <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/CairoMakie\">CairoMakie.jl</a> and <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/MathOptInterface\">MathOptInterface.jl</a> contain various *.so files in the compiled folder:</p>\n<p><a href=\"/user_uploads/7178/DEv9gDlPbKP0HgN8R-ChVFV1/image.png\">image.png</a></p>\n<div class=\"message_inline_image\"><a href=\"/user_uploads/7178/DEv9gDlPbKP0HgN8R-ChVFV1/image.png\" title=\"image.png\"><img data-original-content-type=\"image/png\" data-original-dimensions=\"699x682\" src=\"/user_uploads/thumbnail/7178/DEv9gDlPbKP0HgN8R-ChVFV1/image.png/840x560.webp\"></a></div><p>Is this caused by the way I am using these packages in dev'ed environments? How to avoid this?</p>\n<p>All other packages in the compiled folder only have a single *.so file.</p>",
+        "id": 508278113,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1742996234
+    },
+    {
+        "content": "<p>Perhaps helpful:</p>\n<ul>\n<li><a href=\"https://github.com/timholy/PkgCacheInspector.jl\">https://github.com/timholy/PkgCacheInspector.jl</a></li>\n</ul>",
+        "id": 508304104,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1743001686
+    }
+]

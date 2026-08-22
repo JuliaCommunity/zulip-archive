@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Hi! Since Julia 1.11, Statistics is an upgradeable stdlib. (This means that within the same Julia version, you can <code>Pkg.update</code> Statistics to a newer version, right?)</p>\n<p>Are there other upgradeable stdlibs? Where can I find this info?</p>",
+        "id": 541788215,
+        "sender_full_name": "Fons van der Plas",
+        "timestamp": 1758963688
+    },
+    {
+        "content": "<p>I think this is the best reference ATM: <a href=\"https://github.com/JuliaLang/julia/issues/50697\">https://github.com/JuliaLang/julia/issues/50697</a></p>\n<p>TL;DR, Statistics and DelimitedFiles. Distributed is also possible since it's out of the sysimage but you have to <code>dev</code> it because there's no registry entry for it (I attempted to add one but it didn't get through).</p>",
+        "id": 541808771,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1758981733
+    }
+]
