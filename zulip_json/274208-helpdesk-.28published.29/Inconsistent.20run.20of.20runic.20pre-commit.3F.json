@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p>Hi there! I am having a strange issue with runic pre-commit, where the CI passes before merging a pull request, but fails right after. Any idea what I might be doing wrong?</p>\n<ul>\n<li>Before: <a href=\"https://github.com/Klafyvel/Strophe.jl/actions/runs/22547493728/job/65312154564\">https://github.com/Klafyvel/Strophe.jl/actions/runs/22547493728/job/65312154564</a></li>\n<li>After: <a href=\"https://github.com/Klafyvel/Strophe.jl/actions/runs/22550941660/job/65320683875\">https://github.com/Klafyvel/Strophe.jl/actions/runs/22550941660/job/65320683875</a></li>\n</ul>",
+        "id": 577202405,
+        "sender_full_name": "Hugo Levy-Falk",
+        "timestamp": 1772625852
+    }
+]

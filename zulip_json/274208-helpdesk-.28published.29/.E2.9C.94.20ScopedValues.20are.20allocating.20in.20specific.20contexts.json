@@ -1,0 +1,26 @@
+[
+    {
+        "content": "<p>I believe that's a known issue that's fixed in 1.14: <a href=\"https://github.com/JuliaLang/julia/issues/53584\">https://github.com/JuliaLang/julia/issues/53584</a></p>",
+        "id": 585350311,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1776152125
+    },
+    {
+        "content": "<p>So if we test with Julia nightly, we shouldn't see the issue, right?</p>",
+        "id": 585426075,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1776173225
+    },
+    {
+        "content": "<p>I confirm that Julia nightly doesn't have the issue.</p>",
+        "id": 585427291,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1776173507
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> has marked this topic as resolved.</p>",
+        "id": 585427327,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1776173515
+    }
+]

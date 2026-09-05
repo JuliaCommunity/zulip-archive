@@ -1,0 +1,50 @@
+[
+    {
+        "content": "<p>The docstring of <code>ntoh</code> mentions the term \"Network\". Was Big-Endian introduced to optimize data transfer over networks?</p>\n<p>What is the current status of this convention? The fact that it can't be <code>mmap</code>ed and that it can't be consumed in chuncks without a <code>bswap</code> seems very limiting.</p>",
+        "id": 560150007,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764076266
+    },
+    {
+        "content": "<p>Endianness is arbitrary, so initial hardware and specifications differed. Processors have come to coalesce to little endianness, and network protocols to big endianness.<br>\nYou can basically guarantee that any computer will store and load data little endian, so in that sense, you don't need to worry about it. W.r.t network protocols and file formats, they may be big-endian, but their content needs to be actively parsed anyway, so byteswapping can be considered just a minor part of parsing some format</p>",
+        "id": 560154558,
+        "sender_full_name": "Jakob Nybo Andersen",
+        "timestamp": 1764077381
+    },
+    {
+        "content": "<p>Or, to put it in another way, you can consume a stream/array of bytes without considering endianness. When you have to interpret these bytes as some data structure, e.g. <code>Int32</code> or whatever, you need to parse it. And when you parse, you need to do a _lot_ of operations to go from an array of bytes to whatever data structure it represents, and considering endianness is a small part of the task</p>",
+        "id": 560155617,
+        "sender_full_name": "Jakob Nybo Andersen",
+        "timestamp": 1764077645
+    },
+    {
+        "content": "<p>Got it. So basically big-endian is still the main convention for network protocols. Sad the industry didn't converge on a single representation. It seems quite arbitrary. Is there a strong reason to prefer big-endian for networks?</p>",
+        "id": 560158329,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764078303
+    },
+    {
+        "content": "<p>No, not that I'm aware of</p>",
+        "id": 560163312,
+        "sender_full_name": "Jakob Nybo Andersen",
+        "timestamp": 1764079462
+    },
+    {
+        "content": "<p>Thank you for the answers!</p>",
+        "id": 560163704,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764079543
+    },
+    {
+        "content": "<p>One sort-of arbitrary justification that I heard in university (but of course wasn't backed up by anything) was that in big endian the bigger parts of a number is transmitted first over the network (confusingly). The reasoning why this was considered better is that even if the number is truncated, you'll at least know the order of magnitude of whatever was transmitted. In practice this doesn't really matter anyway, since transmitted data is usually checksummed &amp; discarded if it arrives incomplete, since retransmission is relatively cheap.</p>",
+        "id": 560184898,
+        "sender_full_name": "Sukera",
+        "timestamp": 1764084408
+    },
+    {
+        "content": "<p>Nowadays, it's mostly done for backwards compatibility with existing protocols. For new protocols it's often just an arbitrary choice at this point.</p>",
+        "id": 560185585,
+        "sender_full_name": "Sukera",
+        "timestamp": 1764084573
+    }
+]

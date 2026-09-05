@@ -1,0 +1,146 @@
+[
+    {
+        "content": "<p>Suppose I have a immutable struct with primitive fields (e.g., <code>UInt8</code>):</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">struct</span> <span class=\"kt\">MyStruct</span>\n<span class=\"w\">  </span><span class=\"n\">field1</span><span class=\"o\">::</span><span class=\"kt\">UInt8</span>\n<span class=\"w\">  </span><span class=\"n\">field2</span><span class=\"o\">::</span><span class=\"kt\">UInt16</span>\n<span class=\"w\">  </span><span class=\"o\">...</span>\n<span class=\"w\"> </span><span class=\"k\">end</span>\n</code></pre></div>\n<p>What is the most efficient method to convert a vector of bytes like</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">bytes</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">read</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">100</span><span class=\"p\">)</span>\n</code></pre></div>\n<p>into an instance of the struct?</p>\n<p>Do I need to loop over the fields and <code>reinterpret</code> each byte?</p>",
+        "id": 555665996,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763149516
+    },
+    {
+        "content": "<p>I tested with <code>reinterpret(MyStruct, bytes)</code> and it apparently works, but the result is a vector with a single instance. Any way to return just the instance?</p>",
+        "id": 555670199,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763151310
+    },
+    {
+        "content": "<p>My current solution for future reference:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">only</span><span class=\"p\">(</span><span class=\"n\">reinterpret</span><span class=\"p\">(</span><span class=\"n\">MySctruct</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">bytes</span><span class=\"p\">))</span>\n</code></pre></div>",
+        "id": 555671583,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763151853
+    },
+    {
+        "content": "<p>I'm away from computer, going by memory you can pass a custom type to <code>read</code></p>",
+        "id": 555677158,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1763154046
+    },
+    {
+        "content": "<p>Probably &lt;<a href=\"https://docs.julialang.org/en/v1/base/io-network/#Base.read\">https://docs.julialang.org/en/v1/base/io-network/#Base.read</a>!&gt;</p>",
+        "id": 555677589,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1763154210
+    },
+    {
+        "content": "<p>That is my current solution above, right?</p>",
+        "id": 555677632,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763154231
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F/near/555671583\">said</a>:</p>\n<blockquote>\n<p>My current solution for future reference:</p>\n<p><div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">only</span><span class=\"p\">(</span><span class=\"n\">reinterpret</span><span class=\"p\">(</span><span class=\"n\">MySctruct</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">bytes</span><span class=\"p\">))</span>\n</code></pre></div><br>\n</p>\n</blockquote>\n<p>This one <span aria-label=\"up\" class=\"emoji emoji-2b06\" role=\"img\" title=\"up\">:up:</span></p>",
+        "id": 555677679,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763154250
+    },
+    {
+        "content": "<p>I said read, not reinterpret</p>",
+        "id": 555677711,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1763154272
+    },
+    {
+        "content": "<p>Didn't know read also supported this. Let me check...</p>",
+        "id": 555677780,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763154311
+    },
+    {
+        "content": "<p><a href=\"/user_uploads/7178/j4q7xlUaVGr1JsLTywHz1sQ0/image.png\">image.png</a></p>\n<div class=\"message_inline_image\"><a href=\"/user_uploads/7178/j4q7xlUaVGr1JsLTywHz1sQ0/image.png\" title=\"image.png\"><img data-original-content-type=\"image/png\" data-original-dimensions=\"811x145\" src=\"/user_uploads/thumbnail/7178/j4q7xlUaVGr1JsLTywHz1sQ0/image.png/840x560.webp\"></a></div><p>Would it be that method?</p>",
+        "id": 555677918,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763154380
+    },
+    {
+        "content": "<p>Yes</p>",
+        "id": 555677948,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1763154398
+    },
+    {
+        "content": "<p>Regarding the endianness, how can I enforce <code>ntoh</code> to always convert from Big Endian?</p>",
+        "id": 555678016,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763154423
+    },
+    {
+        "content": "<p>That wasn't what I linked actually because zulip messed up the exclamation mark, but that should work too</p>",
+        "id": 555678021,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1763154424
+    },
+    {
+        "content": "<p>If I need to enforce endianness, I need to <code>read</code> first with the original endianness, convert the endianess with <code>ntoh</code>, and then <code>reinterpret</code>?</p>",
+        "id": 555678216,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763154499
+    },
+    {
+        "content": "<p>Or there is a direct method with just <code>read</code> + <code>ntoh</code>?</p>",
+        "id": 555678260,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763154519
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20efficiently.20convert.20bytes.20into.20a.20struct.3F/near/555678016\">said</a>:</p>\n<blockquote>\n<p>Regarding the endianness, how can I enforce <code>ntoh</code> to always convert from Big Endian?</p>\n</blockquote>\n<p>If you need to invert the endianess you may have to first rest the raw bits, invert, and then reinterpret</p>",
+        "id": 555678264,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1763154520
+    },
+    {
+        "content": "<p>Yep, I think the <code>reinterpret</code> is the way to go then.</p>",
+        "id": 555678314,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763154545
+    },
+    {
+        "content": "<p>Solution for future reference:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">only</span><span class=\"p\">(</span><span class=\"n\">reinterpret</span><span class=\"p\">(</span><span class=\"n\">MyStruct</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">map</span><span class=\"p\">(</span><span class=\"n\">ntoh</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">bytes</span><span class=\"p\">)))</span>\n</code></pre></div>",
+        "id": 555679591,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763155213
+    },
+    {
+        "content": "<p>The solution above doesn't work. The fact that the file endianness is different than the host machine forces reading field-by-field, converting each field with <code>ntoh</code> and then combining fields into the final struct.</p>",
+        "id": 555681571,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763156084
+    },
+    {
+        "content": "<p>The solution that actually works:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">fields</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">map</span><span class=\"p\">(</span><span class=\"n\">fieldnames</span><span class=\"p\">(</span><span class=\"n\">MyStruct</span><span class=\"p\">))</span><span class=\"w\"> </span><span class=\"k\">do</span><span class=\"w\"> </span><span class=\"n\">field</span>\n<span class=\"w\">  </span><span class=\"n\">type</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">fieldtype</span><span class=\"p\">(</span><span class=\"n\">MyStruct</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">field</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"n\">ntoh</span><span class=\"p\">(</span><span class=\"n\">read</span><span class=\"p\">(</span><span class=\"n\">io</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">type</span><span class=\"p\">))</span>\n<span class=\"k\">end</span>\n<span class=\"n\">reinterpret</span><span class=\"p\">(</span><span class=\"n\">MyStruct</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">fields</span><span class=\"p\">)</span>\n</code></pre></div>",
+        "id": 555683088,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763156820
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> has marked this topic as resolved.</p>",
+        "id": 555683149,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1763156844
+    },
+    {
+        "content": "<p>You could also do </p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">ptr</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">convert</span><span class=\"p\">(</span><span class=\"kt\">Ptr</span><span class=\"p\">{</span><span class=\"kt\">MyType</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"n\">pointer</span><span class=\"p\">(</span><span class=\"n\">bytes</span><span class=\"p\">))</span>\n<span class=\"n\">unsafe_load</span><span class=\"p\">(</span><span class=\"n\">ptr</span><span class=\"p\">)</span>\n</code></pre></div>",
+        "id": 555684795,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763157698
+    },
+    {
+        "content": "<p>Make sure you're aware of julia's padding conventions though. E.g. your struct</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">struct</span> <span class=\"kt\">MyStruct</span>\n<span class=\"w\">  </span><span class=\"n\">field1</span><span class=\"o\">::</span><span class=\"kt\">UInt8</span>\n<span class=\"w\">  </span><span class=\"n\">field2</span><span class=\"o\">::</span><span class=\"kt\">UInt16</span>\n<span class=\"w\"> </span><span class=\"k\">end</span>\n</code></pre></div>\n<p>actually has padding between <code>field1</code> and <code>field2</code> to give it anlignment, so <code>field2</code> is not the the 2nd and 3rd bytes of the array.</p>",
+        "id": 555685278,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763157906
+    },
+    {
+        "content": "<p>Thank yo for sharing this alternative. I think I will go with the <code>reinterpret</code> approach as it is working well.</p>",
+        "id": 555690685,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763160919
+    }
+]
