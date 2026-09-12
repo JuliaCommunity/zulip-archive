@@ -1,0 +1,38 @@
+[
+    {
+        "content": "<p>Is JET built into the VS Code extension now? Or does one have to do <code>using JET</code> to get the features?</p>\n<p>Aside: if the latter, I've been having a hard time with compat via Revise, Runic, InteractiveUtils, JuliaSyntax, and now JET recently (on 1.11).</p>",
+        "id": 528718401,
+        "sender_full_name": "Alec",
+        "timestamp": 1752517801
+    },
+    {
+        "content": "<p>JET is only partly integrated with VSCode. You have to still run JET the normal way through the REPL. The only integration is that the JET report will place underlines in your code where it detects issues.<br>\nThere is ongoing work on a true JET-powered language server - <a href=\"https://github.com/aviatesk/JETLS.jl\">https://github.com/aviatesk/JETLS.jl</a>. It is still in early development and not yet ready to use for anyone who isn't a JET developer. But I think it looks very promising. Expect to hear more about JETLS at JuliaCon in a few weeks.</p>",
+        "id": 528808741,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1752569025
+    },
+    {
+        "content": "<p>Cool demo <a href=\"https://github.com/aviatesk/JETLS.jl/pull/227\">https://github.com/aviatesk/JETLS.jl/pull/227</a></p>",
+        "id": 535578103,
+        "sender_full_name": "jar",
+        "timestamp": 1755810072
+    },
+    {
+        "content": "<p>I wonder why that <code>y &gt; 0</code> fails to infer</p>",
+        "id": 535584742,
+        "sender_full_name": "jar",
+        "timestamp": 1755813468
+    },
+    {
+        "content": "<p>That is some sweet sweet tooling <img alt=\":italian-chef-kiss:\" class=\"emoji\" src=\"https://avatars.zulip.com/7178/emoji/images/2fb83f26.png\" title=\"italian-chef-kiss\"></p>",
+        "id": 535635665,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1755850180
+    },
+    {
+        "content": "<p>And as a bonus, all editors supporting the LSP (Language Server Protocol) will be able to use it, not just VS Code :)</p>",
+        "id": 535643272,
+        "sender_full_name": "Cédric Belmant",
+        "timestamp": 1755853479
+    }
+]

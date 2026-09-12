@@ -1,0 +1,20 @@
+[
+    {
+        "content": "<p>Hi! Currently I am tweaking a toplevel function in my package, and after every change I run <code>pkg&gt; test Example</code> in my terminal, recompiling Example. </p>\n<p>Can I use Revise together with testing, to avoid recompiling Example every time I run the tests?</p>",
+        "id": 507764352,
+        "sender_full_name": "Fons van der Plas",
+        "timestamp": 1742823148
+    },
+    {
+        "content": "<p>The way I typically do this is I make a <code>testsuite.jl</code> file that contains</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"c\">#testsuite.jl</span>\n\n<span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">MyPackage</span>\n<span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">SomeOtherPackage</span>\n\n<span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">test_fobulation</span><span class=\"p\">(;</span><span class=\"w\"> </span><span class=\"n\">some_param</span><span class=\"o\">=</span><span class=\"mi\">10</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"nd\">@testset</span><span class=\"w\"> </span><span class=\"s\">\"Fobulation test\"</span><span class=\"w\"> </span><span class=\"k\">begin</span>\n<span class=\"w\">        </span><span class=\"nd\">@test</span><span class=\"w\"> </span><span class=\"n\">is_fobulated</span><span class=\"p\">(</span><span class=\"n\">fobulate</span><span class=\"p\">(</span><span class=\"mf\">1.0</span><span class=\"p\">;</span><span class=\"w\"> </span><span class=\"n\">some_param</span><span class=\"p\">))</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>and then my <code>runtests.jl</code> file is just</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"c\">#runtests.jl</span>\n<span class=\"n\">include</span><span class=\"p\">(</span><span class=\"s\">\"test_suite.jl\"</span><span class=\"p\">)</span>\n<span class=\"n\">test_fobulation</span><span class=\"p\">()</span>\n</code></pre></div>",
+        "id": 507766191,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1742823523
+    },
+    {
+        "content": "<p>Then, if I want to interactively run tests while I tinker with Revise, I just do</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">includet</span><span class=\"p\">(</span><span class=\"s\">\"test/test_suite.jl\"</span><span class=\"p\">)</span>\n</code></pre></div>\n<p>in my REPL, and </p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">test_fobulation</span><span class=\"p\">(;</span><span class=\"w\"> </span><span class=\"n\">some_param</span><span class=\"o\">=</span><span class=\"mi\">11</span><span class=\"p\">)</span>\n</code></pre></div>\n<p>or whatever to re-run tests without having to recompile the whole module</p>",
+        "id": 507766604,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1742823602
+    }
+]

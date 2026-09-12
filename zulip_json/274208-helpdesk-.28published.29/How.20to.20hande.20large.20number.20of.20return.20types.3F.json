@@ -1,0 +1,470 @@
+[
+    {
+        "content": "<p>The compiler gives up  type inference when the number of return types is large:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">    </span><span class=\"kt\">Int64</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">    </span><span class=\"kt\">Int32</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">3</span>\n<span class=\"w\">    </span><span class=\"kt\">Int16</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">4</span>\n<span class=\"w\">    </span><span class=\"kt\">Int8</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">5</span>\n<span class=\"w\">    </span><span class=\"kt\">UInt64</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">6</span>\n<span class=\"w\">    </span><span class=\"kt\">UInt32</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">7</span>\n<span class=\"w\">    </span><span class=\"kt\">UInt16</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">8</span>\n<span class=\"w\">    </span><span class=\"kt\">UInt8</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">9</span>\n<span class=\"w\">    </span><span class=\"kt\">Float64</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">10</span>\n<span class=\"w\">    </span><span class=\"kt\">Float32</span>\n<span class=\"w\">  </span><span class=\"k\">else</span>\n<span class=\"w\">    </span><span class=\"n\">error</span><span class=\"p\">(</span><span class=\"s\">\"Unsupported code\"</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"k\">end</span>\n<span class=\"k\">end</span>\n\n<span class=\"nd\">@code_warntype</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">)</span>\n</code></pre></div>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">MethodInstance</span><span class=\"w\"> </span><span class=\"k\">for</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"o\">::</span><span class=\"kt\">Int64</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"n\">from</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"err\">@</span><span class=\"w\"> </span><span class=\"n\">Main</span><span class=\"w\"> </span><span class=\"n\">REPL</span><span class=\"p\">[</span><span class=\"mi\">35</span><span class=\"p\">]</span><span class=\"o\">:</span><span class=\"mi\">1</span>\n<span class=\"n\">Arguments</span>\n<span class=\"w\">  </span><span class=\"c\">#self#::Core.Const(Main.f)</span>\n<span class=\"w\">  </span><span class=\"n\">i</span><span class=\"o\">::</span><span class=\"kt\">Int64</span>\n<span class=\"n\">Body</span><span class=\"o\">::</span><span class=\"kt\">Type</span>\n</code></pre></div>\n<p>However, I have an application that needs to support that many number types. What can we do to workaround this compiler limitation?</p>",
+        "id": 558761826,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763764614
+    },
+    {
+        "content": "<p>I know the union-splitting trick in the calling function when it needs to deal with a subset of types:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">g</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"n\">T</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"c\"># union-splitting optimization reduces</span>\n<span class=\"w\">  </span><span class=\"c\"># the number of possible branches to</span>\n<span class=\"w\">  </span><span class=\"c\"># help the compiler perform inference</span>\n<span class=\"w\">  </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"kt\">T</span><span class=\"w\"> </span><span class=\"o\">&lt;:</span><span class=\"w\"> </span><span class=\"kt\">Float64</span>\n<span class=\"w\">    </span><span class=\"s\">\"float64\"</span>\n<span class=\"w\">  </span><span class=\"k\">else</span>\n<span class=\"w\">    </span><span class=\"s\">\"other\"</span>\n<span class=\"w\">  </span><span class=\"k\">end</span>\n<span class=\"k\">end</span>\n</code></pre></div>",
+        "id": 558762235,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763764914
+    },
+    {
+        "content": "<p>Any other solution?</p>",
+        "id": 558762283,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763764951
+    },
+    {
+        "content": "<p>Have you tried with a sum type package? SumTypes, LightSumTypes, Moshi, WrappedUnions for example?</p>",
+        "id": 558763904,
+        "sender_full_name": "cschen",
+        "timestamp": 1763766096
+    },
+    {
+        "content": "<p>Never used it. Any recommendation from the list of packages?</p>",
+        "id": 558763974,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763766146
+    },
+    {
+        "content": "<p>Related question: could <code>Val{T}</code> help in this situation?</p>",
+        "id": 558764160,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763766304
+    },
+    {
+        "content": "<p>I’ve been using WrappedUnions recently to try it out. It’s from the same author of LightSumTypes and he thinks it should be the successor but I think is not as well trodden as LightSumTypes. WrappedUnions is pretty barebones though. SumTypes or Moshi might have a bit more niceties</p>",
+        "id": 558764220,
+        "sender_full_name": "cschen",
+        "timestamp": 1763766334
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558764160\">said</a>:</p>\n<blockquote>\n<p>Related question: could <code>Val{T}</code> help in this situation?</p>\n</blockquote>\n<p>You’d need to have the Val be really a compile time value. Otherwise you’re just moving the type instability around.</p>",
+        "id": 558764387,
+        "sender_full_name": "cschen",
+        "timestamp": 1763766442
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"921827\">cschen</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558764220\">said</a>:</p>\n<blockquote>\n<p>I’ve been using WrappedUnions recently to try it out. It’s from the same author of LightSumTypes and he thinks it should be the successor but I think is not as well trodden as LightSumTypes. WrappedUnions is pretty barebones though. SumTypes or Moshi might have a bit more niceties</p>\n</blockquote>\n<p>I will experiment <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/SumTypes\">SumTypes.jl</a> and <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/LightSumTypes\">LightSumTypes.jl</a></p>",
+        "id": 558764973,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763766827
+    },
+    {
+        "content": "<p><span class=\"user-mention\" data-user-id=\"921827\">@cschen</span> how would you rewrite the function <code>f</code> in terms of <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/SumTypes\">SumTypes.jl</a> for example? I see that the <code>@sum_types</code> macro expects symbols as the options, but in this case we have integer literals.</p>",
+        "id": 558765238,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763767028
+    },
+    {
+        "content": "<p>The ideai had was to have the function return always the same sumtype containing different variants. You would then have to union split on the resulting argument.<br>\nCan’t go much into the details as I both am not so handy with SumTypes and Am not at the keyboard either :)</p>",
+        "id": 558765696,
+        "sender_full_name": "cschen",
+        "timestamp": 1763767406
+    },
+    {
+        "content": "<p>Yes, I am just finding it difficult to create such sum type in this case. Tried reading the examples in <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/SumTypes\">SumTypes.jl</a> and <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/LightSumTypes\">LightSumTypes.jl</a> but still can't figure it out.</p>",
+        "id": 558766106,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763767730
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558761826\">said</a>:</p>\n<blockquote>\n<p>What can we do to workaround this compiler limitation?</p>\n</blockquote>\n<p>Accept that there will be a dynamic dispatch here (because you're literally dynamically dispatching on the runtime value of <code>i</code>), and use function barriers to contain the type instability.</p>",
+        "id": 558770239,
+        "sender_full_name": "Daniel Wennberg",
+        "timestamp": 1763770913
+    },
+    {
+        "content": "<p>I tried function barriers but they didn't solve the issue. The downstream algorithm performance is impacted.</p>",
+        "id": 558787315,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763789941
+    },
+    {
+        "content": "<p>You don't actually necessarily need to accept that. The trick to take advantage of here is that Julia tries <strong>way</strong> harder to deal with large unions if they are \"enclosed\" in a struct:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">struct</span> <span class=\"kt\">MyWrapper</span>\n<span class=\"w\">    </span><span class=\"n\">T</span><span class=\"o\">::</span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int16</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int8</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt16</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt8</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Float64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Float32</span><span class=\"p\">}}</span>\n<span class=\"k\">end</span>\n\n<span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">T</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">        </span><span class=\"kt\">Int64</span>\n<span class=\"w\">    </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">        </span><span class=\"kt\">Int32</span>\n<span class=\"w\">    </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">3</span>\n<span class=\"w\">        </span><span class=\"kt\">Int16</span>\n<span class=\"w\">    </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">4</span>\n<span class=\"w\">        </span><span class=\"kt\">Int8</span>\n<span class=\"w\">    </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">5</span>\n<span class=\"w\">        </span><span class=\"kt\">UInt64</span>\n<span class=\"w\">    </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">6</span>\n<span class=\"w\">        </span><span class=\"kt\">UInt32</span>\n<span class=\"w\">    </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">7</span>\n<span class=\"w\">        </span><span class=\"kt\">UInt16</span>\n<span class=\"w\">    </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">8</span>\n<span class=\"w\">        </span><span class=\"kt\">UInt8</span>\n<span class=\"w\">    </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">9</span>\n<span class=\"w\">        </span><span class=\"kt\">Float64</span>\n<span class=\"w\">    </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">10</span>\n<span class=\"w\">        </span><span class=\"kt\">Float32</span>\n<span class=\"w\">    </span><span class=\"k\">else</span>\n<span class=\"w\">        </span><span class=\"n\">error</span><span class=\"p\">(</span><span class=\"s\">\"Unsupported code\"</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"w\">    </span><span class=\"n\">MyWrapper</span><span class=\"p\">(</span><span class=\"n\">T</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>and then e.g. you might have a <code>g</code> function that calls <code>f</code>:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">g</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span><span class=\"o\">.</span><span class=\"n\">T</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>and we see here that julia does work through all the union variants:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"w\"> </span><span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">code_warntype</span><span class=\"p\">(</span><span class=\"n\">g</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Tuple</span><span class=\"p\">{</span><span class=\"kt\">Int</span><span class=\"p\">})</span>\n<span class=\"n\">MethodInstance</span><span class=\"w\"> </span><span class=\"k\">for</span><span class=\"w\"> </span><span class=\"n\">g</span><span class=\"p\">(</span><span class=\"o\">::</span><span class=\"kt\">Int64</span><span class=\"p\">)</span>\n<span class=\"w\"> </span><span class=\"n\">from</span><span class=\"w\"> </span><span class=\"n\">g</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"err\">@</span><span class=\"w\"> </span><span class=\"n\">Main</span><span class=\"w\"> </span><span class=\"n\">REPL</span><span class=\"p\">[</span><span class=\"mi\">16</span><span class=\"p\">]</span><span class=\"o\">:</span><span class=\"mi\">1</span>\n<span class=\"n\">Arguments</span>\n<span class=\"w\"> </span><span class=\"c\">#self#::Core.Const(Main.g)</span>\n<span class=\"w\"> </span><span class=\"n\">i</span><span class=\"o\">::</span><span class=\"kt\">Int64</span>\n<span class=\"n\">Body</span><span class=\"o\">::</span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Float32</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Float64</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int16</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int32</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int64</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int8</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt16</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt32</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt64</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt8</span><span class=\"p\">}</span>\n<span class=\"mi\">1</span><span class=\"w\"> </span><span class=\"n\">─</span><span class=\"w\"> </span><span class=\"o\">%</span><span class=\"mi\">1</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Main</span><span class=\"o\">.</span><span class=\"n\">f</span><span class=\"o\">::</span><span class=\"kt\">Core</span><span class=\"o\">.</span><span class=\"n\">Const</span><span class=\"p\">(</span><span class=\"n\">Main</span><span class=\"o\">.</span><span class=\"n\">f</span><span class=\"p\">)</span>\n<span class=\"n\">│</span><span class=\"w\">   </span><span class=\"o\">%</span><span class=\"mi\">2</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"o\">%</span><span class=\"mi\">1</span><span class=\"p\">)(</span><span class=\"n\">i</span><span class=\"p\">)</span><span class=\"o\">::</span><span class=\"kt\">MyWrapper</span>\n<span class=\"n\">│</span><span class=\"w\">   </span><span class=\"o\">%</span><span class=\"mi\">3</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"n\">getproperty</span><span class=\"p\">(</span><span class=\"o\">%</span><span class=\"mi\">2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"ss\">:T</span><span class=\"p\">)</span><span class=\"o\">::</span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Float32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Float64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int16</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int8</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt16</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Ty</span>\n<span class=\"kt\">pe</span><span class=\"p\">{</span><span class=\"kt\">UInt32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt8</span><span class=\"p\">}}</span>\n<span class=\"n\">│</span><span class=\"w\">   </span><span class=\"o\">%</span><span class=\"mi\">4</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"o\">%</span><span class=\"mi\">3</span><span class=\"p\">)(</span><span class=\"n\">i</span><span class=\"p\">)</span><span class=\"o\">::</span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Float32</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Float64</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int16</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int32</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int64</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int8</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt16</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt32</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt64</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt8</span><span class=\"p\">}</span>\n<span class=\"n\">└──</span><span class=\"w\">      </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"o\">%</span><span class=\"mi\">4</span>\n</code></pre></div>",
+        "id": 558796423,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763799222
+    },
+    {
+        "content": "<p>Nice trick. I'll try it locally, thank you.</p>",
+        "id": 558797057,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763799820
+    },
+    {
+        "content": "<p>By the way, the package WrappedUnions takes advantage of exactly this trick and gives a few helper functions to invoke the unionsplit. It’s very lightweight at ~100 lines of code</p>",
+        "id": 558797628,
+        "sender_full_name": "cschen",
+        "timestamp": 1763800459
+    },
+    {
+        "content": "<p>Will take a look too.</p>",
+        "id": 558797782,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763800587
+    },
+    {
+        "content": "<p>Really liked the <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/WrappedUnions\">WrappedUnions.jl</a> solution:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"nd\">@wrapped</span><span class=\"w\"> </span><span class=\"k\">struct</span> <span class=\"kt\">NumberType</span><span class=\"w\"> </span><span class=\"o\">&lt;:</span><span class=\"w\"> </span><span class=\"kt\">WrappedUnion</span>\n<span class=\"w\">  </span><span class=\"n\">union</span><span class=\"o\">::</span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"o\">...</span><span class=\"p\">}</span>\n<span class=\"k\">end</span>\n\n<span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"n\">T</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">    </span><span class=\"kt\">Int32</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">    </span><span class=\"kt\">Int64</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span>\n<span class=\"w\">    </span><span class=\"o\">...</span>\n<span class=\"w\">  </span><span class=\"k\">end</span>\n<span class=\"w\">  </span><span class=\"n\">NumberType</span><span class=\"p\">(</span><span class=\"n\">T</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>It unwraps the type automatically when I call <code>f(1)</code> in another function.</p>",
+        "id": 558805528,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763808269
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> has marked this topic as resolved.</p>",
+        "id": 558805540,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1763808282
+    },
+    {
+        "content": "<p>Curious question: why the Julia compiler doesn't perform this union-split by default?</p>",
+        "id": 558805724,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763808449
+    },
+    {
+        "content": "<p>It does perform the union split by default. If you look at the code I wrote, you could just as easily have re-written </p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">unwrap</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"o\">::</span><span class=\"kt\">MyWrapper</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"o\">.</span><span class=\"n\">T</span>\n<span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">g</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">unwrap</span><span class=\"p\">(</span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">))(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>and it'd be equivalent to the <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/WrappedUnions\">WrappedUnions.jl</a> code</p>",
+        "id": 558805881,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763808613
+    },
+    {
+        "content": "<p>What julia doesn't do by default is try to preserve large unions that get emitted out of function bodies. </p>\n<p>i.e. your original <code>f</code> got inferred as <code>Any</code> rather than a big union because heuristically, it's usually a waste of compile time to try and deal with really large \"open unions\" like that because those unions tend to multiply. E.g. if you have <code>h(x)</code> that calls <code>f(x)</code> if <code>h</code> also has a very wide number of return types, then you have <code>N_return_types(h) * N_return_types(f)</code> different return types to reason about, on and on and on, so the compile times tend to explode</p>",
+        "id": 558806033,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763808793
+    },
+    {
+        "content": "<p>By wrapping the output into a struct, you're basically signalling to the compiler \"This is all the possible return types, I want you to actually think about them and not give up early\"</p>",
+        "id": 558806085,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763808843
+    },
+    {
+        "content": "<p>Makes total sense. It would be really nice if we could mark a function with a single macro from Base to signal this behavior:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"nd\">@dontgiveup</span><span class=\"w\"> </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"o\">...</span>\n<span class=\"k\">end</span>\n</code></pre></div>",
+        "id": 558806282,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763809070
+    },
+    {
+        "content": "<p>Encountered something weird. The <code>NumberType</code> above is not always \"unwrapped\" in the calling site. For some inputs it gets unwrapped and for other inputs it is not unwrapped. What is the safest method to always unwrap?</p>",
+        "id": 558808410,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763811252
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> has marked this topic as unresolved.</p>",
+        "id": 558810741,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1763813689
+    },
+    {
+        "content": "<p>If going with the WrappedUnions approach you need to use the @unionsplit macro in front of the function calls that take your wrapped union as argument.</p>",
+        "id": 558810894,
+        "sender_full_name": "cschen",
+        "timestamp": 1763813862
+    },
+    {
+        "content": "<p>I actually missed an early <code>return</code> in the function.</p>\n<p>The current implementation looks like this:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"kt\">Bool</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">&amp;&amp;</span><span class=\"w\"> </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"n\">NumberType</span><span class=\"p\">(</span><span class=\"kt\">Float32</span><span class=\"p\">)</span>\n\n<span class=\"w\">  </span><span class=\"n\">T</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">    </span><span class=\"kt\">Int32</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">    </span><span class=\"kt\">Int64</span>\n<span class=\"w\">  </span><span class=\"k\">elseif</span>\n<span class=\"w\">    </span><span class=\"o\">...</span>\n<span class=\"w\">  </span><span class=\"k\">end</span>\n<span class=\"w\">  </span><span class=\"n\">NumberType</span><span class=\"p\">(</span><span class=\"n\">T</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>However, it doesn't automatically unwraps the <code>NumberType</code>. I tried to call <code>unwrap</code> in the <code>return</code> statements of the function <code>f</code> and in the calling site, but none worked.</p>",
+        "id": 558810899,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763813866
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"921827\">cschen</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558810894\">said</a>:</p>\n<blockquote>\n<p>If going with the WrappedUnions approach you need to use the @unionsplit macro in front of the function calls that take your wrapped union as argument.</p>\n</blockquote>\n<p>So we need to do <code>@unionsplit identity(f(i))</code>?</p>",
+        "id": 558810932,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763813906
+    },
+    {
+        "content": "<p>You can also define a method that unwraps automatically f(n::NumberType) = @unionsplit f(n)</p>",
+        "id": 558810962,
+        "sender_full_name": "cschen",
+        "timestamp": 1763813943
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"921827\">cschen</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558810894\">said</a>:</p>\n<blockquote>\n<p>If going with the WrappedUnions approach you need to use the @unionsplit macro in front of the function calls that take your wrapped union as argument.</p>\n</blockquote>\n<p>not necessarily. That just makes it try extra hard, but in practice julia will just unwrap the whole union and split it anyways. <code>unwrap</code> is enough here</p>",
+        "id": 558811193,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763814193
+    },
+    {
+        "content": "<p>Couldn't find a way to make it work with <code>unwrap</code> so far.</p>",
+        "id": 558811225,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763814220
+    },
+    {
+        "content": "<p>Well, I don't know how the package could be screwing up something so simple, but you could just do it yourself as I showed before:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">struct</span> <span class=\"kt\">MyWrapper</span>\n<span class=\"w\">           </span><span class=\"n\">T</span><span class=\"o\">::</span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int16</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int8</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt16</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt8</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Float64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Float32</span><span class=\"p\">}}</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"kt\">Bool</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">&amp;&amp;</span><span class=\"w\"> </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"n\">MyWrapper</span><span class=\"p\">(</span><span class=\"kt\">Float32</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"n\">T</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">               </span><span class=\"kt\">Int64</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">               </span><span class=\"kt\">Int32</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">3</span>\n<span class=\"w\">               </span><span class=\"kt\">Int16</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">4</span>\n<span class=\"w\">               </span><span class=\"kt\">Int8</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">5</span>\n<span class=\"w\">               </span><span class=\"kt\">UInt64</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">6</span>\n<span class=\"w\">               </span><span class=\"kt\">UInt32</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">7</span>\n<span class=\"w\">               </span><span class=\"kt\">UInt16</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">8</span>\n<span class=\"w\">               </span><span class=\"kt\">UInt8</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">9</span>\n<span class=\"w\">               </span><span class=\"kt\">Float64</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">10</span>\n<span class=\"w\">               </span><span class=\"kt\">Float32</span>\n<span class=\"w\">           </span><span class=\"k\">else</span>\n<span class=\"w\">               </span><span class=\"n\">error</span><span class=\"p\">(</span><span class=\"s\">\"Unsupported code\"</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"k\">end</span>\n<span class=\"w\">           </span><span class=\"n\">MyWrapper</span><span class=\"p\">(</span><span class=\"n\">T</span><span class=\"p\">)</span>\n<span class=\"w\">       </span><span class=\"k\">end</span><span class=\"p\">;</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">unwrap</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"o\">::</span><span class=\"kt\">MyWrapper</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"o\">.</span><span class=\"n\">T</span><span class=\"p\">;</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">g</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">unwrap</span><span class=\"p\">(</span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">))(</span><span class=\"n\">i</span><span class=\"p\">);</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">Core</span><span class=\"o\">.</span><span class=\"n\">Compiler</span><span class=\"o\">.</span><span class=\"n\">return_type</span><span class=\"p\">(</span><span class=\"n\">g</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Tuple</span><span class=\"p\">{</span><span class=\"kt\">Int</span><span class=\"p\">})</span>\n<span class=\"go\">Union{Float32, Float64, Int16, Int32, Int64, Int8, UInt16, UInt32, UInt64, UInt8}</span>\n</code></pre></div>",
+        "id": 558811647,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763814590
+    },
+    {
+        "content": "<p>Can we call <code>unwrap</code> inside the function <code>f</code> instead of returning <code>MyWrapper</code>? Or we need the additional call outside the function to make it work?</p>",
+        "id": 558811786,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763814728
+    },
+    {
+        "content": "<p>Okay, I installed <code>WrappedUnions</code> and it seems to work fine for this too:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">WrappedUnions</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"nd\">@wrapped</span><span class=\"w\"> </span><span class=\"k\">struct</span> <span class=\"kt\">MyWrapper</span><span class=\"w\"> </span><span class=\"o\">&lt;:</span><span class=\"w\"> </span><span class=\"kt\">WrappedUnion</span>\n<span class=\"w\">           </span><span class=\"n\">union</span><span class=\"o\">::</span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int16</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int8</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt16</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt8</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Float64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Float32</span><span class=\"p\">}}</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"kt\">Bool</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">&amp;&amp;</span><span class=\"w\"> </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"n\">MyWrapper</span><span class=\"p\">(</span><span class=\"kt\">Float32</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"n\">T</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">               </span><span class=\"kt\">Int64</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">               </span><span class=\"kt\">Int32</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">3</span>\n<span class=\"w\">               </span><span class=\"kt\">Int16</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">4</span>\n<span class=\"w\">               </span><span class=\"kt\">Int8</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">5</span>\n<span class=\"w\">               </span><span class=\"kt\">UInt64</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">6</span>\n<span class=\"w\">               </span><span class=\"kt\">UInt32</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">7</span>\n<span class=\"w\">               </span><span class=\"kt\">UInt16</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">8</span>\n<span class=\"w\">               </span><span class=\"kt\">UInt8</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">9</span>\n<span class=\"w\">               </span><span class=\"kt\">Float64</span>\n<span class=\"w\">           </span><span class=\"k\">elseif</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">10</span>\n<span class=\"w\">               </span><span class=\"kt\">Float32</span>\n<span class=\"w\">           </span><span class=\"k\">else</span>\n<span class=\"w\">               </span><span class=\"n\">error</span><span class=\"p\">(</span><span class=\"s\">\"Unsupported code\"</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"k\">end</span>\n<span class=\"w\">           </span><span class=\"n\">MyWrapper</span><span class=\"p\">(</span><span class=\"n\">T</span><span class=\"p\">)</span>\n<span class=\"w\">       </span><span class=\"k\">end</span><span class=\"p\">;</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">g</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"nd\">@unionsplit</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"n\">g</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"n\">generic</span><span class=\"w\"> </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">with</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"w\"> </span><span class=\"n\">method</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">Core</span><span class=\"o\">.</span><span class=\"n\">Compiler</span><span class=\"o\">.</span><span class=\"n\">return_type</span><span class=\"p\">(</span><span class=\"n\">g</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Tuple</span><span class=\"p\">{</span><span class=\"kt\">Int</span><span class=\"p\">})</span>\n<span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Float32</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Float64</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int16</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int32</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int64</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int8</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt16</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt32</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt64</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">UInt8</span><span class=\"p\">}</span>\n</code></pre></div>",
+        "id": 558811792,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763814734
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558811786\">said</a>:</p>\n<blockquote>\n<p>Can we call <code>unwrap</code> inside the function <code>f</code> instead of returning <code>MyWrapper</code>? Or we need the additional call outside the function to make it work?</p>\n</blockquote>\n<p>then you'd just be back where you started</p>",
+        "id": 558811825,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763814760
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558811193\">said</a>:</p>\n<blockquote>\n<p><span class=\"user-mention silent\" data-user-id=\"921827\">cschen</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558810894\">said</a>:</p>\n<blockquote>\n<p>If going with the WrappedUnions approach you need to use the @unionsplit macro in front of the function calls that take your wrapped union as argument.</p>\n</blockquote>\n<p>not necessarily. That just makes it try extra hard, but in practice julia will just unwrap the whole union and split it anyways. <code>unwrap</code> is enough here</p>\n</blockquote>\n<p>Oh good to know!</p>",
+        "id": 558812126,
+        "sender_full_name": "cschen",
+        "timestamp": 1763815084
+    },
+    {
+        "content": "<p>This is what my <code>@code_warntype</code> looks like:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">Arguments</span>\n<span class=\"w\">  </span><span class=\"c\">#self#::Core.Const(Segy.numbertype)</span>\n<span class=\"w\">  </span><span class=\"n\">fname</span><span class=\"o\">::</span><span class=\"kt\">String</span>\n<span class=\"n\">Body</span><span class=\"o\">::</span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Float32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Float64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int16</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">Int8</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt16</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">UInt8</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Type</span><span class=\"p\">{</span><span class=\"kt\">IBMFloat32</span><span class=\"p\">}}</span>\n</code></pre></div>\n<p>It shows the union in red color. Is that ok?</p>",
+        "id": 558812217,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763815171
+    },
+    {
+        "content": "<p>Yes</p>",
+        "id": 558812244,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763815188
+    },
+    {
+        "content": "<p>I am using <code>g(i) = unwrap(f(i))</code>, is that ok?</p>",
+        "id": 558812282,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763815221
+    },
+    {
+        "content": "<p>Apparently we need <code>@unionsplit</code></p>",
+        "id": 558812326,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763815262
+    },
+    {
+        "content": "<p>Otherwise the calling site becomes type unstable.</p>",
+        "id": 558812342,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763815272
+    },
+    {
+        "content": "<p>What are you actually trying to do with the output?</p>",
+        "id": 558812419,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763815334
+    },
+    {
+        "content": "<p>I am doing the following basically:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">T</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">g</span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"n\">F</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">T</span><span class=\"w\"> </span><span class=\"o\">&lt;:</span><span class=\"w\"> </span><span class=\"kt\">Float32</span><span class=\"w\"> </span><span class=\"o\">?</span><span class=\"w\"> </span><span class=\"kt\">Float64</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"n\">T</span>\n\n<span class=\"n\">A</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Matrix</span><span class=\"p\">{</span><span class=\"kt\">F</span><span class=\"p\">}(</span><span class=\"nb\">undef</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">100</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">100</span><span class=\"p\">)</span>\n</code></pre></div>",
+        "id": 558812500,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763815408
+    },
+    {
+        "content": "<p>and then?</p>",
+        "id": 558812539,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763815444
+    },
+    {
+        "content": "<p>Testing a few more things locally to see if the issue is fully solved...</p>",
+        "id": 558812559,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763815460
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558812539\">said</a>:</p>\n<blockquote>\n<p>and then?</p>\n</blockquote>\n<p>Then I populate the matrix with multiple <code>convert(F, read(io, T))</code> calls.</p>",
+        "id": 558812578,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763815481
+    },
+    {
+        "content": "<p>okay, well I'm not going to force you to describe every step of the process until we get somewhere, but the important thing to know is whether all the different paths eventually converge somewhere that has a stable type</p>",
+        "id": 558812934,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763815849
+    },
+    {
+        "content": "<p>Could this be related to the number of types and the fact that I also have some custom types in the list?</p>",
+        "id": 558812996,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763815913
+    },
+    {
+        "content": "<p>if at the end of all the function calls, you're just going to end up returning a value whose type depends on the input value, then yeah, this will just be fundamentally brittle and easily pop back into <code>Any</code> territory</p>",
+        "id": 558813022,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763815940
+    },
+    {
+        "content": "<p>if you are going to <em>do</em> something with those matrices and converge back to some sort of finite, knowable return type that's the same for all the branches (including maybe wrapping some other big union into a new wrapper) then it's fine</p>",
+        "id": 558813060,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763815980
+    },
+    {
+        "content": "<p>At the end of the day I just want to return this matrix. So it should be a single type.</p>",
+        "id": 558813126,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763816052
+    },
+    {
+        "content": "<p>But for some reason I still can't get the code to work reliably.</p>",
+        "id": 558813144,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763816069
+    },
+    {
+        "content": "<p>okay, then this is going to be type unstable</p>",
+        "id": 558813180,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763816110
+    },
+    {
+        "content": "<p>but if you're doing matrix operations I doubt the type instability really matters</p>",
+        "id": 558813199,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763816128
+    },
+    {
+        "content": "<p>If you <em>do</em> need it to be type stable, return a </p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">struct</span> <span class=\"kt\">MatrixWrapper</span>\n<span class=\"w\">    </span><span class=\"n\">union</span><span class=\"o\">::</span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Matrix</span><span class=\"p\">{</span><span class=\"kt\">Int</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Matrix</span><span class=\"p\">{</span><span class=\"kt\">Int32</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"o\">...</span><span class=\"p\">}</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>and instruct the reciever of the wrapper to unwrap it before they use it.</p>",
+        "id": 558813281,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763816222
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558813180\">said</a>:</p>\n<blockquote>\n<p>okay, then this is going to be type unstable</p>\n</blockquote>\n<p>So the trick with <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/WrappedUnions\">WrappedUnions.jl</a> doesn't really help here? I thought that <code>@unionsplit</code> would unwrap the type and make everything onwards type stable?</p>",
+        "id": 558813340,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763816283
+    },
+    {
+        "content": "<p>I am confused with the behavior.</p>",
+        "id": 558813366,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763816307
+    },
+    {
+        "content": "<p>everything in the branches downstream of the <code>unwrap</code> will be type stable, but that's not what you're doing, you're just returning the object, so the wrapping doesn't help unless the compiler can actually see the end points</p>",
+        "id": 558813442,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763816386
+    },
+    {
+        "content": "<p>You are saying that I should at least perform some function call on the object that is different than <code>identity</code>?</p>",
+        "id": 558813556,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763816488
+    },
+    {
+        "content": "<p>In the WrappedUnions readme the last example is exactly what mason is suggesting. You need to also wrap the matrix you are returning into a closed union</p>",
+        "id": 558813574,
+        "sender_full_name": "cschen",
+        "timestamp": 1763816503
+    },
+    {
+        "content": "<p>I did read the example, but can't fully understand the reason why we need an additional wrapper if the function argument is already wrapped into a stable type.</p>\n<p>Can I help the compiler with a type annotation  when returning the matrix?</p>",
+        "id": 558814112,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763817032
+    },
+    {
+        "content": "<p>Ok, I decided for a design that always returns <code>Matrix{Float64}</code> regardless of the input type. I also removed a bunch of input types and the <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/WrappedUnions\">WrappedUnions.jl</a> dependency as it really doesn't solve the issue at hand.</p>",
+        "id": 558815800,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763818809
+    },
+    {
+        "content": "<p>The Julia compiler can do a much better job with just 3 input types that are subtypes of <code>AbstractFloat</code>, inferring things perfectly.</p>",
+        "id": 558815834,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763818843
+    },
+    {
+        "content": "<p>It is a shame that we don't have a way in Base Julia to <code>@dontgiveup</code> with more types.</p>",
+        "id": 558815848,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763818860
+    },
+    {
+        "content": "<p>I don't understand why Julia doesn't infer the large union even when it's not wrapped in a struct:</p>\n<ul>\n<li>It's probably quite rare that a function returns a big union, and when it does, it's probably intentional</li>\n<li>If the issue is that big unions tend to multiply, then the compiler could just bail out at the later stage when you apply some <code>f(::Union{Lots, Of, Members...})</code>, and hence stop the big union from growing</li>\n</ul>\n<p>It seems backwards that we should wrap the union in a struct, then unwrap it, just to make Julia treat it as the union it already is.</p>",
+        "id": 558833249,
+        "sender_full_name": "Jakob Nybo Andersen",
+        "timestamp": 1763835096
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20hande.20large.20number.20of.20return.20types.3F/near/558815848\">said</a>:</p>\n<blockquote>\n<p>It is a shame that we don't have a way in Base Julia to <code>@dontgiveup</code> with more types.</p>\n</blockquote>\n<p>I'd love to tell the julia compiler encouraging messages like this</p>",
+        "id": 558877502,
+        "sender_full_name": "Sukera",
+        "timestamp": 1763886872
+    },
+    {
+        "content": "<p>we could also have <code>@youcandoit</code> and <code>@tryalittleharder</code> <span aria-label=\"wink\" class=\"emoji emoji-1f609\" role=\"img\" title=\"wink\">:wink:</span></p>",
+        "id": 558878101,
+        "sender_full_name": "Timothy",
+        "timestamp": 1763887497
+    },
+    {
+        "content": "<p>It would feel like talking to a LLM.</p>",
+        "id": 558903039,
+        "sender_full_name": "Mark Kittisopikul",
+        "timestamp": 1763912298
+    },
+    {
+        "content": "<p>I managed to add the support for all number types with a ~2x slowdown.</p>\n<p>Here is the PR with the <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/WrappedUnions\">WrappedUnions.jl</a> changes: <a href=\"https://github.com/JuliaEarth/SeisKit.jl/pull/3/files\">https://github.com/JuliaEarth/SeisKit.jl/pull/3/files</a></p>\n<p>You can benchmark the PR against the main branch with the following code:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">SeisKit</span>\n\n<span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">Segy</span><span class=\"o\">.</span><span class=\"n\">load</span><span class=\"p\">(</span><span class=\"s\">\"test/data/stacked2Drev1.sgy\"</span><span class=\"p\">);</span>\n</code></pre></div>\n<p>where <code>stacked2Drev1.sgy</code> is a small sample file. In practice we need to load Gb of data on these files, so any speedup counts.</p>",
+        "id": 560216744,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764092738
+    },
+    {
+        "content": "<p>Any trick to get back the original performance and still support all number types?</p>",
+        "id": 560216823,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764092763
+    },
+    {
+        "content": "<p><span class=\"user-mention\" data-user-id=\"269150\">@Mason Protter</span> your package <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/FieldViews\">FieldViews.jl</a> was really useful to access fields in multiple file header structs.</p>",
+        "id": 560217782,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764093110
+    },
+    {
+        "content": "<p>yay!</p>",
+        "id": 560225554,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1764095513
+    },
+    {
+        "content": "<p>Is there a mechanism to precompile a package with a subset of types by default, but give users the ability to enable a larger set on demand? The large union issue is slowing down the performance by a 2x factor still. It would be great if we could erase a bunch of \"rare\" types by default.</p>",
+        "id": 560934979,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764440696
+    },
+    {
+        "content": "<p>In that specific package I would like to compile with <code>IBMFloat32</code>, <code>Float32</code>, and <code>Float64</code> support by default.</p>",
+        "id": 560935010,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764440735
+    },
+    {
+        "content": "<p>And when a user encounters a dataset in the industry with the exotic integer types, he/she could enable the larger list.</p>",
+        "id": 560935064,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764440791
+    },
+    {
+        "content": "<p>I am thinking about creating a separate function with the exact same body, but with a different list of supported types.</p>",
+        "id": 560935114,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1764440836
+    }
+]

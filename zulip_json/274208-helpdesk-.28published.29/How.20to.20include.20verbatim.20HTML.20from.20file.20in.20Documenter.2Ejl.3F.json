@@ -1,0 +1,20 @@
+[
+    {
+        "content": "<p><a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/GeoStats\">GeoStats.jl</a>'s README has a section built by a bot on GitHub, which tracks contributors. How can I show this same section on a <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Documenter\">Documenter.jl</a> page?</p>\n<p><a href=\"https://github.com/JuliaEarth/GeoStats.jl?tab=readme-ov-file#contributors\">https://github.com/JuliaEarth/GeoStats.jl?tab=readme-ov-file#contributors</a></p>\n<p>I am aware of <code>@raw html</code> blocks, but can't find a way to insert the contents in the block from the README.</p>\n<p>The following code can be used to extract the text from the README:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"w\">  </span><span class=\"n\">path</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">joinpath</span><span class=\"p\">(</span><span class=\"n\">dirname</span><span class=\"p\">(</span><span class=\"nd\">@__DIR__</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"s\">\"README.md\"</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"n\">text</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">read</span><span class=\"p\">(</span><span class=\"n\">path</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">String</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"n\">html</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">last</span><span class=\"p\">(</span><span class=\"n\">split</span><span class=\"p\">(</span><span class=\"n\">text</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"s\">\"##\"</span><span class=\"p\">))</span>\n</code></pre></div>\n<p>How can I \"paste\" the value of <code>html</code> into the <code>@raw html</code> block?</p>",
+        "id": 518748343,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1747429893
+    },
+    {
+        "content": "<p>It <a href=\"https://allcontributors.org/docs/en/bot/configuration\">looks</a> like you can use the all-contributors bot itself to do the bulk of the work: </p>\n<ul>\n<li>add a new <code>contributors.md</code> file under your <code>docs</code> folder</li>\n<li>paste into it the same <code>ALL-CONTRIBUTORS-LIST:START</code> <a href=\"https://allcontributors.org/docs/en/bot/installation#3-create-a-readmemd\">template</a> as in the readme</li>\n<li>add that to the <code>file</code> key in your <a href=\"https://github.com/JuliaEarth/GeoStats.jl/blob/master/.all-contributorsrc#L2\">.all-contributorsrc</a> file </li>\n<li>include this <code>contributors.md</code> in your <code>makedocs</code> call</li>\n</ul>\n<p>That would avoid having to do any hacky copy-paste script or anything, and seems a well supported way of doing it.</p>",
+        "id": 518774121,
+        "sender_full_name": "Sundar R",
+        "timestamp": 1747448852
+    },
+    {
+        "content": "<p>I guess your contributors.md should start out looking something like</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"sb\">```@raw html</span>\n<span class=\"sb\">&lt;!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section --&gt;</span>\n<span class=\"sb\">&lt;!-- prettier-ignore-start --&gt;</span>\n<span class=\"sb\">&lt;!-- markdownlint-disable --&gt;</span>\n\n<span class=\"sb\">&lt;!-- markdownlint-restore --&gt;</span>\n<span class=\"sb\">&lt;!-- prettier-ignore-end --&gt;</span>\n\n<span class=\"sb\">&lt;!-- ALL-CONTRIBUTORS-LIST:END --&gt;</span>\n<span class=\"sb\">```</span>\n</code></pre></div>",
+        "id": 518774449,
+        "sender_full_name": "Sundar R",
+        "timestamp": 1747449098
+    }
+]

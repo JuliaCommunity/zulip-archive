@@ -1,0 +1,32 @@
+[
+    {
+        "content": "<p>Can someone please try to reproduce locally?</p>\n<p><a href=\"https://github.com/JuliaGeometry/Meshes.jl/pull/1356\">https://github.com/JuliaGeometry/Meshes.jl/pull/1356</a></p>\n<p>You can just install the latest <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/GeoStats\">GeoStats.jl</a> and copy/paste the code. I am on Julia v1.12.5.</p>",
+        "id": 584712461,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1775838141
+    },
+    {
+        "content": "<p>The funny part is  that all these functions live in the <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Meshes\">Meshes.jl</a> + <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/CoordRefSystems\">CoordRefSystems.jl</a> submodules, and if you replace</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">GeoStats</span>\n</code></pre></div>\n<p>by</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">Meshes</span>\n<span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">CoordRefSystems</span>\n</code></pre></div>\n<p>the long compilation time is reduced.</p>",
+        "id": 584715549,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1775839086
+    },
+    {
+        "content": "<p>Hmm</p>",
+        "id": 585041823,
+        "sender_full_name": "Mark Kittisopikul",
+        "timestamp": 1776005493
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269582\">Mark Kittisopikul</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/Very.20slow.20compiler.20again.2E.2E.2E/near/585041823\">said</a>:</p>\n<blockquote>\n<p>Hmm</p>\n</blockquote>\n<p>That means you reproduced the issue locally?</p>",
+        "id": 585067946,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1776030390
+    },
+    {
+        "content": "<p>probably <a href=\"https://github.com/JuliaLang/julia/issues/54524\">https://github.com/JuliaLang/julia/issues/54524</a> ?</p>",
+        "id": 585282468,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1776114546
+    }
+]

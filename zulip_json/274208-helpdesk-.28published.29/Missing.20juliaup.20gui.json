@@ -1,0 +1,26 @@
+[
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Bash Session\"><pre><span></span><code><span class=\"gp\">$ </span>juliaup<span class=\"w\"> </span>self<span class=\"w\"> </span>update\n<span class=\"go\">    Checking for new Julia versions</span>\n<span class=\"go\">Checking for self-updates</span>\n<span class=\"go\">Juliaup unchanged on channel 'release' - 1.22.3</span>\n<span class=\"gp\">$ </span>juliaup<span class=\"w\"> </span>gui\n<span class=\"go\">Error: GUI binary not found at '/home/~~~~~/.juliaup/bin/juliaupgui'. The juliaupgui component may not be installed.</span>\n</code></pre></div>\n<p>How can I get the juliaup gui up and running (on Linux)?</p>",
+        "id": 623151525,
+        "sender_full_name": "mbaz",
+        "timestamp": 1789047109
+    },
+    {
+        "content": "<p>No idea but I can reproduce the problem.</p>",
+        "id": 623153992,
+        "sender_full_name": "Gunnar Farnebäck",
+        "timestamp": 1789047615
+    },
+    {
+        "content": "<p>From slack:</p>\n<blockquote>\n<p><strong>Ian Butterworth</strong>:<br>\nThe linux packaging was missing the gui... Somehow the only people that tested it on linux did local builds, not the releasepreview, so I didn't notice</p>\n</blockquote>",
+        "id": 623572554,
+        "sender_full_name": "Gunnar Farnebäck",
+        "timestamp": 1789137838
+    },
+    {
+        "content": "<p>Nerds</p>",
+        "id": 623574621,
+        "sender_full_name": "cschen",
+        "timestamp": 1789138338
+    }
+]

@@ -1,0 +1,32 @@
+[
+    {
+        "content": "<p>Say I have a string like</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"s\">\"F1 .... F2 ..... F3 ....... F10\"</span>\n</code></pre></div>\n<p>where the <code>...</code> represent arbitrary text in between the markers <code>FN</code>.</p>\n<p>I want to find all indices that satisfy the regex <code>r\"F\\d+\"</code> and splice a <code>\\n</code> so that the final result looks like</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"s\">\"\"\"</span>\n<span class=\"s\">F1 ...</span>\n<span class=\"s\">F2 ...</span>\n<span class=\"s\">F3 ...</span>\n<span class=\"s\">.</span>\n<span class=\"s\">.</span>\n<span class=\"s\">.</span>\n<span class=\"s\">F10 ...</span>\n<span class=\"s\">\"\"\"</span>\n</code></pre></div>\n<p>I could find the index of each regex match with <code>m.offset for m in eachmatch(regex, text)</code> but I wonder if there is a more straightforward method to split the text and join the sentences with <code>\\n</code> in one go.</p>",
+        "id": 555704290,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763171758
+    },
+    {
+        "content": "<p>Also found <code>eachsplit(text, regex)</code> but it discards the markers <code>FN</code> from the substrings.</p>",
+        "id": 555704450,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763171938
+    },
+    {
+        "content": "<p>Current solution:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"w\">  </span><span class=\"n\">lines</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">eachsplit</span><span class=\"p\">(</span><span class=\"n\">text</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"sa\">r</span><span class=\"sr\">\"F</span><span class=\"err\">\\</span><span class=\"sr\">d+\"</span><span class=\"p\">)</span>\n<span class=\"w\">  </span><span class=\"n\">valid</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">collect</span><span class=\"p\">(</span><span class=\"n\">lines</span><span class=\"p\">)[</span><span class=\"k\">begin</span><span class=\"o\">+</span><span class=\"mi\">1</span><span class=\"o\">:</span><span class=\"k\">end</span><span class=\"o\">-</span><span class=\"mi\">1</span><span class=\"p\">]</span>\n<span class=\"w\">  </span><span class=\"n\">join</span><span class=\"p\">((</span><span class=\"s\">\"F</span><span class=\"si\">$i</span><span class=\"s\">\"</span><span class=\"w\"> </span><span class=\"o\">*</span><span class=\"w\"> </span><span class=\"n\">l</span><span class=\"w\"> </span><span class=\"k\">for</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">l</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"k\">in</span><span class=\"w\"> </span><span class=\"n\">enumerate</span><span class=\"p\">(</span><span class=\"n\">valid</span><span class=\"p\">)),</span><span class=\"w\"> </span><span class=\"s\">\"</span><span class=\"se\">\\n</span><span class=\"s\">\"</span><span class=\"p\">)</span>\n</code></pre></div>",
+        "id": 555705440,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1763173031
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> has marked this topic as resolved.</p>",
+        "id": 555706490,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1763174348
+    },
+    {
+        "content": "<p>Maybe <code>lstrip(replace(s, r\"(F\\d+)\" =&gt; s\"\\n\\1\"))</code>.</p>",
+        "id": 555730940,
+        "sender_full_name": "Gunnar Farnebäck",
+        "timestamp": 1763199355
+    }
+]
