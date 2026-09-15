@@ -1,0 +1,68 @@
+[
+    {
+        "content": "<p>Hey, this is probably a stupid question but I'm completely new to working with map data and all the various geo packages are a bit confusing.</p>\n<p>I have a <a href=\"https://offenedaten-koeln.de/dataset/kommunalwahlbezirke-k%C3%B6ln\">shapefile</a> that contains several districts and want to check which district a point is in given by latitude and longitude of the point.</p>\n<p>I found a <a href=\"https://discourse.julialang.org/t/efficiently-check-if-points-are-contained-in-polygons/74415/\">thread on Discourse</a> that has several options but I'm at a loss which one to use. I've tried <span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span>'s <a href=\"https://discourse.julialang.org/t/efficiently-check-if-points-are-contained-in-polygons/74415/18\">method</a> but it didn't match any points (which is probably me making a mistake somewhere):</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">geotable</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">GeoIO</span><span class=\"o\">.</span><span class=\"n\">load</span><span class=\"p\">(</span><span class=\"s\">\"Kommunalwahlbezirk_3/Kommunalwahlbezirk.shp\"</span><span class=\"p\">)</span>\n<span class=\"n\">ps</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Point</span><span class=\"o\">.</span><span class=\"p\">(</span><span class=\"n\">points</span><span class=\"p\">)</span>\n<span class=\"n\">gs</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">domain</span><span class=\"p\">(</span><span class=\"n\">geotable</span><span class=\"p\">)</span>\n<span class=\"p\">[</span><span class=\"n\">p</span><span class=\"w\"> </span><span class=\"o\">∈</span><span class=\"w\"> </span><span class=\"n\">g</span><span class=\"w\"> </span><span class=\"k\">for</span><span class=\"w\"> </span><span class=\"n\">p</span><span class=\"w\"> </span><span class=\"k\">in</span><span class=\"w\"> </span><span class=\"n\">ps</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">g</span><span class=\"w\"> </span><span class=\"k\">in</span><span class=\"w\"> </span><span class=\"n\">gs</span><span class=\"p\">]</span>\n</code></pre></div>\n<p>with</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">ps</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Point</span><span class=\"o\">.</span><span class=\"p\">([(</span><span class=\"n\">lon</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">lat</span><span class=\"p\">)])</span>\n<span class=\"go\">1-element Vector{Point{𝔼{2}, CoordRefSystems.Cartesian2D{CoordRefSystems.NoDatum, Unitful.Quantity{Float64, 𝐋, Unitful.FreeUnits{(m,), 𝐋, nothing}}}}}:</span>\n<span class=\"go\"> Point(x: 6.958137997831819 m, y: 50.941303500000004 m)</span>\n<span class=\"go\"> ...</span>\n</code></pre></div>\n<p>and </p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">gs</span>\n<span class=\"go\">45 GeometrySet</span>\n<span class=\"go\">├─ Multi(2×PolyArea)</span>\n<span class=\"go\">├─ Multi(1×PolyArea)</span>\n<span class=\"go\">├─ Multi(1×PolyArea)</span>\n<span class=\"go\">├─ Multi(1×PolyArea)</span>\n<span class=\"go\">├─ Multi(1×PolyArea)</span>\n<span class=\"go\">⋮</span>\n<span class=\"go\">├─ Multi(1×PolyArea)</span>\n<span class=\"go\">├─ Multi(1×PolyArea)</span>\n<span class=\"go\">├─ Multi(1×PolyArea)</span>\n<span class=\"go\">├─ Multi(1×PolyArea)</span>\n<span class=\"go\">└─ Multi(1×PolyArea)</span>\n</code></pre></div>\n<p>However the resulting matrix has no matches, even though that point is definitely within the area of one of the districts.</p>\n<p>Any ideas on what I'm doing wrong with that specific method or generally what the best idea to approach this problem is? It doesn't have to be efficient, I only have to do this once for ~2.3k points.</p>",
+        "id": 508824039,
+        "sender_full_name": "Sascha Mann",
+        "timestamp": 1743187182
+    },
+    {
+        "content": "<p>You probably need to define the <code>Point</code> in the same projection, I'll try to see if I can find out how to construct it</p>",
+        "id": 508830619,
+        "sender_full_name": "Daniel González",
+        "timestamp": 1743189650
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"558813\">Daniel González</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/How.20to.20check.20if.20position.20.60.28lon.2C.20lat.29.60.20is.20within.20an.20area.3F/near/508830619\">said</a>:</p>\n<blockquote>\n<p>You probably need to define the <code>Point</code> in the same projection, I'll try to see if I can find out how to construct it</p>\n</blockquote>\n<p>I literally just arrived at that thought when you wrote it <span aria-label=\"sweat smile\" class=\"emoji emoji-1f605\" role=\"img\" title=\"sweat smile\">:sweat_smile:</span> the shapefile coordinates are significantly off from the coordinates I have. The coordinate system for the shapefile is <code>ETRS 1989 UTM Zone 32N</code></p>",
+        "id": 508830789,
+        "sender_full_name": "Sascha Mann",
+        "timestamp": 1743189724
+    },
+    {
+        "content": "<p>The coordinates of my points are what I receive from the OpenStreetMaps API (which appears to be <code>WGS 1984</code>)</p>",
+        "id": 508830998,
+        "sender_full_name": "Sascha Mann",
+        "timestamp": 1743189831
+    },
+    {
+        "content": "<p>I think this might be what you need</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">CoordRefSystems</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Unitful</span>\n\n<span class=\"n\">m</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Unitful</span><span class=\"o\">.</span><span class=\"n\">m</span>\n<span class=\"n\">°</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Unitful</span><span class=\"o\">.</span><span class=\"n\">°</span>\n\n<span class=\"n\">k₀</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mf\">0.9996</span>\n<span class=\"n\">latₒ</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mf\">0.0</span><span class=\"n\">°</span>\n<span class=\"n\">lonₒ</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mf\">9.0</span><span class=\"n\">°</span>\n<span class=\"n\">xₒ</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mf\">500000.0</span><span class=\"n\">m</span>\n<span class=\"n\">yₒ</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mf\">0.0</span><span class=\"n\">m</span>\n<span class=\"n\">S</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">CoordRefSystems</span><span class=\"o\">.</span><span class=\"n\">Shift</span><span class=\"p\">(;</span><span class=\"w\"> </span><span class=\"n\">lonₒ</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">xₒ</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">yₒ</span><span class=\"p\">)</span>\n<span class=\"n\">proj</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">TransverseMercator</span><span class=\"p\">{</span><span class=\"kt\">k₀</span><span class=\"p\">,</span><span class=\"kt\">latₒ</span><span class=\"p\">,</span><span class=\"kt\">ETRFLatest</span><span class=\"p\">,</span><span class=\"kt\">S</span><span class=\"p\">}</span>\n\n<span class=\"n\">point_projected</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">convert</span><span class=\"p\">(</span><span class=\"n\">proj</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">LatLon</span><span class=\"p\">(</span><span class=\"n\">lat</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">lon</span><span class=\"p\">))</span><span class=\"w\"> </span><span class=\"c\"># use your trial values here</span>\n</code></pre></div>",
+        "id": 508832256,
+        "sender_full_name": "Daniel González",
+        "timestamp": 1743190306
+    },
+    {
+        "content": "<p>Alternatively </p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">proj</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">utm</span><span class=\"p\">(</span><span class=\"ss\">:north</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">32</span><span class=\"p\">;</span><span class=\"w\"> </span><span class=\"n\">datum</span><span class=\"o\">=</span><span class=\"n\">ETRFLatest</span><span class=\"p\">)</span>\n</code></pre></div>",
+        "id": 508832810,
+        "sender_full_name": "Daniel González",
+        "timestamp": 1743190522
+    },
+    {
+        "content": "<p>That appears to work, thank you!</p>",
+        "id": 508835101,
+        "sender_full_name": "Sascha Mann",
+        "timestamp": 1743191384
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269167\">Sascha Mann</span> has marked this topic as resolved.</p>",
+        "id": 508837177,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1743192240
+    },
+    {
+        "content": "<p><span class=\"user-mention\" data-user-id=\"269167\">@Sascha Mann</span> try to use the <code>Proj</code> transform instead as described in Chapter 6 Map projections: <a href=\"https://juliaearth.github.io/geospatial-data-science-with-julia/06-projections.html\">https://juliaearth.github.io/geospatial-data-science-with-julia/06-projections.html</a></p>",
+        "id": 509199793,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1743427361
+    },
+    {
+        "content": "<p>You can send the geotable directly to it as in <code>geotable |&gt; Proj(utm(:north, 32, datum=ETRFLatest))</code></p>",
+        "id": 509199908,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1743427387
+    },
+    {
+        "content": "<p>Thank you <span class=\"user-mention\" data-user-id=\"558813\">@Daniel González</span> for helping with it <span aria-label=\"100\" class=\"emoji emoji-1f4af\" role=\"img\" title=\"100\">:100:</span></p>",
+        "id": 509200460,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1743427509
+    }
+]

@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Hello, I'm interested in writing more performant and scalable code for various geospatial and database uses and I'm curious about what the standard idioms are for a context-dependent tree (defined as: A tree that has it's ordering defined from either an extrinsic property, or as the children move and some internal property changes). The textbook examples of these are geometric sweep line algorithms (using a binary search tree) or a region tree of moving planets/stars/etc. </p>\n<p>I have tried multiple strategies from linking children to the parent tree (so I can call the tree's fields from a child) to tracking \"last known state\"s within the children. All of these just end up with lots of allocations and code complexity that surely I'm missing something solved. All this to say, what is a Julia idiom for writing context-dependent trees?</p>",
+        "id": 590249110,
+        "sender_full_name": "Jeffrey Chandler",
+        "timestamp": 1776873205
+    },
+    {
+        "content": "<p>It is definitely tricky to get recursive data structures right in the language. I struggled writing our HalfEdgeTopology in <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Meshes\">Meshes.jl</a> and it might still have some potential optimizations left to do. I would start looking into it to get inspiration.</p>",
+        "id": 590897816,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1777142290
+    }
+]

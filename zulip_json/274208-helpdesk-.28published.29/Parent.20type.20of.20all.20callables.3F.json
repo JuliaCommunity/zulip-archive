@@ -1,0 +1,164 @@
+[
+    {
+        "content": "<p>Is there a parent type for all callable objects?</p>\n<p>I am trying to constrain the arguments of a function to <code>Function</code> + constructors. Something like <code>Union{&lt;:Function,&lt;:Constructor}</code> but <code>Constructor</code> doesn't exist. Is there a general type that I can use in this scenario?</p>",
+        "id": 542931430,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759493381
+    },
+    {
+        "content": "<p>nope</p>",
+        "id": 542931912,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1759493552
+    },
+    {
+        "content": "<p>I am considering <code>Union{Function,Type}</code>. Experimenting with it...</p>",
+        "id": 542932309,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759493710
+    },
+    {
+        "content": "<p>why not <code>Any</code> ? there's nothing really generic you can do over \"callables\" anyway</p>",
+        "id": 542932733,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1759493872
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"671422\">Andy Dienes</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F/near/542932733\">said</a>:</p>\n<blockquote>\n<p>why not <code>Any</code> ? there's nothing really generic you can do over \"callables\" anyway</p>\n</blockquote>\n<p>Ambiguity with other types. It is a more convoluted use case.</p>",
+        "id": 542932856,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759493916
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"c\"># supported argument types</span>\n<span class=\"k\">const</span><span class=\"w\"> </span><span class=\"n\">Callable</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Function</span><span class=\"p\">,</span><span class=\"kt\">Type</span><span class=\"p\">}</span>\n<span class=\"k\">const</span><span class=\"w\"> </span><span class=\"n\">Target</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Symbol</span><span class=\"p\">,</span><span class=\"kt\">AbstractString</span><span class=\"p\">}</span>\n<span class=\"k\">const</span><span class=\"w\"> </span><span class=\"n\">ColsCallableTarget</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Pair</span><span class=\"p\">{</span><span class=\"o\">&lt;:</span><span class=\"kt\">Any</span><span class=\"p\">,</span><span class=\"o\">&lt;:</span><span class=\"kt\">Pair</span><span class=\"p\">{</span><span class=\"o\">&lt;:</span><span class=\"kt\">Callable</span><span class=\"p\">,</span><span class=\"o\">&lt;:</span><span class=\"kt\">Target</span><span class=\"p\">}}</span>\n<span class=\"k\">const</span><span class=\"w\"> </span><span class=\"n\">ColsCallable</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Pair</span><span class=\"p\">{</span><span class=\"o\">&lt;:</span><span class=\"kt\">Any</span><span class=\"p\">,</span><span class=\"o\">&lt;:</span><span class=\"kt\">Callable</span><span class=\"p\">}</span>\n<span class=\"k\">const</span><span class=\"w\"> </span><span class=\"n\">CallableTarget</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Pair</span><span class=\"p\">{</span><span class=\"o\">&lt;:</span><span class=\"kt\">Callable</span><span class=\"p\">,</span><span class=\"o\">&lt;:</span><span class=\"kt\">Target</span><span class=\"p\">}</span>\n<span class=\"k\">const</span><span class=\"w\"> </span><span class=\"n\">MapArg</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">ColsCallableTarget</span><span class=\"p\">,</span><span class=\"kt\">ColsCallable</span><span class=\"p\">,</span><span class=\"kt\">CallableTarget</span><span class=\"p\">,</span><span class=\"kt\">Callable</span><span class=\"p\">}</span>\n</code></pre></div>\n<p><code>MapArg</code> is the type that I want to constrain at the end. My function definition will have a <code>VargArg</code> of them:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">foo</span><span class=\"p\">(</span><span class=\"n\">arg</span><span class=\"o\">::</span><span class=\"kt\">MapArg</span><span class=\"o\">...</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n</code></pre></div>",
+        "id": 542933057,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759493988
+    },
+    {
+        "content": "<p>The <code>VarArg</code> requirement forces this non-idiomatic approach with explicit types. I would use simple dispatch if I could.</p>",
+        "id": 542933244,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759494039
+    },
+    {
+        "content": "<p>does does <code>foo</code> do?</p>",
+        "id": 542933334,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1759494065
+    },
+    {
+        "content": "<p>Let me finish the PR and you can see the whole picture <span aria-label=\"slight smile\" class=\"emoji emoji-1f642\" role=\"img\" title=\"slight smile\">:slight_smile:</span></p>",
+        "id": 542933368,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759494079
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">struct</span> <span class=\"kt\">Foo</span><span class=\"w\"> </span><span class=\"k\">end</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"o\">::</span><span class=\"kt\">Foo</span><span class=\"p\">)(</span><span class=\"n\">x</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">y</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">+</span><span class=\"w\"> </span><span class=\"n\">y</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">Foo</span><span class=\"p\">()(</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">2</span><span class=\"p\">)</span>\n<span class=\"go\">3</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">supertype</span><span class=\"p\">(</span><span class=\"n\">Foo</span><span class=\"p\">)</span>\n<span class=\"go\">Any</span>\n</code></pre></div>",
+        "id": 542933674,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1759494177
+    },
+    {
+        "content": "<p>Yes, I am thinking of types as possible callables.</p>",
+        "id": 542933777,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759494217
+    },
+    {
+        "content": "<p>that wasn't a type</p>",
+        "id": 542933861,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1759494245
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">Foo</span><span class=\"p\">()</span><span class=\"w\"> </span><span class=\"k\">isa</span><span class=\"w\"> </span><span class=\"kt\">Type</span>\n<span class=\"nb\">false</span>\n</code></pre></div>",
+        "id": 542933891,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1759494259
+    },
+    {
+        "content": "<p>Oh I see your point.</p>",
+        "id": 542933902,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759494261
+    },
+    {
+        "content": "<p>You are mentioning the case of an instance that is callable and not a subtype of <code>Function</code>.</p>",
+        "id": 542934005,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759494291
+    },
+    {
+        "content": "<p>I don't want to support this use case.</p>",
+        "id": 542934035,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759494299
+    },
+    {
+        "content": "<p>It's callable <span aria-label=\"shrug\" class=\"emoji emoji-1f937\" role=\"img\" title=\"shrug\">:shrug:</span></p>",
+        "id": 542934108,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1759494320
+    },
+    {
+        "content": "<p>I know. It wouldn't hurt to support this case, but since Julia doesn't have a <code>Callable</code> super type, I don't need to cover it in practice.</p>",
+        "id": 542934353,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759494373
+    },
+    {
+        "content": "<p>The use case is pretty simple: take a function or constructor and map over an array of arguments. The PR is almost ready...</p>",
+        "id": 542934499,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759494407
+    },
+    {
+        "content": "<p><a href=\"https://github.com/JuliaML/TableTransforms.jl/pull/305\">https://github.com/JuliaML/TableTransforms.jl/pull/305</a></p>",
+        "id": 542938988,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759495862
+    },
+    {
+        "content": "<p>The PR above should clarify the use case. It is working fine <span aria-label=\"slight smile\" class=\"emoji emoji-1f642\" role=\"img\" title=\"slight smile\">:slight_smile:</span></p>",
+        "id": 542939034,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759495879
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/Parent.20type.20of.20all.20callables.3F/near/542934353\">said</a>:</p>\n<blockquote>\n<p>Julia doesn't have a <code>Callable</code> super type</p>\n</blockquote>\n<p>Technically there's <a href=\"https://github.com/JuliaLang/julia/blob/85687b522a6e73836b6ae95e65a8dc1723427d32/base/essentials.jl#L5\">https://github.com/JuliaLang/julia/blob/85687b522a6e73836b6ae95e65a8dc1723427d32/base/essentials.jl#L5</a> but it isn't public.</p>",
+        "id": 542988680,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1759510745
+    },
+    {
+        "content": "<p>Interesting. The exact same definition.</p>",
+        "id": 542991794,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1759511758
+    },
+    {
+        "content": "<p>For not-really-generic code it's totally fine to dispatch on <code>Union{Function, Type}</code> to catch many callables, but in generic code there's no way to select callables just by their supertype. That's why generic API is designed so that there's no confusion – whether a callable should be in this argument or not.</p>",
+        "id": 542997484,
+        "sender_full_name": "aplavin",
+        "timestamp": 1759513976
+    },
+    {
+        "content": "<p>Relevant discussion on the Julia issue tracker:</p>\n<ul>\n<li><a href=\"https://github.com/JuliaLang/julia/issues/43491\">https://github.com/JuliaLang/julia/issues/43491</a></li>\n</ul>",
+        "id": 543068720,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1759564678
+    },
+    {
+        "content": "<p>The design of Julia is such that anything may be callable, just give it a method. Thus a <code>Callable</code> type would not make sense.</p>",
+        "id": 543068811,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1759564792
+    },
+    {
+        "content": "<p>Yea, I've writen functions like <code>(f::Foo)(x) = ...</code> before.</p>",
+        "id": 543074505,
+        "sender_full_name": "Timothy",
+        "timestamp": 1759570850
+    }
+]
