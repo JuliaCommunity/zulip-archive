@@ -1,0 +1,62 @@
+[
+    {
+        "content": "<p>Do you have a general rule of thumb for picking one over the other?</p>\n<p>Benchmarks are inconsistent depending on how many random numbers are generated:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">rng1</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">MersenneTwister</span><span class=\"p\">(</span><span class=\"mi\">123</span><span class=\"p\">)</span>\n<span class=\"n\">MersenneTwister</span><span class=\"p\">(</span><span class=\"mi\">123</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">rng2</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Xoshiro</span><span class=\"p\">(</span><span class=\"mi\">123</span><span class=\"p\">)</span>\n<span class=\"n\">Xoshiro</span><span class=\"p\">(</span><span class=\"mh\">0xfefa8d41b8f5dca5</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mh\">0xf80cc98e147960c1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mh\">0x20e2ccc17662fc1d</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mh\">0xea7a7dcb2e787c01</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mh\">0xf4e85a418b9c4f80</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">rng1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"p\">);</span>\n<span class=\"w\">  </span><span class=\"mf\">27.570</span><span class=\"w\"> </span><span class=\"n\">ns</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"mi\">2</span><span class=\"w\"> </span><span class=\"n\">allocations</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"mi\">64</span><span class=\"w\"> </span><span class=\"n\">bytes</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">rng2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"p\">);</span>\n<span class=\"w\">  </span><span class=\"mf\">19.695</span><span class=\"w\"> </span><span class=\"n\">ns</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"mi\">2</span><span class=\"w\"> </span><span class=\"n\">allocations</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"mi\">64</span><span class=\"w\"> </span><span class=\"n\">bytes</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">rng1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">100</span><span class=\"p\">);</span>\n<span class=\"w\">  </span><span class=\"mf\">118.183</span><span class=\"w\"> </span><span class=\"n\">ns</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"mi\">2</span><span class=\"w\"> </span><span class=\"n\">allocations</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"mi\">928</span><span class=\"w\"> </span><span class=\"n\">bytes</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">rng2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">100</span><span class=\"p\">);</span>\n<span class=\"w\">  </span><span class=\"mf\">133.110</span><span class=\"w\"> </span><span class=\"n\">ns</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"mi\">2</span><span class=\"w\"> </span><span class=\"n\">allocations</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"mi\">928</span><span class=\"w\"> </span><span class=\"n\">bytes</span><span class=\"p\">)</span>\n</code></pre></div>",
+        "id": 527199402,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1751642510
+    },
+    {
+        "content": "<p>I just always use Xoshiro. MT is kinda just for backwards compatibility</p>",
+        "id": 527200357,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1751642982
+    },
+    {
+        "content": "<p>That is what I was told. I am curious why it is slower in the n=100 case above.</p>",
+        "id": 527200510,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1751643062
+    },
+    {
+        "content": "<p>FWIW, I don't see Xoshiro lose at any size on my machine:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">using</span><span class=\"w\"> </span><span class=\"n\">Random</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">rng1</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">MersenneTwister</span><span class=\"p\">(</span><span class=\"mi\">123</span><span class=\"p\">)</span>\n<span class=\"go\">MersenneTwister(123)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">rng2</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Xoshiro</span><span class=\"p\">(</span><span class=\"mi\">123</span><span class=\"p\">)</span>\n<span class=\"go\">Xoshiro(0xfefa8d41b8f5dca5, 0xf80cc98e147960c1, 0x20e2ccc17662fc1d, 0xea7a7dcb2e787c01, 0xf4e85a418b9c4f80)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">rng1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"p\">);</span>\n<span class=\"go\">  20.245 ns (2 allocations: 64 bytes)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">rng2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"p\">);</span>\n<span class=\"go\">  15.435 ns (2 allocations: 64 bytes)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">rng1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">100</span><span class=\"p\">);</span>\n<span class=\"go\">  71.995 ns (2 allocations: 928 bytes)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">rng2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">100</span><span class=\"p\">);</span>\n<span class=\"go\">  66.703 ns (2 allocations: 928 bytes)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">rng1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">10000</span><span class=\"p\">);</span>\n<span class=\"go\">  3.859 μs (3 allocations: 78.20 KiB)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">rand</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">rng2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">10000</span><span class=\"p\">);</span>\n<span class=\"go\">  2.639 μs (3 allocations: 78.20 KiB)</span>\n</code></pre></div>",
+        "id": 527200702,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1751643168
+    },
+    {
+        "content": "<p>I wouldn't be surprised if this sort of thing was pretty architecture dependent.</p>",
+        "id": 527200813,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1751643238
+    },
+    {
+        "content": "<p>Interesting. I will move to Xoshiro in that case.</p>",
+        "id": 527200909,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1751643307
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> has marked this topic as resolved.</p>",
+        "id": 527200919,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1751643310
+    },
+    {
+        "content": "<p>IIRC, MT buffers a bunch of random numbers which xoshiro doesn't. So when you time with @btime, which gives the minimum time, you don't benchmark the actual time to generate the numbers, only that to copy it from the buffer</p>",
+        "id": 527207934,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1751646370
+    },
+    {
+        "content": "<p>Thanks for sharing.</p>",
+        "id": 527209139,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1751646750
+    },
+    {
+        "content": "<p>There's a whole funny rivalry between the Xoshiro and PCG  people, but Mersenne is <em>old</em> and  either is probably an upgrade over that IMHO</p>",
+        "id": 527235018,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1751666853
+    }
+]

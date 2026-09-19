@@ -1,0 +1,44 @@
+[
+    {
+        "content": "<p>Given a number, say <code>x = 1e-5</code>, how would you extract the number <code>5</code>?</p>\n<p>One possible solution is <code>round(Int, -log10(x))</code>. Is there any special function in Base with this purpose?</p>",
+        "id": 507449382,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1742648299
+    },
+    {
+        "content": "<p>Base.hidigit, but that's internal and does similar things anyway</p>",
+        "id": 507459039,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1742655502
+    },
+    {
+        "content": "<p>But are you sure about round? Is what you want? 5e-5 would be different from 1e-5, is that what you want?</p>",
+        "id": 507459094,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1742655562
+    },
+    {
+        "content": "<p>Not sure about the round, just wanted to get an integer as the result</p>",
+        "id": 507460089,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1742656298
+    },
+    {
+        "content": "<p>Let's change the question: _what_ integer do you want based on the given input? Your request is under specified, there's lots of ambiguity</p>",
+        "id": 507461064,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1742657053
+    },
+    {
+        "content": "<p>Assuming that the value <code>x</code> is a tolerance to floating point approximations, I'm trying to extract the number of digits that make a difference. So if two numbers are subtracted I'm expecting to represent the difference with this number of digits</p>",
+        "id": 507463443,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1742658771
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mf\">1.234567890e5</span>\n<span class=\"n\">decimal_exp</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">floor</span><span class=\"p\">(</span><span class=\"kt\">Int</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">log10</span><span class=\"p\">(</span><span class=\"n\">abs</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"p\">)))</span>\n<span class=\"mi\">5</span>\n</code></pre></div>",
+        "id": 524094901,
+        "sender_full_name": "Richard Careaga",
+        "timestamp": 1749947201
+    }
+]

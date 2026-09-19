@@ -1,0 +1,62 @@
+[
+    {
+        "content": "<p>I found out that using break/continue statements inside a do block (for example, <code>open(file) do f ... end</code>) produces an error. Is there a work-around or should I just avoid do blocks when I want to use these jump statements?</p>\n<p>A MWE:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">for</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"k\">in</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"o\">:</span><span class=\"mi\">10</span>\n<span class=\"w\">  </span><span class=\"n\">map</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"o\">:</span><span class=\"mi\">5</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"k\">do</span><span class=\"w\"> </span><span class=\"n\">j</span>\n<span class=\"w\">    </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">      </span><span class=\"k\">continue</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"w\">    </span><span class=\"mi\">2</span><span class=\"n\">j</span>\n<span class=\"w\">  </span><span class=\"k\">end</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>which produces</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">ERROR</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"n\">syntax</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"k\">break</span><span class=\"w\"> </span><span class=\"n\">or</span><span class=\"w\"> </span><span class=\"k\">continue</span><span class=\"w\"> </span><span class=\"n\">outside</span><span class=\"w\"> </span><span class=\"n\">loop</span>\n<span class=\"n\">Stacktrace</span><span class=\"o\">:</span>\n<span class=\"w\"> </span><span class=\"p\">[</span><span class=\"mi\">1</span><span class=\"p\">]</span><span class=\"w\"> </span><span class=\"n\">top</span><span class=\"o\">-</span><span class=\"n\">level</span><span class=\"w\"> </span><span class=\"n\">scope</span>\n<span class=\"w\">   </span><span class=\"err\">@</span><span class=\"w\"> </span><span class=\"n\">REPL</span><span class=\"p\">[</span><span class=\"mi\">1</span><span class=\"p\">]</span><span class=\"o\">:</span><span class=\"mi\">1</span>\n</code></pre></div>",
+        "id": 504754948,
+        "sender_full_name": "Moorits Muru",
+        "timestamp": 1741675805
+    },
+    {
+        "content": "<p>The do syntax is sugar to convert <code>map(f, xs)</code> into</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">map</span><span class=\"p\">(</span><span class=\"n\">xs</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"k\">do</span><span class=\"w\"> </span><span class=\"n\">x</span>\n<span class=\"w\">  </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>Your <code>f</code> is not a valid Julia function.</p>",
+        "id": 504771456,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1741681839
+    },
+    {
+        "content": "<p>This is just an example to show the behaviour of the continue statement, and it does seem like a valid function to me.</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">map</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"o\">:</span><span class=\"mi\">5</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"k\">do</span><span class=\"w\"> </span><span class=\"n\">f</span>\n<span class=\"w\">       </span><span class=\"mi\">2</span><span class=\"n\">f</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">5-element Vector{Int64}:</span>\n<span class=\"go\">  2</span>\n<span class=\"go\">  4</span>\n<span class=\"go\">  6</span>\n<span class=\"go\">  8</span>\n<span class=\"go\"> 10</span>\n</code></pre></div>",
+        "id": 504781889,
+        "sender_full_name": "Moorits Muru",
+        "timestamp": 1741684723
+    },
+    {
+        "content": "<p>What would you expect <code>continue</code> to do inside the <code>map</code> body?</p>",
+        "id": 504784242,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1741685327
+    },
+    {
+        "content": "<blockquote>\n<p>and it does seem like a valid function to me.</p>\n</blockquote>\n<p>Júlio was referring specifically to your use of <code>continue</code> in the function body. To be clear, when you write</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">map</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"o\">:</span><span class=\"mi\">5</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"k\">do</span><span class=\"w\"> </span><span class=\"n\">j</span>\n<span class=\"w\">    </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">        </span><span class=\"k\">continue</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"w\">    </span><span class=\"mi\">2</span><span class=\"n\">j</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>that is basically syntax sugar for</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">_f</span><span class=\"p\">(</span><span class=\"n\">j</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">        </span><span class=\"k\">continue</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"w\">    </span><span class=\"mi\">2</span><span class=\"n\">j</span>\n<span class=\"k\">end</span>\n\n<span class=\"n\">map</span><span class=\"p\">(</span><span class=\"n\">f</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"o\">:</span><span class=\"mi\">5</span><span class=\"p\">)</span>\n</code></pre></div>\n<p>The <code>continue</code> belongs lexically to the function body, not to the outer <code>for</code> loop.</p>",
+        "id": 504786119,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1741685791
+    },
+    {
+        "content": "<p>This gives me a dejavu to <a href=\"https://discourse.julialang.org/t/use-break-or-continue-statement-with-pmap/126425\">https://discourse.julialang.org/t/use-break-or-continue-statement-with-pmap/126425</a></p>",
+        "id": 504787365,
+        "sender_full_name": "Gunnar Farnebäck",
+        "timestamp": 1741686114
+    },
+    {
+        "content": "<p>I was hoping that in a loop the <code>i</code> is also in the scope of the do block. My real life case is that I have loop over file paths, open them using a do block and check whether the file contains certain info, if it doesn't, continue with the next file.</p>",
+        "id": 504787378,
+        "sender_full_name": "Moorits Muru",
+        "timestamp": 1741686117
+    },
+    {
+        "content": "<p>If you just want to continue, a return from the implicit anonymous function does just that.</p>",
+        "id": 504787591,
+        "sender_full_name": "Gunnar Farnebäck",
+        "timestamp": 1741686166
+    },
+    {
+        "content": "<p>I could try that, thanks!</p>",
+        "id": 504787946,
+        "sender_full_name": "Moorits Muru",
+        "timestamp": 1741686253
+    },
+    {
+        "content": "<p>yeah, <code>map</code> was a confusing example here because the mapping function is meant to be called multiple times, and the results are all supposed to be collected in order, so it wasn't clear to me what you expected to happen in the iterations where you <code>continue</code>. (i.e. should the output vector be shorter, should it contain <code>nothing</code>s, etc?)</p>",
+        "id": 504788958,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1741686509
+    }
+]

@@ -1,0 +1,92 @@
+[
+    {
+        "content": "<p>Are there any opinions on whether it's better to use a <code>Ref</code> or <code>Union{T, Nothing}</code> type as a kind of nullable type? I vaguely prefer a union as a matter of style, but maybe Ref's are better for type-stability and error messages. Though one downside of a Ref is that AFAIK there's no way to unassign one.</p>",
+        "id": 543905701,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1760000338
+    },
+    {
+        "content": "<p>I would use a union personally</p>",
+        "id": 543908389,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1760001093
+    },
+    {
+        "content": "<p>I doubt there'd be any real type stability benefits to the <code>Ref</code>, since with the union branch you would always do a</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"o\">!</span><span class=\"n\">isnothing</span><span class=\"p\">(</span><span class=\"n\">foo</span><span class=\"o\">.</span><span class=\"n\">field</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">your_code</span>\n<span class=\"k\">else</span>\n<span class=\"w\">    </span><span class=\"n\">some_error_branch</span><span class=\"p\">()</span>\n<span class=\"k\">end</span>\n</code></pre></div>",
+        "id": 543909033,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1760001282
+    },
+    {
+        "content": "<p>I <em>should</em>, but I admittedly I don't always remember to <span aria-label=\"peep\" class=\"emoji emoji-1fae3\" role=\"img\" title=\"peep\">:peep:</span></p>",
+        "id": 543910931,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1760001793
+    },
+    {
+        "content": "<p>How can a Ref be nullable?</p>",
+        "id": 543934176,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1760009316
+    },
+    {
+        "content": "<p>As in you can check whether it has a value with <code>isassigned()</code>. And dereferencing an unassigned Ref will immediately throw an exception, which is nice.</p>",
+        "id": 543935115,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1760009628
+    },
+    {
+        "content": "<p>note that will only work for non-isbits types</p>",
+        "id": 543935436,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1760009726
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">r</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Ref</span><span class=\"p\">{</span><span class=\"kt\">Int</span><span class=\"p\">}()</span>\n<span class=\"go\">Base.RefValue{Int64}(140383053485888)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">isassigned</span><span class=\"p\">(</span><span class=\"n\">r</span><span class=\"p\">)</span>\n<span class=\"go\">true</span>\n</code></pre></div>",
+        "id": 543935503,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1760009753
+    },
+    {
+        "content": "<p>Ugh true, I forgot about that.</p>",
+        "id": 543935558,
+        "sender_full_name": "James Wrigley",
+        "timestamp": 1760009769
+    },
+    {
+        "content": "<p>Also you can't un-assign a Ref (if you need to)</p>",
+        "id": 543937264,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1760010364
+    },
+    {
+        "content": "<p>Just use Union <span aria-label=\"thumbs up\" class=\"emoji emoji-1f44d\" role=\"img\" title=\"thumbs up\">:thumbs_up:</span></p>",
+        "id": 543937273,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1760010370
+    },
+    {
+        "content": "<p>I usually prefer <code>Union{Some{T}, Nothing}</code>, since that forces me to handle it and I can't forget about it anymore. The downside is that it peppers my code with <code>@something (..) throw(...)</code> to handle the <code>Nothing</code>s</p>",
+        "id": 543995565,
+        "sender_full_name": "Sukera",
+        "timestamp": 1760024948
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"306754\">Sukera</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/Ref.20vs.20Union.7BT.2C.20Nothing.7D/near/543995565\">said</a>:</p>\n<blockquote>\n<p>The downside is that it peppers my code</p>\n</blockquote>\n<p>This is the problem with the \"make Julia more like Rust\" program.</p>",
+        "id": 544022549,
+        "sender_full_name": "John Lapeyre",
+        "timestamp": 1760033764
+    },
+    {
+        "content": "<p>Not sure what this has to do with Rust, this is just the cost of checking my callsites &amp; the lack of syntax support for this in Julia. I personally don't mind this downside at all, because I can rest assured that I have checked every error path <img alt=\":shrugging:\" class=\"emoji\" src=\"https://avatars.zulip.com/7178/emoji/images/2366215e.gif\" title=\"shrugging\"></p>",
+        "id": 544041144,
+        "sender_full_name": "Sukera",
+        "timestamp": 1760041268
+    },
+    {
+        "content": "<p>I'm not saying that checking every error path is bad or that doing it with <code>Union{Some{T}, Nothing}</code> is bad. If you went through a Julia program and did this everywhere, you'd probably have a more reliable program. It would also look more like rust code than it did before you made the change.</p>",
+        "id": 544067387,
+        "sender_full_name": "John Lapeyre",
+        "timestamp": 1760057010
+    }
+]

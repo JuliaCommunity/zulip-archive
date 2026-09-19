@@ -1,0 +1,104 @@
+[
+    {
+        "content": "<p><a href=\"https://docs.julialang.org/en/v1/base/base/\">https://docs.julialang.org/en/v1/base/base/#</a>...</p>\n<p>Is there a way to know what data types the splat operator can be used with?  Through experimentation, I've used it with:</p>\n<ul>\n<li>AbstractDict (and its subtypes)</li>\n<li>NamedTuple</li>\n<li>Vector</li>\n</ul>\n<p>Are there any more?</p>",
+        "id": 543617913,
+        "sender_full_name": "G Gundam",
+        "timestamp": 1759869610
+    },
+    {
+        "content": "<p>I think it just calls <code>iterate</code>, so anything iterable</p>",
+        "id": 543619807,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1759870380
+    },
+    {
+        "content": "<p>Forgive my newbish question, but is there a type that contains all iterable things?</p>",
+        "id": 543620226,
+        "sender_full_name": "G Gundam",
+        "timestamp": 1759870483
+    },
+    {
+        "content": "<p>there is not</p>",
+        "id": 543620341,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1759870524
+    },
+    {
+        "content": "<p>Thanks.</p>",
+        "id": 543620375,
+        "sender_full_name": "G Gundam",
+        "timestamp": 1759870535
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"599001\">G Gundam</span> has marked this topic as resolved.</p>",
+        "id": 543620381,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1759870538
+    },
+    {
+        "content": "<p>Many (most?) things with multiple elements probably are iterable though!</p>\n<p>One key thing to keep in mind with splatting though is AFAIU performance may not be great with things where either (A) the collection has many elements and/or (B) the compiler can't tell how many elements are in a collection from its type</p>",
+        "id": 543626379,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1759873383
+    },
+    {
+        "content": "<p>so splatting Tuples is generally fine, but splatting arrays may not be ideal</p>",
+        "id": 543626417,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1759873398
+    },
+    {
+        "content": "<p>I'll keep that in mind.  I tend to use splatting when passing kwargs, and it's usually not in loops.  A lot of times, it's in a configuration-esque context where I call something like <code>somefunction(arg1, arg2; kwargs...)</code></p>",
+        "id": 543626963,
+        "sender_full_name": "G Gundam",
+        "timestamp": 1759873688
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"p\">[</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"mi\">2</span><span class=\"p\">,</span><span class=\"mi\">3</span><span class=\"p\">]</span>\n<span class=\"mi\">3</span><span class=\"o\">-</span><span class=\"n\">element</span><span class=\"w\"> </span><span class=\"kt\">Vector</span><span class=\"p\">{</span><span class=\"kt\">Int64</span><span class=\"p\">}</span><span class=\"o\">:</span>\n<span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\"> </span><span class=\"mi\">3</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">Meta</span><span class=\"o\">.</span><span class=\"nd\">@lower</span><span class=\"w\"> </span><span class=\"n\">tuple</span><span class=\"p\">(</span><span class=\"n\">a</span><span class=\"o\">...</span><span class=\"p\">)</span>\n<span class=\"o\">:</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"kt\">Expr</span><span class=\"p\">(</span><span class=\"ss\">:thunk</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">CodeInfo</span><span class=\"p\">(</span>\n<span class=\"w\">    </span><span class=\"err\">@</span><span class=\"w\"> </span><span class=\"n\">none</span><span class=\"w\"> </span><span class=\"n\">within</span><span class=\"w\"> </span><span class=\"sb\">`top-level scope`</span>\n<span class=\"mi\">1</span><span class=\"w\"> </span><span class=\"n\">─</span><span class=\"w\"> </span><span class=\"o\">%</span><span class=\"mi\">1</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Core</span><span class=\"o\">.</span><span class=\"n\">_apply_iterate</span><span class=\"p\">(</span><span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"n\">iterate</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">tuple</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"p\">)</span>\n<span class=\"n\">└──</span><span class=\"w\">      </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"o\">%</span><span class=\"mi\">1</span>\n<span class=\"p\">))))</span>\n</code></pre></div>",
+        "id": 543628554,
+        "sender_full_name": "jar",
+        "timestamp": 1759874481
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">help</span><span class=\"o\">?&gt;</span><span class=\"w\"> </span><span class=\"o\">...</span>\n<span class=\"n\">search</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"o\">...</span>\n\n<span class=\"w\">  </span><span class=\"o\">...</span>\n\n<span class=\"w\">  </span><span class=\"n\">The</span><span class=\"w\"> </span><span class=\"s\">\"splat\"</span><span class=\"w\"> </span><span class=\"n\">operator</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"o\">...</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">represents</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"w\"> </span><span class=\"n\">sequence</span><span class=\"w\"> </span><span class=\"n\">of</span><span class=\"w\"> </span><span class=\"n\">arguments</span><span class=\"o\">.</span><span class=\"w\"> </span><span class=\"o\">...</span><span class=\"w\"> </span><span class=\"n\">can</span><span class=\"w\"> </span><span class=\"n\">be</span><span class=\"w\"> </span><span class=\"n\">used</span><span class=\"w\"> </span><span class=\"k\">in</span><span class=\"w\"> </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">definitions</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">to</span><span class=\"w\"> </span><span class=\"n\">indicate</span><span class=\"w\"> </span><span class=\"n\">that</span><span class=\"w\"> </span><span class=\"n\">the</span>\n<span class=\"w\">  </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">accepts</span><span class=\"w\"> </span><span class=\"n\">an</span><span class=\"w\"> </span><span class=\"n\">arbitrary</span><span class=\"w\"> </span><span class=\"n\">number</span><span class=\"w\"> </span><span class=\"n\">of</span><span class=\"w\"> </span><span class=\"n\">arguments</span><span class=\"o\">.</span><span class=\"w\"> </span><span class=\"o\">...</span><span class=\"w\"> </span><span class=\"n\">can</span><span class=\"w\"> </span><span class=\"n\">also</span><span class=\"w\"> </span><span class=\"n\">be</span><span class=\"w\"> </span><span class=\"n\">used</span><span class=\"w\"> </span><span class=\"n\">to</span><span class=\"w\"> </span><span class=\"n\">apply</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"w\"> </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">to</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"w\"> </span><span class=\"n\">sequence</span><span class=\"w\"> </span><span class=\"n\">of</span><span class=\"w\"> </span><span class=\"n\">arguments</span><span class=\"o\">.</span>\n</code></pre></div>",
+        "id": 543628677,
+        "sender_full_name": "jar",
+        "timestamp": 1759874544
+    },
+    {
+        "content": "<p>also note that it really does call <code>iterate</code>, which affects stateful iterators weirdly:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">itr</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Iterators</span><span class=\"o\">.</span><span class=\"n\">Stateful</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"o\">:</span><span class=\"mi\">10</span><span class=\"p\">)</span>\n<span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"n\">Iterators</span><span class=\"o\">.</span><span class=\"kt\">Stateful</span><span class=\"p\">{</span><span class=\"kt\">UnitRange</span><span class=\"p\">{</span><span class=\"kt\">Int64</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"kt\">Union</span><span class=\"p\">{</span><span class=\"kt\">Nothing</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Tuple</span><span class=\"p\">{</span><span class=\"kt\">Int64</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"kt\">Int64</span><span class=\"p\">}}}(</span><span class=\"mi\">1</span><span class=\"o\">:</span><span class=\"mi\">10</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"p\">))</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">tuple</span><span class=\"p\">(</span><span class=\"n\">itr</span><span class=\"o\">...</span><span class=\"p\">)</span>\n<span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">3</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">4</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">5</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">6</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">7</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">8</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">9</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">10</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">tuple</span><span class=\"p\">(</span><span class=\"n\">itr</span><span class=\"o\">...</span><span class=\"p\">)</span>\n<span class=\"p\">()</span>\n</code></pre></div>",
+        "id": 543646739,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1759887748
+    },
+    {
+        "content": "<p>Is there any information about when the compiler knows how many elements are in the iterable? Is it only able to reliably do so for tuples? It currently seems like the only widely-known way to control this for custom types is to always lower the iterable to a <code>Tuple</code>, and splat that.</p>",
+        "id": 543651852,
+        "sender_full_name": "Jakob Peters",
+        "timestamp": 1759892263
+    },
+    {
+        "content": "<p>A general iterator, not really. At most it can know if it has finite length or not. Maybe there’s things like FixedSizeArrays that the compiler can reason about more effectively. Otherwise it’s just compile time knowledge from tuples and or sizes embedded in the type system.<br>\nBut, with enough information the compiler can probably const prop things and actually compute the total iteration length. But it’s hard to give assurances I’d say </p>\n<p>Lowering a generic iterator to a tuple simply moves the problem of figuring out how many things are in it to another point in the program.</p>",
+        "id": 543706896,
+        "sender_full_name": "cschen",
+        "timestamp": 1759917865
+    },
+    {
+        "content": "<p>The compiler will try to unroll iteration up to <code>max_tuple_splat</code> elements, which is 32 by default, so even quite complex examples like the following will \"just work\":</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">code_typed</span><span class=\"p\">((</span><span class=\"n\">typeof</span><span class=\"p\">((;</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">b</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">c</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">3</span><span class=\"p\">)),);</span><span class=\"w\"> </span><span class=\"n\">optimize</span><span class=\"o\">=</span><span class=\"nb\">false</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"k\">do</span><span class=\"w\"> </span><span class=\"n\">nt</span>\n<span class=\"w\">           </span><span class=\"n\">tuple</span><span class=\"p\">(</span><span class=\"n\">Iterators</span><span class=\"o\">.</span><span class=\"n\">flatten</span><span class=\"p\">((</span><span class=\"mi\">1</span><span class=\"o\">:</span><span class=\"mi\">3</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">zip</span><span class=\"p\">((</span><span class=\"mi\">2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">4</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"n\">i</span><span class=\"o\">^</span><span class=\"mi\">2</span><span class=\"w\"> </span><span class=\"k\">for</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"k\">in</span><span class=\"w\"> </span><span class=\"mi\">5</span><span class=\"o\">:</span><span class=\"mi\">6</span><span class=\"p\">)),</span><span class=\"w\"> </span><span class=\"n\">nt</span><span class=\"p\">))</span><span class=\"o\">...</span><span class=\"p\">)</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">1-element Vector{Any}:</span>\n<span class=\"go\"> CodeInfo(</span>\n<span class=\"go\">1 ─ %1  = Main.tuple::Core.Const(tuple)</span>\n<span class=\"go\">│   %2  = Base.Iterators.flatten::Core.Const(Base.Iterators.flatten)</span>\n<span class=\"go\">│   %3  = (1:3)::Core.Const(1:3)</span>\n<span class=\"go\">│   %4  = Main.zip::Core.Const(zip)</span>\n<span class=\"go\">│   %5  = Core.tuple(2, 4)::Core.Const((2, 4))</span>\n<span class=\"go\">│   %6  = Main.:(var\"#26#28\")::Core.Const(var\"#26#28\")</span>\n<span class=\"go\">│         (#26 = %new(%6))::Core.Const(var\"#26#28\"())</span>\n<span class=\"go\">│   %8  = #26::Core.Const(var\"#26#28\"())</span>\n<span class=\"go\">│   %9  = (5:6)::Core.Const(5:6)</span>\n<span class=\"go\">│   %10 = Base.Generator(%8, %9)::Core.Const(Base.Generator{UnitRange{Int64}, var\"#26#28\"}(var\"#26#28\"(), 5:6))</span>\n<span class=\"go\">│   %11 = (%4)(%5, %10)::Core.Const(zip((2, 4), Base.Generator{UnitRange{Int64}, var\"#26#28\"}(var\"#26#28\"(), 5:6)))</span>\n<span class=\"go\">│   %12 = Core.tuple(%3, %11, nt)::Core.PartialStruct(Tuple{UnitRange{Int64}, Base.Iterators.Zip{Tuple{Tuple{Int64, Int64}, Base.Generator{UnitRange{Int64}, var\"#26#28\"}}}, @NamedTuple{a::Int64, b::Int64, c::Int64}}, Any[Core.Const(1:3), Core.Const(zip((2, 4), Base.Generator{UnitRange{Int64}, var\"#26#28\"}(var\"#26#28\"(), 5:6))), @NamedTuple{a::Int64, b::Int64, c::Int64}])</span>\n<span class=\"go\">│   %13 = (%2)(%12)::Core.PartialStruct(Base.Iterators.Flatten{Tuple{UnitRange{Int64}, Base.Iterators.Zip{Tuple{Tuple{Int64, Int64}, Base.Generator{UnitRange{Int64}, var\"#26#28\"}}}, @NamedTuple{a::Int64, b::Int64, c::Int64}}}, Any[Core.PartialStruct(Tuple{UnitRange{Int64}, Base.Iterators.Zip{Tuple{Tuple{Int64, Int64}, Base.Generator{UnitRange{Int64}, var\"#26#28\"}}}, @NamedTuple{a::Int64, b::Int64, c::Int64}}, Any[Core.Const(1:3), Core.Const(zip((2, 4), Base.Generator{UnitRange{Int64}, var\"#26#28\"}(var\"#26#28\"(), 5:6))), @NamedTuple{a::Int64, b::Int64, c::Int64}])])</span>\n<span class=\"go\">│   %14 = Core._apply_iterate(Base.iterate, %1, %13)::Core.PartialStruct(Tuple{Int64, Int64, Int64, Tuple{Int64, Int64}, Tuple{Int64, Int64}, Int64, Int64, Int64}, Any[Core.Const(1), Core.Const(2), Core.Const(3), Core.Const((2, 25)), Core.Const((4, 36)), Int64, Int64, Int64])</span>\n<span class=\"go\">└──       return %14</span>\n<span class=\"go\">) =&gt; Tuple{Int64, Int64, Int64, Tuple{Int64, Int64}, Tuple{Int64, Int64}, Int64, Int64, Int64}</span>\n</code></pre></div>\n<p>All this requires is for the compiler to be able to do (partial) constant propagation through <code>iterate</code> and eventually reach <code>nothing</code>. The issues with arrays is just that the size is mutable and as such the compiler is limited about what it can reason about their size.</p>",
+        "id": 543720023,
+        "sender_full_name": "Simeon Schaub",
+        "timestamp": 1759922093
+    },
+    {
+        "content": "<p>I'd imagine it can reason about the lengths of <code>StaticArray</code>s as well (which I suppose are kind of tuples under the hood anyways)</p>",
+        "id": 543813944,
+        "sender_full_name": "Brenhin Keller",
+        "timestamp": 1759949462
+    },
+    {
+        "content": "<p>If you define a length method that returns a constant number, Julia is pretty good with constant propagation/evaluation, so you can use most iterables with a constant length.<br>\nIMO the bigger issues are 1) collections that does not have any compile time length info are splattable, laying a compilation trap for users, and 2) for collections whose length is part of the type, it's tricky to consistently write code that doesn't cause a codegen explosion by creating lots of Intermediate types.</p>",
+        "id": 544312451,
+        "sender_full_name": "Jakob Nybo Nissen",
+        "timestamp": 1760182889
+    }
+]

@@ -1,0 +1,32 @@
+[
+    {
+        "content": "<p>I have a testset for some code generation code which used to work in 1.11 but now fails in 1.12. I realize it might have worked for the wrong reasons before, but I guess now is as good a time to fix it as ever.</p>\n<p>The overall structure of the test is like this</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"nd\">@testset</span><span class=\"w\"> </span><span class=\"s\">\"Test Concept XX\"</span><span class=\"w\"> </span><span class=\"k\">begin</span>\n<span class=\"w\">     </span><span class=\"c\"># Do some setup</span>\n<span class=\"w\">     </span><span class=\"nd\">@eval</span><span class=\"w\"> </span><span class=\"k\">module</span><span class=\"w\"> </span><span class=\"n\">TestModule</span><span class=\"w\"> </span><span class=\"k\">end</span><span class=\"w\"> </span><span class=\"c\"># Code will be generated into this module to not mess up other modules (eg Main)</span>\n\n<span class=\"w\">       </span><span class=\"nd\">@testset</span><span class=\"w\"> </span><span class=\"s\">\"Test generation of </span><span class=\"si\">$x</span><span class=\"s\">\"</span><span class=\"w\"> </span><span class=\"k\">for</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"k\">in</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"o\">....</span><span class=\"p\">)</span>\n<span class=\"w\">            </span><span class=\"k\">try</span>\n<span class=\"w\">                </span><span class=\"c\"># Test that user gets a nice warning if they ever end up doing this</span>\n<span class=\"w\">                 </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">badfun</span><span class=\"p\">()</span>\n<span class=\"w\">                         </span><span class=\"n\">generate_code!</span><span class=\"p\">(</span><span class=\"n\">TestModule</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"p\">)</span>\n<span class=\"w\">                         </span><span class=\"c\"># Call code which uses result of  the above</span>\n<span class=\"w\">                         </span><span class=\"n\">make_use_of_generated_stuff</span><span class=\"p\">(</span><span class=\"n\">TestModule</span><span class=\"p\">)</span>\n<span class=\"w\">                 </span><span class=\"k\">end</span>\n\n<span class=\"w\">                </span><span class=\"nd\">@test_logs</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"ss\">:warn</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"s\">\"Warning about generated code\"</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"n\">badfun</span><span class=\"p\">()</span>\n<span class=\"w\">                </span><span class=\"c\"># In Julia 1.11 it seems the world age had advanced here, but in 1.12 it hasn't</span>\n<span class=\"w\">                 </span><span class=\"nd\">@test</span><span class=\"w\"> </span><span class=\"n\">make_use_of_generated_stuff</span><span class=\"p\">(</span><span class=\"n\">TestModule</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"n\">expected_result</span>\n\n<span class=\"w\">            </span><span class=\"k\">finally</span>\n<span class=\"w\">                  </span><span class=\"n\">clear_some_global_caches_in_tested_package</span><span class=\"p\">()</span>\n<span class=\"w\">            </span><span class=\"k\">end</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>The above is in a file which is included from runtests.jl inside another testcase:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"nd\">@testset</span><span class=\"w\"> </span><span class=\"s\">\"Test Concepts\"</span><span class=\"w\"> </span><span class=\"k\">begin</span>\n<span class=\"w\">        </span><span class=\"n\">include</span><span class=\"p\">(</span><span class=\"s\">\"the/above/file.jl\"</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n</code></pre></div>\n<p>Is there any place in this where it is safe to assume that the world age has advanced in 1.12?</p>",
+        "id": 558701891,
+        "sender_full_name": "DrChainsaw",
+        "timestamp": 1763742305
+    },
+    {
+        "content": "<p><a href=\"https://docs.julialang.org/en/v1/base/base/#include\">https://docs.julialang.org/en/v1/base/base/#include</a> mentions <code>Core.@latestworld</code>, but <code>Core.@latestworld</code> itself doesn't have docs. But it sounds like placing that where you want the world age to advance might work?</p>",
+        "id": 558702934,
+        "sender_full_name": "Eric Hanson",
+        "timestamp": 1763742556
+    },
+    {
+        "content": "<p>You can just use <code>invokelatest</code> too, right?</p>",
+        "id": 558711114,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1763744752
+    },
+    {
+        "content": "<p>Thanks alot. Both Core.@latestworld and invokelatest worked. I guess invokelatest will also work on earlier versions and I think it is enough for the test to be valid (or else it was not a good test to begin with).</p>",
+        "id": 558714240,
+        "sender_full_name": "DrChainsaw",
+        "timestamp": 1763745785
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"300483\">DrChainsaw</span> has marked this topic as resolved.</p>",
+        "id": 558714263,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1763745795
+    }
+]

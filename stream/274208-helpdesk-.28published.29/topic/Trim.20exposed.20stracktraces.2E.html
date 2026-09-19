@@ -1,0 +1,316 @@
+<html>
+<head><meta charset="utf-8"><title>Trim exposed stracktraces. · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html">Trim exposed stracktraces.</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="613806373"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613806373" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613806373">(Jul 31 2026 at 07:50)</a>:</h4>
+<p>In the following situation:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="c">#-------------------------------------</span>
+<span class="k">module</span><span class="w"> </span><span class="n">Internal</span>
+<span class="k">struct</span> <span class="kt">WrongInput</span><span class="w"> </span><span class="o">&lt;:</span><span class="w"> </span><span class="kt">Exception</span><span class="w"> </span><span class="k">end</span>
+<span class="n">f</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">throw</span><span class="p">(</span><span class="n">WrongInput</span><span class="p">())</span>
+<span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">Int</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span>
+<span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">h</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">export</span><span class="w"> </span><span class="n">h</span>
+<span class="k">end</span>
+
+<span class="c">#-------------------------------------</span>
+<span class="k">module</span><span class="w"> </span><span class="n">Exposed</span>
+
+<span class="k">using</span><span class="w"> </span><span class="o">..</span><span class="n">Internal</span>
+<span class="k">struct</span> <span class="kt">NiceReport</span><span class="w"> </span><span class="o">&lt;:</span><span class="w"> </span><span class="kt">Exception</span><span class="w"> </span><span class="k">end</span>
+
+<span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">q</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">welcome</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="k">try</span>
+<span class="w">        </span><span class="n">q</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="w">    </span><span class="k">catch</span><span class="w"> </span><span class="n">e</span>
+<span class="w">        </span><span class="n">e</span><span class="w"> </span><span class="k">isa</span><span class="w"> </span><span class="n">Internal</span><span class="o">.</span><span class="n">WrongInput</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rethrow</span><span class="p">(</span><span class="n">NiceReport</span><span class="p">())</span>
+<span class="w">        </span><span class="n">rethrow</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">export</span><span class="w"> </span><span class="n">welcome</span>
+
+<span class="n">Base</span><span class="o">.</span><span class="n">showerror</span><span class="p">(</span><span class="n">io</span><span class="o">::</span><span class="kt">IO</span><span class="p">,</span><span class="w"> </span><span class="o">::</span><span class="kt">NiceReport</span><span class="p">)</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="n">print</span><span class="p">(</span><span class="n">io</span><span class="p">,</span><span class="w"> </span><span class="s">"Don't worry it's not that bad just try again &lt;3"</span><span class="p">)</span>
+
+<span class="k">end</span>
+
+<span class="c">#-------------------------------------</span>
+<span class="c"># User.</span>
+<span class="k">using</span><span class="w"> </span><span class="o">.</span><span class="n">Exposed</span>
+
+<span class="n">my_u</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">welcome</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">my_v</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_u</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">my_w</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_v</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">my_w</span><span class="p">(</span><span class="s">"hi"</span><span class="p">)</span>
+</code></pre></div>
+<p>User obtains the following stacktrace:</p>
+<div class="codehilite" data-code-language="Text only"><pre><span></span><code>ERROR: LoadError: Don't worry it's not that bad just try again &lt;3
+Stacktrace:
+  [1] f(::String)                   &lt;&lt;
+    @ Main.Internal ./test.jl.jl:4  &lt;&lt;
+  [2] g(x::String)                  &lt;&lt;
+    @ Main.Internal ./test.jl.jl:6  &lt;&lt;
+  [3] h(x::String)                  &lt;&lt;
+    @ Main.Internal ./test.jl.jl:7  &lt;&lt;  Garbage (from user POV).
+  [4] p(x::String)                  &lt;&lt;  Useless for debugging: not a bug (in the lib).
+    @ Main.Exposed ./test.jl.jl:17  &lt;&lt;
+  [5] q(x::String)                  &lt;&lt;
+    @ Main.Exposed ./test.jl.jl:18  &lt;&lt;
+  [6] welcome(x::String)            &lt;&lt;
+    @ Main.Exposed ./test.jl.jl:21  &lt;&lt;
+  [7] my_u(x::String)            &lt;&lt;
+    @ Main ./test.jl.jl:37       &lt;&lt;
+  [8] my_v(x::String)            &lt;&lt;
+    @ Main ./test.jl.jl:38       &lt;&lt;   *USEFUL* (from user POV).
+  [9] my_w(x::String)            &lt;&lt;
+    @ Main ./test.jl.jl:39       &lt;&lt;
+ [10] top-level scope            &lt;&lt;
+    @ ./test.jl.jl:41            &lt;&lt;
+ [11] top-level scope            &lt;&lt;
+    @ REPL[1]:1                  &lt;&lt;
+in expression starting at ./test.jl:41
+</code></pre></div>
+<p>Is there a way I could reliably trim frames <code>[1]</code> to <code>[6]</code> so as not to bury them into the lib implementation detail? The relevant info for them only starts on frame <code>[7]</code>, and the deepest the lib the further <em>up</em> they need to scroll so as to just <em>read</em> the report.</p>
+
+
+
+<a name="613806538"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613806538" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613806538">(Jul 31 2026 at 07:52)</a>:</h4>
+<p>Using <code>throw(NiceReport())</code> instead of <code>rethrow(NiceReport())</code> does cut it exactly where it should, but then the <code>caused by</code> section still flushes the report up.</p>
+
+
+
+<a name="613806834"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613806834" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613806834">(Jul 31 2026 at 07:54)</a>:</h4>
+<p><em>(currently investigating <a href="https://docs.julialang.org/en/v1/base/base/#Base.current_exceptions"><code>Base.current_exceptions</code></a>)</em></p>
+
+
+
+<a name="613807497"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613807497" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613807497">(Jul 31 2026 at 07:59)</a>:</h4>
+<p><em>(nah, it doesn't seem we can mutate the returned <code>ExceptionStack</code>, can we?)</em></p>
+
+
+
+<a name="613807554"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613807554" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613807554">(Jul 31 2026 at 07:59)</a>:</h4>
+<p>I don't think so, but also, I think it's a bad idea to even try. A stack trace should contain the entire call stack so it's maximally usable for debuggning. Once you try messing with it to improve user friendliness, you should not be throwing un-caught exceptions, but instead print an error to stderr or something like that</p>
+
+
+
+<a name="613807898"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613807898" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613807898">(Jul 31 2026 at 08:01)</a>:</h4>
+<p>Just printint to stderr would drop frames <code>[7]</code> to <code>[11]</code> which <em>are</em> useful to user IMO.</p>
+
+
+
+<a name="613808062"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613808062" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613808062">(Jul 31 2026 at 08:02)</a>:</h4>
+<p>Also the purpose of <code>rethrow(e)</code> in case of unexpected exception is to really obtain the full stacktrace in case the <em>lib</em> itself needs debugging, so I wouldn't worry about this?</p>
+
+
+
+<a name="613808097"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613808097" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613808097">(Jul 31 2026 at 08:02)</a>:</h4>
+<p>It's going to be difficult to determine beforehand what's useful to a user. What's to say the error isn't truly caused by something internal in your library?</p>
+
+
+
+<a name="613808162"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613808162" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613808162">(Jul 31 2026 at 08:02)</a>:</h4>
+<p>When I say difficult, I mean that it's not possible at all. You can't have that information</p>
+
+
+
+<a name="613808246"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613808246" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613808246">(Jul 31 2026 at 08:03)</a>:</h4>
+<p>This pattern does (IMO):</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">try</span>
+<span class="w">   </span><span class="n">f</span><span class="p">()</span>
+<span class="k">catch</span><span class="w"> </span><span class="n">e</span>
+<span class="w">   </span><span class="n">e</span><span class="w"> </span><span class="k">isa</span><span class="w"> </span><span class="n">ExpectedExceptionType</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">rethrow</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="c"># Obtain full stracktrace for debugging.</span>
+<span class="w">   </span><span class="c"># or handle e gracefully, forgetting about internal detail.</span>
+<span class="k">end</span>
+</code></pre></div>
+
+
+
+<a name="613808382"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613808382" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613808382">(Jul 31 2026 at 08:04)</a>:</h4>
+<p>Ahh so you'd want something like Python's <code>raise X from None</code>. Yeah that makes sense</p>
+
+
+
+<a name="613808442"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613808442" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613808442">(Jul 31 2026 at 08:04)</a>:</h4>
+<p>Don't know that one, but yeah why not :)</p>
+
+
+
+<a name="613808664"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613808664" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613808664">(Jul 31 2026 at 08:05)</a>:</h4>
+<p>I wish to trim whichever part of the stack collected <em>before</em> the point I can assert that detail doesn't matter.</p>
+
+
+
+<a name="613808700"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613808700" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613808700">(Jul 31 2026 at 08:05)</a>:</h4>
+<p>(and I take responsibility for this as the lib author ofc)</p>
+
+
+
+<a name="613809379"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613809379" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613809379">(Jul 31 2026 at 08:09)</a>:</h4>
+<p>Ah yeah I see. I don't think that exists. But it would be nice to have</p>
+
+
+
+<a name="613809616"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613809616" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613809616">(Jul 31 2026 at 08:10)</a>:</h4>
+<p>Siigh, should I request it you think or is there already relevant momentum in that direction?</p>
+
+
+
+<a name="613811239"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613811239" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613811239">(Jul 31 2026 at 08:20)</a>:</h4>
+<p>I think Julia's errors have gotten very little attention in general</p>
+
+
+
+<a name="613811478"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613811478" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613811478">(Jul 31 2026 at 08:22)</a>:</h4>
+<p>Alright. I'll report as a feat request unless someone else teaches us something about this today :)</p>
+
+
+
+<a name="613811987"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613811987" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613811987">(Jul 31 2026 at 08:25)</a>:</h4>
+<p><code>(re)throw(e; afresh=true)</code> or sth would be nice.</p>
+
+
+
+<a name="613880972"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613880972" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Mason Protter <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613880972">(Jul 31 2026 at 15:09)</a>:</h4>
+<p>I'd really like a way to trim out noise from stacktraces too. The context I have this from is writing code like this:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="k">macro</span><span class="w"> </span><span class="n">outline</span><span class="p">(</span><span class="n">args</span><span class="o">...</span><span class="p">)</span>
+<span class="w">    </span><span class="n">fargs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">esc</span><span class="o">.</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="w">    </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">args</span><span class="p">[</span><span class="k">end</span><span class="p">]</span>
+<span class="w">    </span><span class="nd">@gensym</span><span class="w"> </span><span class="n">f</span>
+<span class="w">    </span><span class="k">quote</span>
+<span class="w">        </span><span class="o">$</span><span class="n">f</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="n">fargs</span><span class="o">...</span><span class="p">),)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">$</span><span class="n">body</span>
+<span class="w">        </span><span class="nd">@noinline</span><span class="w"> </span><span class="o">$</span><span class="n">f</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="n">fargs</span><span class="o">...</span><span class="p">),)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="n">my_sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="w">     </span><span class="k">if</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">          </span><span class="nd">@outline</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="n">throw</span><span class="p">(</span><span class="kt">ArgumentError</span><span class="p">(</span><span class="s">"my_sqrt does not take negative arguments, got </span><span class="si">$x</span><span class="s">"</span><span class="p">))</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="p">[</span><span class="o">...</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Here <code>@outline</code> automates the process of making a function barrier for me so that the error-path doesn't clog up the generated code for <code>my_sqrt</code>, which helps optimization, and then the value can be used in the error message without worrying about all the involved io/string operations.</p>
+<p>But the downside is that it clogs up stacktraces with irrelevant information.</p>
+
+
+
+<a name="613920132"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613920132" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613920132">(Jul 31 2026 at 18:30)</a>:</h4>
+<p><a href="https://github.com/JuliaLang/julia/issues/62594">https://github.com/JuliaLang/julia/issues/62594</a>.. let's see ¯\_(ツ)_/¯</p>
+
+
+
+<a name="613939231"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/613939231" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#613939231">(Jul 31 2026 at 20:53)</a>:</h4>
+<p>Relevant: <a href="https://github.com/JuliaLang/julia/issues/40138">https://github.com/JuliaLang/julia/issues/40138</a></p>
+
+
+
+<a name="624161864"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/624161864" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#624161864">(Sep 14 2026 at 19:38)</a>:</h4>
+<p>Hi. I am puzzled that <a href="https://github.com/JuliaLang/julia/pull/62606">#62606</a> is obtaining zero feedback. Do you think I did anything wrong? Is it unclear that I even <em>expect</em> anything? Should I just blame it on the northern hemisphere summer period and probable community exhaustion around v1.13 release?<br>
+I was thinking maybe I should just very briefly unmark the PR as a "draft" so as to trigger formal review requests? But maybe that'd be considered rude?<br>
+Or maybe this is just usual latency within the project?</p>
+
+
+
+<a name="625125262"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/625125262" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Andy Dienes <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#625125262">(Sep 18 2026 at 02:33)</a>:</h4>
+<ul>
+<li>draft PRs are less likely to grab attention</li>
+<li>there is some usual latency, and, unfortunately I think review density in general has gone down over time. more contributors are trusting AI to do reviews</li>
+<li>for this problem in particular, truncated stacktraces have been attempted many many times before, and never quite satisfactorily, so I suspect reviewers are kind of just avoiding any PRs on the topic</li>
+</ul>
+
+
+
+<a name="625139226"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/625139226" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#625139226">(Sep 18 2026 at 04:39)</a>:</h4>
+<p>Thank you, that is informative, although yet.. disheartening ^ ^"<br>
+I'm not sure how to best move forward then. I'll maybe start by un-drafting it to emit a more formal review request. But I'm unsure whether to spent more effort to get further on my own without getting at least a positive vibe/hint about the approach as a whole.. ?</p>
+
+
+
+<a name="625224909"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/625224909" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#625224909">(Sep 18 2026 at 12:14)</a>:</h4>
+<p>Un-drafting is a good first step. To me, a draft PR means it's not ready for review yet.<br>
+I think it's a good idea to find some people who engaged in previous stacktrace discussions and ask them to review it. Probably people with merge rights are pressed for time in general and will be more likely to move forward with a PR if they can see that a few stakeholders agree this is the right direction</p>
+
+
+
+<a name="625225099"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/625225099" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Jakob Nybo Andersen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#625225099">(Sep 18 2026 at 12:15)</a>:</h4>
+<p>As someone who hasn't gone deep into the stacktrace discussion, it's this long long issue discussed over years, with lots of conflicting opinions. It takes a herculean amount of effort even to understand all the arguments from all sides, and that's before you even have the background knowledge to have an opinion about any given PR.</p>
+
+
+
+<a name="625229519"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/625229519" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#625229519">(Sep 18 2026 at 12:35)</a>:</h4>
+<p>Thank you for feedback. I am at least aware of <a href="https://github.com/JuliaLang/julia/issues/40138">this attempt</a> having been discussed in the past. And I figured that most of the discussion was whether we should accept a <em>heuristic</em> approach to pruning stacktraces (I would not fwiw). I understand how we may not succeed in converging towards a consensus there. The approach I offer is exact instead, the trick being to put lib authors in charge. Are you aware of other past attempts / different strategies?</p>
+
+
+
+<a name="625230229"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/625230229" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> iago-lito <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#625230229">(Sep 18 2026 at 12:38)</a>:</h4>
+<blockquote>
+<p>it's a good idea to find some people who engaged in previous stacktrace discussions</p>
+</blockquote>
+<p>Well there is at least <a href="https://github.com/JuliaLang/julia/issues/62594#issuecomment-5150104685">@BioTurboNick</a> but he seemed satisfied with the heuristic approach and, err..  maybe <em>sour</em> about the idea of trying this again ^ ^"</p>
+<p>But do you happen to know more people like this? Or else how to search?</p>
+
+
+
+<a name="625238931"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/625238931" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> cschen <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#625238931">(Sep 18 2026 at 13:13)</a>:</h4>
+<p>I’ve found that bots are very good at exploring issues and PRs and give a summary of the “prior art”. <br>
+I usually ask to gather a list of relevant issues/PRs with a quick summary on the topic of the discussion that I can then read on my own.</p>
+
+
+
+<a name="625388956"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/Trim%20exposed%20stracktraces./near/625388956" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Em <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E.html#625388956">(Sep 19 2026 at 06:09)</a>:</h4>
+<p><span class="user-mention silent" data-user-id="590870">iago-lito</span> <a href="#narrow/channel/274208-helpdesk-.28published.29/topic/Trim.20exposed.20stracktraces.2E/near/624161864">said</a>:</p>
+<blockquote>
+<p>I am puzzled that <a href="https://github.com/JuliaLang/julia/pull/62606">#62606</a> is obtaining zero feedback</p>
+</blockquote>
+<p>I agree with Jakob that the particular problem of stack frame hiding is a bit cursed, because the cost of getting it wrong (hiding a useful frame) is massive confusion, and the cost of leaving too many frames in is minor inconvenience. When you add the fact that the lower-complexity fewer-bugs option is just printing everything, you may understand the lack of motivation to hide frames.  I can't express how much I appreciate your clear and well-written PR description, though.</p>
+<blockquote>
+<p>whether we should accept a <em>heuristic</em> approach to pruning stacktraces (I would not fwiw).</p>
+</blockquote>
+<p>We already have a few (<code>kwcall</code>, <code>__repl_entry</code>, possibly some in the backtrace machinery itself)</p>
+
+
+
+<hr><p>Last updated: Sep 19 2026 at 08:53 UTC</p>
+</html>
