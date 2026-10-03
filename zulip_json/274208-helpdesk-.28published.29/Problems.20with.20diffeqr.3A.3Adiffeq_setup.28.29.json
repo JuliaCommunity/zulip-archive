@@ -1,0 +1,38 @@
+[
+    {
+        "content": "<p>Hi together, </p>\n<p>I am new to Julia and would like to use it via JuliaCall / the diffeqr package. I got JuliaCall working in R on a Linux server after some environment issues. Initially package installations were segfaulting. After reinstalling Julia via juliaup and unsetting LD_LIBRARY_PATH / LD_PRELOAD / LIBRARY_PATH,  JuliaCall now works fine (julia_setup() and julia_eval(\"1+1\") both work).</p>\n<p>My current problem is specifically with diffeqr. When I run <br>\n<code>de &lt;- diffeqr::diffeq_setup()</code> <br>\n(after library(diffeqr)) in R / RStudio, it hangs for a while and then the R session terminates / crashes.</p>\n<p>Is this a known issue? Is there a recommended Julia / package version combination that currently works with diffeqr?</p>\n<p>Also: as a next step, I would like to use the diffeqr to solve Stochastic Delay Differential Equations (see <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/StochasticDelayDiffEq\">StochasticDelayDiffEq.jl</a>). In the original Julia package this is possible, but can I also access the same features via diffeqr (since the Github description only mentions \"ordinary differential equations (ODEs), stochastic differential equations (SDEs), delay differential equations (DDEs), and differential-algebraic equations (DAEs)\")?</p>\n<p>Thank you very much in advance and have a great day! :)</p>\n<p>EDIT:<br>\nTrying to directly use the functonalities in julia, loading/compiling the package StochasticDelayDiffEq seems to make some troubles:</p>\n<p>user@server:~$ unset LD_LIBRARY_PATH LD_PRELOAD LIBRARY_PATH</p>\n<p>user@server:~$ julia</p>\n<p>julia&gt; import Pkg</p>\n<p>julia&gt; Pkg.add(\"DifferentialEquations\")<br>\n...<br>\n✗ StochasticDelayDiffEq<br>\nPrecompiling packages finished.<br>\n1 dependency errored.<br>\nFor a report of the errors see <code>julia&gt; err</code></p>\n<p>julia&gt; err<br>\nPkgPrecompileError: The following 1 direct dependency failed to precompile:<br>\nStochasticDelayDiffEq<br>\nFailed to precompile StochasticDelayDiffEq to \"&lt;path&gt;\".<br>\nERROR: LoadError: MethodError: no method matching<br>\nOrdinaryDiffEqCore.DEOptions(...)<br>\nThe type <code>OrdinaryDiffEqCore.DEOptions</code> exists, but no method is defined<br>\nfor this combination of argument types when trying to construct it.<br>\nStacktrace:<br>\n [1] __init(..., alg::StochasticDiffEq.EM{true}, ...)<br>\n     @ StochasticDelayDiffEq &lt;path&gt;/src/solve.jl:447<br>\n [2] __solve(...)<br>\n     @ StochasticDelayDiffEq &lt;path&gt;/src/solve.jl:6<br>\n [3] solve_call(...)<br>\n     @ DiffEqBase &lt;path&gt;/src/solve.jl:172<br>\n ...<br>\nin expression starting at &lt;path&gt;/StochasticDelayDiffEq/src/precompile.jl</p>\n<p>julia&gt; Pkg.precompile(\"StochasticDelayDiffEq\")<br>\n[similar error as above]</p>",
+        "id": 578361182,
+        "sender_full_name": "Nic",
+        "timestamp": 1773139701
+    },
+    {
+        "content": "<p><a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/StochasticDelayDiffEq\">StochasticDelayDiffEq.jl</a> isn't bundled with diffeqr.</p>",
+        "id": 578413555,
+        "sender_full_name": "Christopher Rackauckas",
+        "timestamp": 1773153345
+    },
+    {
+        "content": "<p>We could set that up, but it's not curently bundled at least</p>",
+        "id": 578413586,
+        "sender_full_name": "Christopher Rackauckas",
+        "timestamp": 1773153353
+    },
+    {
+        "content": "<p>Thank you for your fast reply!<br>\nBut in this case the direct implementation in julia should still work, correct?</p>\n<p>Unfortunately I also have problems with the normal import of the DifferentialEquations package in julia, which gives the following error (for a more detailed error description, see the EDIT in my above message):</p>\n<p>julia&gt; Pkg.add(\"DifferentialEquations\")<br>\n...<br>\n✗ StochasticDelayDiffEq<br>\nPrecompiling packages finished.<br>\n1 dependency errored.</p>\n<p>(The following error seems to hinder the precompilation:<br>\nERROR: LoadError: MethodError: no method matching OrdinaryDiffEqCore.DEOptions(...)<br>\nThe type <code>OrdinaryDiffEqCore.DEOptions</code> exists, but no method is defined for this combination of argument types when trying to construct it.)</p>",
+        "id": 579717282,
+        "sender_full_name": "Nic",
+        "timestamp": 1773670528
+    },
+    {
+        "content": "<p>Okay, this seems to be a general issue:<br>\n<a href=\"https://github.com/SciML/StochasticDelayDiffEq.jl/issues/106\">https://github.com/SciML/StochasticDelayDiffEq.jl/issues/106</a></p>",
+        "id": 579879063,
+        "sender_full_name": "Nic",
+        "timestamp": 1773736676
+    },
+    {
+        "content": "<p>Oh yes we're in the middle of restructuring that whole library. It should be fixed by tomorrow and that git repo will be archived. Unfortunate timing but it is being changed to reuse a lot more code which will ultimately keep it in sync with everything else, so we need the temporary break to make it saner</p>",
+        "id": 580512730,
+        "sender_full_name": "Christopher Rackauckas",
+        "timestamp": 1773947958
+    }
+]

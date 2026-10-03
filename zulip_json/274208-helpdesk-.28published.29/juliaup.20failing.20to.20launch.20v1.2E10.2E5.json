@@ -1,0 +1,44 @@
+[
+    {
+        "content": "<p>I've added <code>juliaup add 1.10.5</code> to reproduce the same version of Julia I used in an old script, but this is what I get when I try to run this version:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">zsh</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">julia</span><span class=\"w\"> </span><span class=\"o\">+</span><span class=\"mf\">1.10.5</span>\n<span class=\"n\">ERROR</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"n\">Unable</span><span class=\"w\"> </span><span class=\"n\">to</span><span class=\"w\"> </span><span class=\"n\">load</span><span class=\"w\"> </span><span class=\"n\">dependent</span><span class=\"w\"> </span><span class=\"n\">library</span><span class=\"w\"> </span><span class=\"o\">/</span><span class=\"n\">home</span><span class=\"o\">/</span><span class=\"n\">juliohm</span><span class=\"o\">/.</span><span class=\"n\">julia</span><span class=\"o\">/</span><span class=\"n\">juliaup</span><span class=\"o\">/</span><span class=\"n\">julia</span><span class=\"o\">-</span><span class=\"mf\">1.10.5</span><span class=\"o\">+</span><span class=\"mf\">0.</span><span class=\"n\">x64</span><span class=\"o\">.</span><span class=\"n\">linux</span><span class=\"o\">.</span><span class=\"n\">gnu</span><span class=\"o\">/</span><span class=\"n\">bin</span><span class=\"o\">/../</span><span class=\"n\">lib</span><span class=\"o\">/</span><span class=\"n\">julia</span><span class=\"o\">/</span><span class=\"n\">libopenlibm</span><span class=\"o\">.</span><span class=\"n\">so</span>\n<span class=\"n\">Message</span><span class=\"o\">:/</span><span class=\"n\">home</span><span class=\"o\">/</span><span class=\"n\">juliohm</span><span class=\"o\">/.</span><span class=\"n\">julia</span><span class=\"o\">/</span><span class=\"n\">juliaup</span><span class=\"o\">/</span><span class=\"n\">julia</span><span class=\"o\">-</span><span class=\"mf\">1.10.5</span><span class=\"o\">+</span><span class=\"mf\">0.</span><span class=\"n\">x64</span><span class=\"o\">.</span><span class=\"n\">linux</span><span class=\"o\">.</span><span class=\"n\">gnu</span><span class=\"o\">/</span><span class=\"n\">bin</span><span class=\"o\">/../</span><span class=\"n\">lib</span><span class=\"o\">/</span><span class=\"n\">julia</span><span class=\"o\">/</span><span class=\"n\">libopenlibm</span><span class=\"o\">.</span><span class=\"n\">so</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"n\">cannot</span><span class=\"w\"> </span><span class=\"n\">enable</span><span class=\"w\"> </span><span class=\"n\">executable</span><span class=\"w\"> </span><span class=\"n\">stack</span><span class=\"w\"> </span><span class=\"n\">as</span><span class=\"w\"> </span><span class=\"n\">shared</span><span class=\"w\"> </span><span class=\"n\">object</span><span class=\"w\"> </span><span class=\"n\">requires</span><span class=\"o\">:</span><span class=\"w\"> </span><span class=\"n\">Invalid</span><span class=\"w\"> </span><span class=\"n\">argument</span>\n</code></pre></div>\n<p>Anything wrong from my side or yet another rough corner of the ecosystem?</p>",
+        "id": 529342740,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1752780319
+    },
+    {
+        "content": "<p><a href=\"https://github.com/JuliaLang/julia/issues/57250#issuecomment-2834911167\">https://github.com/JuliaLang/julia/issues/57250#issuecomment-2834911167</a></p>",
+        "id": 529357670,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1752787081
+    },
+    {
+        "content": "<p>Glibc broke it</p>",
+        "id": 529357695,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1752787091
+    },
+    {
+        "content": "<p>And see the number of backlinks to that issue to get an idea of the affected projects</p>",
+        "id": 529358056,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1752787286
+    },
+    {
+        "content": "<p>Thank you. I'll try to run again tomorrow with the option shared in the comment.</p>",
+        "id": 529358184,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1752787357
+    },
+    {
+        "content": "<p>This is the same issue you ran into in march: <a class=\"stream-topic\" data-stream-id=\"137791\" href=\"/#narrow/channel/137791-general/topic/.E2.9C.94.20Julia.20v1.2E11.2E3.20not.20starting.20after.20system.20update/with/504615110\">#general &gt; ✔ Julia v1.11.3 not starting after system update</a></p>",
+        "id": 529358906,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1752787749
+    },
+    {
+        "content": "<p>Yes. I remember it now very generally</p>",
+        "id": 529359053,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1752787837
+    }
+]
