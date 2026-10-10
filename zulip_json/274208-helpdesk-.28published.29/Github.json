@@ -1,0 +1,50 @@
+[
+    {
+        "content": "<p>Can we automate the creation of releases when we merge a PR where we bump the version?</p>",
+        "id": 547445452,
+        "sender_full_name": "Arnav Kapoor",
+        "timestamp": 1761643970
+    },
+    {
+        "content": "<p>You mean something like <a href=\"https://github.com/JuliaRegistries/TagBot\">https://github.com/JuliaRegistries/TagBot</a>?</p>",
+        "id": 547489849,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1761657142
+    },
+    {
+        "content": "<p>I think he means automate pinging <code>@juliaregistrator register</code> when you change the <code>version</code> in the <code>Project.toml</code> file</p>",
+        "id": 547493319,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1761658012
+    },
+    {
+        "content": "<p>so one step before TagBot if I understand correctly</p>",
+        "id": 547493415,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1761658037
+    },
+    {
+        "content": "<p>In that case you can have a workflow triggered by edits to the Project.toml on the default branch, check if the version in the Project is already registered, and if not then call juliaregistrator</p>",
+        "id": 547494318,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1761658267
+    },
+    {
+        "content": "<p>But you'll also need to find a way to pass changelog information</p>",
+        "id": 547494455,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1761658298
+    },
+    {
+        "content": "<p>You could have the action take the changelog info from the commit that changes the <code>version</code> field, and you could have a test that runs that gives a failure if you open a PR that changes the version without having a changelog entry</p>",
+        "id": 547495432,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1761658564
+    },
+    {
+        "content": "<p>Thanks <span aria-label=\"blush\" class=\"emoji emoji-1f60a\" role=\"img\" title=\"blush\">:blush:</span>.  Another question - Can Copilot help write release notes when we call<br>\n@JuliaRegistrator?</p>",
+        "id": 547495447,
+        "sender_full_name": "Arnav Kapoor",
+        "timestamp": 1761658567
+    }
+]

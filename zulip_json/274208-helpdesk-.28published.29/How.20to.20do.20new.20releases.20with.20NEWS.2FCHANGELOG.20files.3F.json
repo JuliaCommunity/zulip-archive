@@ -1,0 +1,62 @@
+[
+    {
+        "content": "<p>So I have no experience with publishing packages, I managed to register my first one half a year ago, now I would want to release a new version along with meaningful release notes and a NEWS.md or CHANGELOG.md file to keep track of these over time.</p>\n<p>For now I get that new releases work like registration (so tagging tagbot in the last commit for the release) and I got that I can write the release notes in the same commit, but how to combine it with a markdown file inside a repo? <br>\nIs there a general preference whether it should be NEWS or CHANGELOG in julialand?<br>\nAnd on top of that, is there a way to then include this in the documenter docs?<br>\nAre there automations available to sync all of this?</p>",
+        "id": 537164114,
+        "sender_full_name": "Marcin Koculak",
+        "timestamp": 1756755801
+    },
+    {
+        "content": "<p>Regarding how to include the changelog automatically in the docs, there is <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Changelog\">Changelog.jl</a>.</p>",
+        "id": 537164415,
+        "sender_full_name": "Joshua Lampert",
+        "timestamp": 1756755974
+    },
+    {
+        "content": "<p>Whether to call the file NEWS.md or CHANGELOG.md, I don't know if there is a preferred way, but I see both.</p>",
+        "id": 537164559,
+        "sender_full_name": "Joshua Lampert",
+        "timestamp": 1756756043
+    },
+    {
+        "content": "<p>Yes, I have seen the package, but was not sure how common is its usage.<br>\nI was trying to figure out was is the typical strategy for julia packages, but from repos alone one can't figure it out, right?</p>\n<p>I was kinda expecting it all somehow happens behind the scenes with github actions.</p>\n<p>I am also going through this <a href=\"https://discourse.julialang.org/t/new-automerge-requirement-release-notes-required-for-breaking-package-releases/123955/32\">discourse thread</a> but it mostly points to Registrator readme which does not have a lot of answers.</p>",
+        "id": 537164903,
+        "sender_full_name": "Marcin Koculak",
+        "timestamp": 1756756279
+    },
+    {
+        "content": "<p>GitHub has some built-in features for automatically generating release notes based on repo activity which you could use to generate the markdown and there's a popular github action for it, too: <a href=\"https://github.com/marketplace/actions/release-drafter\">https://github.com/marketplace/actions/release-drafter</a></p>\n<p>I'm not sure if there's an option to write it to a file but it wouldn't be too hard to add a workflow that does this</p>",
+        "id": 537167502,
+        "sender_full_name": "Sascha Mann",
+        "timestamp": 1756757881
+    },
+    {
+        "content": "<p>That said, I personally feel like there's a benefit to having 'handcrafted' changelogs as auto-generated changelogs tend to have a lot of noise that's probably not overly relevant to most users</p>",
+        "id": 537167564,
+        "sender_full_name": "Sascha Mann",
+        "timestamp": 1756757930
+    },
+    {
+        "content": "<p>True, I guess a list of merged pull requests and closed issues is better than nothing, but having just that is terrible. Ideally, I would just want to handcraft one file that gets distributed to docs and release notes.</p>\n<p>Actually reading (rather than skimming) the readme for <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Changelog\">Changelog.jl</a> allowed me to realise it can create the docs page (and found that <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/IJulia\">IJulia.jl</a> is an example repo that uses it). So that's great.</p>\n<p>The other piece was actually <a href=\"https://discourse.julialang.org/t/make-breaking-change-releases-easier-to-handle-add-release-notes-to-tags-via-juliaregistrator/103241\">proposed and prototyped</a> two years ago. Sadly not finished. Temporary solution is to just manually copy it to the registrator commit, so all three places have the same info.<br>\nMaybe after some time I'll have the time and skill to help finish that draft.</p>",
+        "id": 537273637,
+        "sender_full_name": "Marcin Koculak",
+        "timestamp": 1756815706
+    },
+    {
+        "content": "<p>I have both a <code>NEWS.md</code> and <code>HISTORY.md</code>. All updates for the latest release go into news. As soon as that version is released, the news becomes history. When releasing with JuliaRegistrator, I point a link to that tag's news.</p>",
+        "id": 537591046,
+        "sender_full_name": "Jakob Peters",
+        "timestamp": 1756962556
+    },
+    {
+        "content": "<p><a href=\"https://github.com/googleapis/release-please/issues/2152\">https://github.com/googleapis/release-please/issues/2152</a></p>\n<p>A linked PR from two months ago is supposed to add the feature. No conflicts yet.</p>",
+        "id": 537913341,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1757092292
+    },
+    {
+        "content": "<p><a href=\"https://discourse.julialang.org/t/release-please-a-tool-for-multi-package-multi-language-releases/116450\">https://discourse.julialang.org/t/release-please-a-tool-for-multi-package-multi-language-releases/116450</a></p>",
+        "id": 537913539,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1757092364
+    }
+]
