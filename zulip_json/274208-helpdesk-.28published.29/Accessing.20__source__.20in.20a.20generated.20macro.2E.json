@@ -1,0 +1,266 @@
+[
+    {
+        "content": "<p>I've just stumbled upon the following:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">simple</span><span class=\"p\">()</span>\n<span class=\"w\">    </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"n\">__source__</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"c\"># -&gt;&gt;--</span>\n<span class=\"k\">end</span><span class=\"w\">                     </span><span class=\"c\">#     | this line (4)</span>\n<span class=\"nd\">@simple</span><span class=\"w\"> </span><span class=\"c\"># &lt;&lt;-------------------</span>\n\n<span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">make</span><span class=\"p\">()</span>\n<span class=\"w\">    </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"n\">__source__</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"c\">#-&gt;&gt;--------</span>\n<span class=\"w\">    </span><span class=\"k\">quote</span><span class=\"w\">                        </span><span class=\"c\"># | this line(14)</span>\n<span class=\"w\">        </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">made</span><span class=\"p\">()</span><span class=\"w\">             </span><span class=\"c\"># |</span>\n<span class=\"w\">            </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"n\">__source__</span><span class=\"p\">)</span><span class=\"w\">  </span><span class=\"c\"># | -&gt;&gt;--</span>\n<span class=\"w\">        </span><span class=\"k\">end</span><span class=\"w\">                      </span><span class=\"c\"># |     |</span>\n<span class=\"w\">    </span><span class=\"k\">end</span><span class=\"w\">                          </span><span class=\"c\"># |     | expected this line (15)</span>\n<span class=\"k\">end</span><span class=\"w\">                              </span><span class=\"c\"># |     | got instead: UndefVarError: `__source__`.</span>\n<span class=\"nd\">@make</span><span class=\"w\"> </span><span class=\"c\"># &lt;&lt;--------------------------     |</span>\n<span class=\"nd\">@made</span><span class=\"w\"> </span><span class=\"c\"># &lt;&lt;--------------------------------</span>\n</code></pre></div>\n<p>Is this expected? Can somebody explain?</p>\n<p><code>__source__</code> is <a href=\"https://docs.julialang.org/en/v1/base/base/#__source__\">documented to be a keyword</a>, but the experiment below is suggesting otherwise:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">xp</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">m</span><span class=\"p\">()</span><span class=\"w\"> </span><span class=\"n\">__source__</span><span class=\"w\"> </span><span class=\"k\">end</span><span class=\"p\">)</span>\n<span class=\"go\">:(macro m()</span>\n<span class=\"go\">      #= REPL[2]:1 =#</span>\n<span class=\"go\">      #= REPL[2]:1 =#</span>\n<span class=\"go\">      __source__</span>\n<span class=\"go\">  end)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">s</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">xp</span><span class=\"o\">.</span><span class=\"n\">args</span><span class=\"p\">[</span><span class=\"mi\">2</span><span class=\"p\">]</span><span class=\"o\">.</span><span class=\"n\">args</span><span class=\"p\">[</span><span class=\"mi\">3</span><span class=\"p\">]</span>\n<span class=\"go\">:__source__</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">s</span><span class=\"w\"> </span><span class=\"k\">isa</span><span class=\"w\"> </span><span class=\"cm\">#= regular =#</span><span class=\"w\"> </span><span class=\"kt\">Symbol</span>\n<span class=\"go\">true</span>\n</code></pre></div>\n<p>How come julia seems to be wanting to evaluate <code>__source__</code> in <code>Main</code> within <code>@made()</code> whereas it is understanding it correctly as the special argument within <code>@simple()</code> and <code>@make()</code>?</p>",
+        "id": 613653482,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785419890
+    },
+    {
+        "content": "<p>It's not a keyword, it's a secret argument to a macro. </p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">simple</span><span class=\"p\">()</span>\n<span class=\"w\">           </span><span class=\"p\">(;</span><span class=\"w\"> </span><span class=\"n\">__source__</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">__module__</span><span class=\"p\">)</span>\n<span class=\"w\">       </span><span class=\"k\">end</span><span class=\"p\">;</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">methods</span><span class=\"p\">(</span><span class=\"sa\">var</span><span class=\"s\">\"@simple\"</span><span class=\"p\">)</span>\n<span class=\"go\"># 1 method for macro \"@simple\" from Main:</span>\n<span class=\"go\"> [1] var\"@simple\"(__source__::LineNumberNode, __module__::Module)</span>\n<span class=\"go\">     @ REPL[16]:1</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"sa\">var</span><span class=\"s\">\"@simple\"</span><span class=\"p\">(</span><span class=\"kt\">LineNumberNode</span><span class=\"p\">(</span><span class=\"o\">-</span><span class=\"mi\">10</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"s\">\"boo!\"</span><span class=\"p\">),</span><span class=\"w\"> </span><span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"n\">Math</span><span class=\"p\">)</span>\n<span class=\"go\">(__source__ = :(#= boo!:-10 =#), __module__ = Base.Math)</span>\n</code></pre></div>",
+        "id": 613655448,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785420380
+    },
+    {
+        "content": "<p>Oh, I didn't know you could invoke the macro like this. That's interesting :)</p>",
+        "id": 613655681,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785420455
+    },
+    {
+        "content": "<p>Yeah, this is what the frontend does when it lowers an expression with a macro in it. It calls this function, and then inserts the returned expression into the code</p>",
+        "id": 613655851,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785420503
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> <a href=\"#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613655448\">said</a>:</p>\n<blockquote>\n<p>It's not a keyword, it's a secret argument to a macro.</p>\n</blockquote>\n<p>Maybe the docs should not name it a \"keyword\" but rather a \"parameter\" then?</p>",
+        "id": 613656029,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785420555
+    },
+    {
+        "content": "<p>your example will work if you <code>esc</code> the output.</p>",
+        "id": 613656163,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785420597
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">make</span><span class=\"p\">()</span>\n<span class=\"w\">           </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"n\">__source__</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"k\">quote</span>\n<span class=\"w\">               </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">made</span><span class=\"p\">()</span>\n<span class=\"w\">                   </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"n\">__source__</span><span class=\"p\">)</span>\n<span class=\"w\">               </span><span class=\"k\">end</span>\n<span class=\"w\">           </span><span class=\"k\">end</span><span class=\"w\"> </span><span class=\"o\">|&gt;</span><span class=\"w\"> </span><span class=\"n\">esc</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">@make (macro with 1 method)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@make</span>\n<span class=\"go\">#= REPL[26]:1 =#</span>\n<span class=\"go\">@made (macro with 1 method)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@made</span>\n<span class=\"go\">#= REPL[27]:1 =#</span>\n</code></pre></div>",
+        "id": 613656292,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785420635
+    },
+    {
+        "content": "<p>Hm. It does, but I can't make sense of it :\\</p>",
+        "id": 613656303,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785420638
+    },
+    {
+        "content": "<p>Let's try to only <code>esc</code> the <code>__source__</code> maybe?</p>",
+        "id": 613656419,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785420667
+    },
+    {
+        "content": "<p><code>@macroexpand</code> is our friend here:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">make</span><span class=\"p\">()</span>\n<span class=\"w\">           </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"n\">__source__</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"k\">quote</span>\n<span class=\"w\">               </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">made</span><span class=\"p\">()</span>\n<span class=\"w\">                   </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"n\">__source__</span><span class=\"p\">)</span>\n<span class=\"w\">               </span><span class=\"k\">end</span>\n<span class=\"w\">           </span><span class=\"k\">end</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">@make (macro with 1 method)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@macroexpand</span><span class=\"w\"> </span><span class=\"nd\">@make</span><span class=\"p\">()</span>\n<span class=\"go\">#= REPL[29]:1 =#</span>\n<span class=\"go\">quote</span>\n<span class=\"go\">    #= REPL[28]:4 =#</span>\n<span class=\"go\">    macro Main.made()</span>\n<span class=\"go\">        #= REPL[28]:4 =#</span>\n<span class=\"go\">        #= REPL[28]:5 =#</span>\n<span class=\"go\">        Main.println(Main.__source__)</span>\n<span class=\"go\">    end</span>\n<span class=\"go\">end</span>\n</code></pre></div>",
+        "id": 613656494,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785420689
+    },
+    {
+        "content": "<p>The hygiene pass turned <code>__source__</code> into <code>Main.__source__</code></p>",
+        "id": 613656568,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785420711
+    },
+    {
+        "content": "<p>Yay:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">make</span><span class=\"p\">()</span>\n<span class=\"w\">    </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"n\">__source__</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">src</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">esc</span><span class=\"p\">(</span><span class=\"ss\">:__source__</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"k\">quote</span>\n<span class=\"w\">        </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">made</span><span class=\"p\">()</span>\n<span class=\"w\">            </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">src</span><span class=\"p\">)</span>\n<span class=\"w\">        </span><span class=\"k\">end</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"k\">end</span>\n<span class=\"nd\">@make</span>\n<span class=\"nd\">@made</span><span class=\"w\"> </span><span class=\"c\"># Works as expected.</span>\n</code></pre></div>",
+        "id": 613656575,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785420713
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> <a href=\"#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613656568\">said</a>:</p>\n<blockquote>\n<p>The hygiene pass turned <code>__source__</code> into <code>Main.__source__</code></p>\n</blockquote>\n<p>Okay, the problem and the solution are both making sense to me now, thanks :)</p>",
+        "id": 613656792,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785420782
+    },
+    {
+        "content": "<p>Now..</p>",
+        "id": 613656818,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785420789
+    },
+    {
+        "content": "<p><del>Note that your example does something slightly different (but ends up the same). You threaded the <code>__source__</code> of <code>@make</code> into <code>@made</code>, but in my example, <code>@made</code> returns its own <code>__source__</code>.</del></p>",
+        "id": 613656873,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785420804
+    },
+    {
+        "content": "<p>Why would the hygiene pass do this? Feels like a bug.</p>",
+        "id": 613656896,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785420809
+    },
+    {
+        "content": "<p>Seems like it is incorrectly assuming that <code>__source__</code> should be taken from enclosing scope, whereas it is a local variable of <code>made</code>, right?</p>",
+        "id": 613657104,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785420860
+    },
+    {
+        "content": "<p><em>reads through <del><code>esc</code></del> hygiene docs again</em></p>",
+        "id": 613657155,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785420874
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> <a href=\"#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613656873\">said</a>:</p>\n<blockquote>\n<p>Note that your example does something slightly different (but ends up the same). You threaded the <code>__source__</code> of <code>@make</code> into <code>@made</code>, but in my example, <code>@made</code> returns its own <code>__source__</code>.</p>\n</blockquote>\n<p>sorry, scratch that, you did <code>esc(:__source__)</code>, not <code>esc(__source__)</code>, I misread.</p>",
+        "id": 613657179,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785420882
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"590870\">iago-lito</span> <a href=\"#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613657104\">said</a>:</p>\n<blockquote>\n<p>Seems like it is incorrectly assuming that <code>__source__</code> should be taken from enclosing scope, whereas it is a local variable of <code>made</code>, right?</p>\n</blockquote>\n<p>You didn't pass a local variable from <code>made</code> though, you just passed the bare expression that has a contextless symbol <code>:__source__</code> in it, so it assumes it was some global variable.</p>",
+        "id": 613657465,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785420962
+    },
+    {
+        "content": "<p>From <a href=\"https://docs.julialang.org/en/v1/manual/metaprogramming/#Hygiene\">the docs</a>:</p>\n<blockquote>\n<p><em>A variable is considered local if it is assigned to (and not declared global), declared local, or used as a function argument name. Otherwise, it is considered global.</em></p>\n</blockquote>",
+        "id": 613657547,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785420986
+    },
+    {
+        "content": "<p>Maybe this helps:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">foo</span><span class=\"p\">()</span>\n<span class=\"w\">           </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">           </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"p\">)</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">@foo (macro with 1 method)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@foo</span>\n<span class=\"gr\">ERROR: UndefVarError: `x` not defined in `Main`</span>\n<span class=\"gr\">Suggestion: check for spelling errors or missing imports.</span>\n<span class=\"gr\">Stacktrace:</span>\n<span class=\"gr\"> [1] top-level scope</span>\n<span class=\"gr\">   @ REPL[31]:1</span>\n</code></pre></div>",
+        "id": 613657587,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421003
+    },
+    {
+        "content": "<p>also</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">let</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">           </span><span class=\"nd\">@foo</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"gr\">ERROR: UndefVarError: `x` not defined in `Main`</span>\n<span class=\"gr\">Suggestion: check for spelling errors or missing imports.</span>\n<span class=\"gr\">Stacktrace:</span>\n<span class=\"gr\"> [1] top-level scope</span>\n<span class=\"gr\">   @ REPL[32]:2</span>\n</code></pre></div>",
+        "id": 613657745,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421053
+    },
+    {
+        "content": "<p>I think <a href=\"#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613657547\">this</a> misses the case of <code>__source__</code> and <code>__module__</code>, right? They are incorrectyl considered \"global\" by the hygiene pass, whereas they are actually local parameters?</p>",
+        "id": 613657786,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785421065
+    },
+    {
+        "content": "<p>It's not incorrect</p>",
+        "id": 613657893,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421095
+    },
+    {
+        "content": "<p>the error was that <em>you</em> didn't tell it that you didn't want them to be considered globals</p>",
+        "id": 613657959,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421113
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">foo</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"k\">quote</span>\n<span class=\"w\">               </span><span class=\"n\">x</span>\n<span class=\"w\">           </span><span class=\"k\">end</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">@foo (macro with 2 methods)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@foo</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"gr\">ERROR: UndefVarError: `x` not defined in `Main`</span>\n<span class=\"gr\">Suggestion: check for spelling errors or missing imports.</span>\n<span class=\"gr\">Stacktrace:</span>\n<span class=\"gr\"> [1] top-level scope</span>\n<span class=\"gr\">   @ REPL[34]:1</span>\n<span class=\"gr\"> [2] macro expansion</span>\n<span class=\"gr\">   @ REPL[33]:3 [inlined]</span>\n</code></pre></div>",
+        "id": 613658046,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421139
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@macroexpand</span><span class=\"w\"> </span><span class=\"nd\">@foo</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"go\">quote</span>\n<span class=\"go\">    #= REPL[33]:3 =#</span>\n<span class=\"go\">    Main.x</span>\n<span class=\"go\">end</span>\n</code></pre></div>",
+        "id": 613658160,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421164
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> <a href=\"#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613657959\">said</a>:</p>\n<blockquote>\n<p>the error was that <em>you</em> didn't tell it that you didn't want them to be considered globals</p>\n</blockquote>\n<p>I agree that it is my mistake to not have specified that I intended to use the local <code>__source__</code>.<br>\nMy point is that I believe the hygiene pass should special-case <code>__source__</code> and <code>__macro__</code> just like <code>macro</code> does, don't you agree?</p>",
+        "id": 613658437,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785421245
+    },
+    {
+        "content": "<p>This is why controlling hygiene is important. Consider the following two different macros:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">foo</span><span class=\"p\">()</span>\n<span class=\"w\">           </span><span class=\"k\">quote</span>\n<span class=\"w\">               </span><span class=\"n\">x</span>\n<span class=\"w\">           </span><span class=\"k\">end</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">@foo (macro with 2 methods)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">bar</span><span class=\"p\">()</span>\n<span class=\"w\">           </span><span class=\"k\">quote</span>\n<span class=\"w\">               </span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"n\">esc</span><span class=\"p\">(</span><span class=\"ss\">:x</span><span class=\"p\">))</span>\n<span class=\"w\">           </span><span class=\"k\">end</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">@bar (macro with 1 method)</span>\n</code></pre></div>\n<p>both correctly tell you there's no global named <code>x</code>:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@foo</span>\n<span class=\"gr\">ERROR: UndefVarError: `x` not defined in `Main`</span>\n<span class=\"gr\">Suggestion: check for spelling errors or missing imports.</span>\n<span class=\"gr\">Stacktrace:</span>\n<span class=\"gr\"> [1] top-level scope</span>\n<span class=\"gr\">   @ REPL[38]:1</span>\n<span class=\"gr\"> [2] macro expansion</span>\n<span class=\"gr\">   @ REPL[36]:3 [inlined]</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@bar</span>\n<span class=\"gr\">ERROR: UndefVarError: `x` not defined in `Main`</span>\n<span class=\"gr\">Suggestion: check for spelling errors or missing imports.</span>\n<span class=\"gr\">Stacktrace:</span>\n<span class=\"gr\"> [1] top-level scope</span>\n<span class=\"gr\">   @ REPL[39]:1</span>\n<span class=\"gr\"> [2] macro expansion</span>\n<span class=\"gr\">   @ REPL[37]:3 [inlined]</span>\n</code></pre></div>\n<p>but only <code>bar</code> looks for an <code>x</code> in the local scope:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">let</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">           </span><span class=\"nd\">@foo</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"gr\">ERROR: UndefVarError: `x` not defined in `Main`</span>\n<span class=\"gr\">Suggestion: check for spelling errors or missing imports.</span>\n<span class=\"gr\">Stacktrace:</span>\n<span class=\"gr\"> [1] top-level scope</span>\n<span class=\"gr\">   @ REPL[40]:2</span>\n<span class=\"gr\"> [2] macro expansion</span>\n<span class=\"gr\">   @ REPL[36]:3 [inlined]</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">let</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">           </span><span class=\"nd\">@bar</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">1</span>\n</code></pre></div>",
+        "id": 613658592,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421291
+    },
+    {
+        "content": "<p><code>__source__</code> is not assigned to, not declared local, and not used as a function argument name BUT it is still a local.</p>",
+        "id": 613658644,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785421303
+    },
+    {
+        "content": "<p>I don't agree at all</p>",
+        "id": 613658686,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421314
+    },
+    {
+        "content": "<p><a href=\"#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E/near/613658644\">I mean</a> at least it would be a sensible default expectation for these two \"special\" symbols at least within a <code>macro</code> body.</p>",
+        "id": 613659035,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785421403
+    },
+    {
+        "content": "<p>I would expect them to be treated like other arguments</p>",
+        "id": 613659175,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421438
+    },
+    {
+        "content": "<p>But they're not. Other arguments are considered local.</p>",
+        "id": 613659258,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785421461
+    },
+    {
+        "content": "<p>no they arent?</p>",
+        "id": 613659347,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421485
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">foo</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"k\">quote</span>\n<span class=\"w\">               </span><span class=\"n\">x</span>\n<span class=\"w\">           </span><span class=\"k\">end</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">@foo (macro with 2 methods)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@foo</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"gr\">ERROR: UndefVarError: `x` not defined in `Main`</span>\n<span class=\"gr\">Suggestion: check for spelling errors or missing imports.</span>\n<span class=\"gr\">Stacktrace:</span>\n<span class=\"gr\"> [1] top-level scope</span>\n<span class=\"gr\">   @ REPL[34]:1</span>\n<span class=\"gr\"> [2] macro expansion</span>\n<span class=\"gr\">   @ REPL[33]:3 [inlined]</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">let</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">           </span><span class=\"nd\">@foo</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"gr\">ERROR: UndefVarError: `x` not defined in `Main`</span>\n<span class=\"gr\">Suggestion: check for spelling errors or missing imports.</span>\n<span class=\"gr\">Stacktrace:</span>\n<span class=\"gr\"> [1] top-level scope</span>\n<span class=\"gr\">   @ REPL[44]:2</span>\n<span class=\"gr\"> [2] macro expansion</span>\n<span class=\"gr\">   @ REPL[42]:3 [inlined]</span>\n</code></pre></div>",
+        "id": 613659528,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421523
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">make</span><span class=\"p\">()</span>\n<span class=\"w\">    </span><span class=\"k\">quote</span>\n<span class=\"w\">        </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">made</span><span class=\"p\">(</span><span class=\"n\">arg</span><span class=\"p\">)</span>\n<span class=\"w\">            </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"n\">arg</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"c\"># &lt;- Considered local by the hygiene pass.</span>\n<span class=\"w\">            </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"n\">__source__</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"c\"># &lt;- Considered global.</span>\n<span class=\"w\">        </span><span class=\"k\">end</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"k\">end</span>\n<span class=\"nd\">@make</span>\n<span class=\"nd\">@made</span><span class=\"w\"> </span><span class=\"mi\">5</span>\n</code></pre></div>",
+        "id": 613659547,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785421530
+    },
+    {
+        "content": "<p>Ah, I see what you mean now. Yeah, that would make sense! This is probably able to be considered a bug</p>",
+        "id": 613659802,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785421586
+    },
+    {
+        "content": "<p>I'm glad we agree :) I'll report that then let's see :)</p>",
+        "id": 613659984,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785421632
+    },
+    {
+        "content": "<p><a href=\"https://github.com/JuliaLang/julia/issues/62572\">https://github.com/JuliaLang/julia/issues/62572</a></p>",
+        "id": 613662790,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785422303
+    },
+    {
+        "content": "<p>This topic was moved here from <a class=\"stream-topic\" data-stream-id=\"137791\" href=\"/#narrow/channel/137791-general/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E\">#general &gt; Accessing __source__ in a generated macro.</a> by <span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span>.</p>",
+        "id": 613753877,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1785451880
+    },
+    {
+        "content": "<p>(sure <span class=\"user-mention\" data-user-id=\"269150\">@Mason Protter</span>, I'd even agree to upgrade it to #**helpdesk (published)&gt;?) (I can't)</p>",
+        "id": 613803938,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785483127
+    },
+    {
+        "content": "<p>This topic was moved here from <a class=\"stream-topic\" data-stream-id=\"225542\" href=\"/#narrow/channel/225542-helpdesk/topic/Accessing.20__source__.20in.20a.20generated.20macro.2E\">#helpdesk &gt; Accessing __source__ in a generated macro.</a> by <span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span>.</p>",
+        "id": 613819166,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1785489090
+    }
+]

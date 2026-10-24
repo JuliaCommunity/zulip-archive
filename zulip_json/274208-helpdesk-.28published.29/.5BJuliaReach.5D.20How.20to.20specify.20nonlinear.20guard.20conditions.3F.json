@@ -1,0 +1,56 @@
+[
+    {
+        "content": "<p>I've recently started using JuliaReach for my research on hybrid systems, and I'm having trouble specifying nonlinear guard conditions for mode transitions.<br>\nI'm following the <a href=\"https://juliareach.github.io/ReachabilityAnalysis.jl/dev/generated_examples/SquareWaveOscillator/\">tutorial</a> and using the <code>@system</code> macro to define each mode of the hybrid system. Now, suppose I have a mode with a guard condition like</p>\n<p><span class=\"katex-display\"><span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><semantics><mrow><mi>P</mi><mo>:</mo><mi>x</mi><mo>≤</mo><msup><mi>y</mi><mn>2</mn></msup></mrow><annotation encoding=\"application/x-tex\">P: x\\leq y^2</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.6833em;\"></span><span class=\"mord mathnormal\" style=\"margin-right:0.13889em;\">P</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">:</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height:0.7719em;vertical-align:-0.136em;\"></span><span class=\"mord mathnormal\">x</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">≤</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height:1.0585em;vertical-align:-0.1944em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\" style=\"margin-right:0.03588em;\">y</span><span class=\"msupsub\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.8641em;\"><span style=\"top:-3.113em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\">2</span></span></span></span></span></span></span></span></span></span></span></span></p>\n<p>or, more generally,</p>\n<p><span class=\"katex-display\"><span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><semantics><mrow><mi>x</mi><mo>≤</mo><msup><mi>y</mi><mn>2</mn></msup><mo>∨</mo><mi>x</mi><mo>≥</mo><msup><mi>z</mi><mn>3</mn></msup></mrow><annotation encoding=\"application/x-tex\">x\\leq y^2 \\lor x\\geq z^3</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height:0.7719em;vertical-align:-0.136em;\"></span><span class=\"mord mathnormal\">x</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">≤</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height:1.0585em;vertical-align:-0.1944em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\" style=\"margin-right:0.03588em;\">y</span><span class=\"msupsub\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.8641em;\"><span style=\"top:-3.113em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\">2</span></span></span></span></span></span></span></span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span><span class=\"mbin\">∨</span><span class=\"mspace\" style=\"margin-right:0.2222em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height:0.7719em;vertical-align:-0.136em;\"></span><span class=\"mord mathnormal\">x</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span><span class=\"mrel\">≥</span><span class=\"mspace\" style=\"margin-right:0.2778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height:0.8641em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\" style=\"margin-right:0.04398em;\">z</span><span class=\"msupsub\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height:0.8641em;\"><span style=\"top:-3.113em;margin-right:0.05em;\"><span class=\"pstrut\" style=\"height:2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\">3</span></span></span></span></span></span></span></span></span></span></span></span></p>\n<p>How can I express this as the constraint in the <code>@system</code> macro? Are there better or recommended ways to handle nonlinear guard conditions in JuliaReach?<br>\nAny pointers would be appreciated!</p>",
+        "id": 531396703,
+        "sender_full_name": "ZihMing",
+        "timestamp": 1753715865
+    },
+    {
+        "content": "<p>For what it's worth, Zulip is relatively underused, so if you don't get a reply here, you might get more traction on <a href=\"https://discourse.julialang.org/\">https://discourse.julialang.org/</a></p>",
+        "id": 531419578,
+        "sender_full_name": "jar",
+        "timestamp": 1753722936
+    },
+    {
+        "content": "<p>Yeah, I tried looking into this to see if I could help but it wasn't clear to me how it works. If someone from JuliaReach is here they'll probably help but otherwise Discourse is a good bet.</p>",
+        "id": 531422911,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1753723970
+    },
+    {
+        "content": "<p>Or in the zulip  <a class=\"stream\" data-stream-id=\"278609\" href=\"/#narrow/channel/278609-juliareach\">#juliareach</a> channel ?</p>",
+        "id": 531432027,
+        "sender_full_name": "ederag",
+        "timestamp": 1753727104
+    },
+    {
+        "content": "<p>Oh, that seems better!</p>",
+        "id": 531441250,
+        "sender_full_name": "jar",
+        "timestamp": 1753730359
+    },
+    {
+        "content": "<p><span class=\"user-mention\" data-user-id=\"941265\">@ZihMing</span> the short answer is that this is not supported :(</p>",
+        "id": 531460152,
+        "sender_full_name": "Christian Schilling",
+        "timestamp": 1753736023
+    },
+    {
+        "content": "<p>Thanks so much for all the suggestions and clarifications! I’ve followed up on the recommended channels to gather more information about JuliaReach :)</p>",
+        "id": 531502012,
+        "sender_full_name": "ZihMing",
+        "timestamp": 1753758894
+    },
+    {
+        "content": "<p><span class=\"user-mention\" data-user-id=\"941265\">@ZihMing</span> the slightly longer answer is that you can code it up yourself by using a nonconvex set representation (a taylor model), but it is not easy. there is an example <a href=\"https://github.com/JuliaReach/ARCH2025_NLN_RE/blob/807d58984f9d0c8864e69ec3c05b3efb652c1d6a/models/LotkaVolterra/lotka_volterra_benchmark.jl#L23-L77\">here</a> for the intersection with a circle<br>\nif you have questions about that, i suggest to continue the discussion in the other channel</p>",
+        "id": 531518899,
+        "sender_full_name": "Christian Schilling",
+        "timestamp": 1753768506
+    },
+    {
+        "content": "<blockquote>\n<p>For what it's worth, Zulip is relatively underused, so if you don't get a reply here, you might get more traction on <a href=\"https://discourse.julialang.org/\">https://discourse.julialang.org/</a></p>\n</blockquote>\n<p>i wish there was a way to get email notification on Julia Discourse keyword names, eg. notify me of any new post has \"juliareach\"  on it.  is that possible already?</p>",
+        "id": 531640187,
+        "sender_full_name": "Marcelo (mforets)",
+        "timestamp": 1753803026
+    }
+]
