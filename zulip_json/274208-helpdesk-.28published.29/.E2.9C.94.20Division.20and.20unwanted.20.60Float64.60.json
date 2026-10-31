@@ -1,0 +1,50 @@
+[
+    {
+        "content": "<p>I'm dabbling with some GPU kernel programming and hitting some issues with <code>Float64</code>s that crop up in the math. Specifically, I've got some integers and when I divide them I get a <code>Float64</code>. E.g.</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"go\">Julia&gt; /(Int32(4),Int32(5)) |&gt; typeof</span>\n<span class=\"go\">Float64</span>\n</code></pre></div>\n<p>Any tips for handling this, such as an alternative to <code>/</code> that will keep the results as <code>Float32</code>? Do I just have to wrap every <code>/</code> operation with <code>Float32(...)</code>?</p>",
+        "id": 507284128,
+        "sender_full_name": "Alec",
+        "timestamp": 1742565439
+    },
+    {
+        "content": "<p>You might want to convert these integers as <code>Float32</code> before perfoming the division; that is what the method for <code>/(::Int32, ::Int32)</code>/ does but it uses <code>float</code> to convert them to <code>Float64</code>.</p>",
+        "id": 507295451,
+        "sender_full_name": "Cédric Belmant",
+        "timestamp": 1742568438
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">d</span><span class=\"p\">(</span><span class=\"n\">a</span><span class=\"o\">::</span><span class=\"kt\">Integer</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">b</span><span class=\"o\">::</span><span class=\"kt\">Integer</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"kt\">Float32</span><span class=\"p\">(</span><span class=\"n\">a</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">/</span><span class=\"w\"> </span><span class=\"n\">b</span>\n<span class=\"k\">end</span>\n<span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">d</span><span class=\"p\">(</span><span class=\"n\">a</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">b</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">a</span><span class=\"w\"> </span><span class=\"o\">/</span><span class=\"w\"> </span><span class=\"n\">b</span>\n<span class=\"k\">end</span>\n</code></pre></div>",
+        "id": 507295464,
+        "sender_full_name": "Neven Sajko",
+        "timestamp": 1742568442
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"272612\">Alec</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/Division.20and.20unwanted.20.60Float64.60/near/507284128\">said</a>:</p>\n<blockquote>\n<p>Any tips for handling this, such as an alternative to <code>/</code> that will keep the results as <code>Float32</code>?</p>\n</blockquote>\n<p><em>Keeping</em> the result as <code>Float32</code> sounds inaccurate if neither argument was <code>Float32</code> to begin with. Sometimes you can get away with reordering your computations, e.g. if <code>x</code> is <code>Float32</code> change <code>4 / 5 * x</code> to <code>4 * x / 5</code> but usually it's easiest to add explicit casts where needed or use <code>Float32</code> literals, e.g. <code>4f0 / 5 * x</code>.</p>",
+        "id": 507298656,
+        "sender_full_name": "Gunnar Farnebäck",
+        "timestamp": 1742569245
+    },
+    {
+        "content": "<p>You also have the option to express the divisions as rationals, e.g. <code>4 // 5 * x</code>. In the case of literals this is optimized to just a <code>Float32</code> multiplication.</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"n\">x</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"mi\">4</span><span class=\"w\"> </span><span class=\"o\">//</span><span class=\"w\"> </span><span class=\"mi\">5</span><span class=\"w\"> </span><span class=\"o\">*</span><span class=\"w\"> </span><span class=\"n\">x</span>\n<span class=\"n\">f</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"n\">generic</span><span class=\"w\"> </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">with</span><span class=\"w\"> </span><span class=\"mi\">1</span><span class=\"w\"> </span><span class=\"n\">method</span><span class=\"p\">)</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"nd\">@code_typed</span><span class=\"w\"> </span><span class=\"n\">f</span><span class=\"p\">(</span><span class=\"mf\">1.0f0</span><span class=\"p\">)</span>\n<span class=\"n\">CodeInfo</span><span class=\"p\">(</span>\n<span class=\"mi\">1</span><span class=\"w\"> </span><span class=\"n\">─</span><span class=\"w\"> </span><span class=\"o\">%</span><span class=\"mi\">1</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"n\">mul_float</span><span class=\"p\">(</span><span class=\"mf\">0.8f0</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">x</span><span class=\"p\">)</span><span class=\"o\">::</span><span class=\"kt\">Float32</span>\n<span class=\"n\">└──</span><span class=\"w\">      </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"o\">%</span><span class=\"mi\">1</span>\n<span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">=&gt;</span><span class=\"w\"> </span><span class=\"kt\">Float32</span>\n</code></pre></div>",
+        "id": 507300943,
+        "sender_full_name": "Gunnar Farnebäck",
+        "timestamp": 1742569823
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273176\">Gunnar Farnebäck</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/Division.20and.20unwanted.20.60Float64.60/near/507300943\">said</a>:</p>\n<blockquote>\n<p>You also have the option to express the divisions as rationals, e.g. <code>4 // 5 * x</code></p>\n</blockquote>\n<p>This <span aria-label=\"point of information\" class=\"emoji emoji-261d\" role=\"img\" title=\"point of information\">:point_of_information:</span> is the general solution to avoid spurious promotion, at least as long as you're only doing basic arithmetic. Related to this performance tip from the manual: <a href=\"https://docs.julialang.org/en/v1/manual/style-guide/#Avoid-using-floats-for-numeric-literals-in-generic-code-when-possible\">https://docs.julialang.org/en/v1/manual/style-guide/#Avoid-using-floats-for-numeric-literals-in-generic-code-when-possible</a>.</p>\n<p>There's also <code>zero</code>, <code>one</code>, and <code>oneunit</code>, which are helpful if you're doing more than plain arithmetic and want to keep your code generic. For example, if <code>x</code> is a float of some type and I want to do <code>x * sqrt(3)</code>, I'll write <code>x * sqrt(3one(x))</code> to avoid spurious promotion. But for GPU kernel programming, you're probably not all that concerned about keeping your code generic.</p>",
+        "id": 507313700,
+        "sender_full_name": "Daniel Wennberg",
+        "timestamp": 1742573119
+    },
+    {
+        "content": "<p>Thanks all, very helpful!</p>",
+        "id": 507363028,
+        "sender_full_name": "Alec",
+        "timestamp": 1742589513
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"272612\">Alec</span> has marked this topic as resolved.</p>",
+        "id": 507363038,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1742589519
+    }
+]

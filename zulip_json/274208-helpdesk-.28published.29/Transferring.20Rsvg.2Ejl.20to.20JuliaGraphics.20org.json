@@ -1,0 +1,20 @@
+[
+    {
+        "content": "<p>I'm trying to transfer <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Rsvg\">Rsvg.jl</a> to JuliaGraphics. The original author Andreas Lobinger has stopped working and no longer uses GitHub. I emailed him to obtain his permission to move it to JuliaGraphics org, and he said Yes, go ahead.</p>\n<p>I cloned the repo from his directory and t's now at <a href=\"https://github.com/JuliaGraphics/Rsvg.jl\">https://github.com/JuliaGraphics/Rsvg.jl</a>.</p>\n<p>Now, I'm not too sure what happens next. I suppose a registry maintainer has to perform some magic rituals at some stage.</p>\n<p>Any help with the move (and any maintenance) would be welcome!</p>",
+        "id": 534675768,
+        "sender_full_name": "cormullion",
+        "timestamp": 1755273306
+    },
+    {
+        "content": "<p><a href=\"https://github.com/JuliaRegistries/General/blob/master/README.md#how-do-i-transfer-a-package-to-an-organization-or-another-user\">https://github.com/JuliaRegistries/General/blob/master/README.md#how-do-i-transfer-a-package-to-an-organization-or-another-user</a></p>",
+        "id": 534680931,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1755275672
+    },
+    {
+        "content": "<p>Thanks! I've had a go ...</p>",
+        "id": 534681976,
+        "sender_full_name": "cormullion",
+        "timestamp": 1755276163
+    }
+]

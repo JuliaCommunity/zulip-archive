@@ -1,0 +1,32 @@
+[
+    {
+        "content": "<p>We use <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/ScopedValues\">ScopedValues.jl</a> to customize tolerances in our codebase as you can see here:</p>\n<p><a href=\"https://github.com/JuliaGeometry/Meshes.jl/blob/e9207dfcf0b1edc7f18e0ab955409cc8802f15dc/src/tolerances.jl#L5-L25\">https://github.com/JuliaGeometry/Meshes.jl/blob/e9207dfcf0b1edc7f18e0ab955409cc8802f15dc/src/tolerances.jl#L5-L25</a></p>\n<p>but for some reason calling <code>Meshes.atol(Float64)</code> allocates.</p>",
+        "id": 585304057,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1776125541
+    },
+    {
+        "content": "<p>The same code doesn't allocate when copied/pasted in the REPL.</p>",
+        "id": 585304141,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1776125557
+    },
+    {
+        "content": "<p><span class=\"user-mention\" data-user-id=\"773583\">@Jeffrey Chandler</span> has tried <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Cthulhu\">Cthulhu.jl</a> as you can see here: <a class=\"message-link\" href=\"/#narrow/channel/275558-meshes.2Ejl/topic//near/585237291\">#meshes.jl &gt; <em>general chat</em> @ 💬</a></p>",
+        "id": 585304541,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1776125633
+    },
+    {
+        "content": "<p>Appreciate it if someone with experience in <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/ScopedValues\">ScopedValues.jl</a> could share what might be happening.</p>",
+        "id": 585304848,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1776125700
+    },
+    {
+        "content": "<p>We also tried with the ScopedValues stdlib, and there is no difference in behavior.</p>",
+        "id": 585304958,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1776125724
+    }
+]

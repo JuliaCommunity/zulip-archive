@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>I am updating some packages to <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/PrettyTables\">PrettyTables.jl</a> v3 and can't find an easy way to compare strings with escape characters.</p>\n<p>For example:</p>\n<div class=\"codehilite\" data-code-language=\"HTML\"><pre><span></span><code><span class=\"p\">&lt;</span><span class=\"nt\">th</span> <span class=\"na\">style </span><span class=\"o\">=</span> <span class=\"s\">\"text-align: center; font-weight: bold;\"</span><span class=\"p\">&gt;</span>\\e[35m\\e[1ma\\e[39m\\e[22m<span class=\"p\">&lt;/</span><span class=\"nt\">th</span><span class=\"p\">&gt;</span>\n</code></pre></div>\n<p>This is a column named \"a\" in magenta color. The magenta color is represented with <code>\\e</code> characters in HTML.</p>\n<p>I am getting a parser error in the tests:</p>\n<p><a href=\"https://github.com/JuliaEarth/GeoTables.jl/pull/146\">https://github.com/JuliaEarth/GeoTables.jl/pull/146</a></p>",
+        "id": 536111444,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1756156990
+    },
+    {
+        "content": "<p>To other readers: it seems like this was <a href=\"https://discourse.julialang.org/t/ann-prettytables-v3-0-0/131821/19?u=digital_carver\">resolved on Discourse</a> .</p>",
+        "id": 536122991,
+        "sender_full_name": "Sundar R",
+        "timestamp": 1756163217
+    }
+]
