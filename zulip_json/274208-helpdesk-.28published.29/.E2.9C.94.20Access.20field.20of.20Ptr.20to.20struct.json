@@ -1,0 +1,170 @@
+[
+    {
+        "content": "<p>If I have a <code>Ptr</code> to an immutable struct, is there an easy way to access a single field?</p>\n<p>Example:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">struct</span> <span class=\"kt\">Foo</span>\n<span class=\"w\">    </span><span class=\"n\">x</span><span class=\"o\">::</span><span class=\"kt\">Int</span>\n<span class=\"w\">    </span><span class=\"n\">y</span><span class=\"o\">::</span><span class=\"kt\">Float64</span>\n<span class=\"k\">end</span>\n\n<span class=\"n\">foo</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">fill</span><span class=\"p\">(</span><span class=\"n\">Foo</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"mi\">2</span><span class=\"p\">))</span>\n<span class=\"n\">p</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">pointer</span><span class=\"p\">(</span><span class=\"n\">foo</span><span class=\"p\">)</span>\n</code></pre></div>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">typeof</span><span class=\"p\">(</span><span class=\"n\">p</span><span class=\"p\">)</span>\n<span class=\"go\">Ptr{Foo}</span>\n</code></pre></div>\n<p>It's easy to do this:</p>\n<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">unsafe_load</span><span class=\"p\">(</span><span class=\"n\">p</span><span class=\"p\">)</span>\n<span class=\"go\">Foo(1, 2.0)</span>\n</code></pre></div>\n<p>But what can I do to load <code>p-&gt;y</code> directly, without reading the entire struct (which might be large)?</p>",
+        "id": 514119398,
+        "sender_full_name": "Rasmus Henningsson",
+        "timestamp": 1745499659
+    },
+    {
+        "content": "<p>How open to hacky ideas are you?</p>",
+        "id": 514121523,
+        "sender_full_name": "Timothy",
+        "timestamp": 1745500162
+    },
+    {
+        "content": "<p>Because I have a definition of <code>unsafe_getfield</code> in mind, but it's more than a few lines and not particularly clean</p>",
+        "id": 514121974,
+        "sender_full_name": "Timothy",
+        "timestamp": 1745500265
+    },
+    {
+        "content": "<p>I'm open to hacky ideas if it's needed.<br>\n(But I would prefer a non-hacky solution if it's possible.)</p>\n<p>It seems to me that <code>unsafe_getfield</code>should be in Base.</p>",
+        "id": 514126292,
+        "sender_full_name": "Rasmus Henningsson",
+        "timestamp": 1745501323
+    },
+    {
+        "content": "<p>I've done this before. The tricky part is efficiently getting the <code>Symbol</code> -&gt; fieldnumber mapping at compile time. </p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">unsafe_loadfield</span><span class=\"p\">(</span><span class=\"n\">p</span><span class=\"o\">::</span><span class=\"kt\">Ptr</span><span class=\"p\">{</span><span class=\"kt\">T</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"o\">::</span><span class=\"kt\">Int</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"k\">where</span><span class=\"w\"> </span><span class=\"p\">{</span><span class=\"kt\">T</span><span class=\"p\">}</span>\n<span class=\"w\">    </span><span class=\"n\">FT</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">fieldtype</span><span class=\"p\">(</span><span class=\"n\">T</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">offset</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">fieldoffset</span><span class=\"p\">(</span><span class=\"n\">T</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">pfield</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">Ptr</span><span class=\"p\">{</span><span class=\"kt\">FT</span><span class=\"p\">}(</span><span class=\"n\">p</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"o\">+</span><span class=\"w\"> </span><span class=\"n\">offset</span>\n<span class=\"w\">    </span><span class=\"n\">unsafe_load</span><span class=\"p\">(</span><span class=\"n\">pfield</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n<span class=\"nd\">@generated</span><span class=\"w\"> </span><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">unsafe_loadfield</span><span class=\"p\">(</span><span class=\"n\">p</span><span class=\"o\">::</span><span class=\"kt\">Ptr</span><span class=\"p\">{</span><span class=\"kt\">T</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"n\">s</span><span class=\"o\">::</span><span class=\"kt\">Symbol</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"k\">where</span><span class=\"w\"> </span><span class=\"p\">{</span><span class=\"kt\">T</span><span class=\"p\">}</span>\n<span class=\"w\">    </span><span class=\"n\">names</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">fieldnames</span><span class=\"p\">(</span><span class=\"n\">T</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">exprs</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">map</span><span class=\"p\">(</span><span class=\"n\">eachindex</span><span class=\"p\">(</span><span class=\"n\">names</span><span class=\"p\">))</span><span class=\"w\"> </span><span class=\"k\">do</span><span class=\"w\"> </span><span class=\"n\">i</span>\n<span class=\"w\">        </span><span class=\"k\">quote</span>\n<span class=\"w\">            </span><span class=\"k\">if</span><span class=\"w\"> </span><span class=\"n\">s</span><span class=\"w\"> </span><span class=\"o\">==</span><span class=\"w\"> </span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"kt\">QuoteNode</span><span class=\"p\">(</span><span class=\"n\">names</span><span class=\"p\">[</span><span class=\"n\">i</span><span class=\"p\">]))</span>\n<span class=\"w\">                </span><span class=\"k\">return</span><span class=\"w\"> </span><span class=\"n\">unsafe_loadfield</span><span class=\"p\">(</span><span class=\"n\">p</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"o\">$</span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"w\">            </span><span class=\"k\">end</span>\n<span class=\"w\">        </span><span class=\"k\">end</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"w\">    </span><span class=\"kt\">Expr</span><span class=\"p\">(</span><span class=\"ss\">:block</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">exprs</span><span class=\"o\">...</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"n\">error</span><span class=\"p\">(</span><span class=\"s\">\"Symbol </span><span class=\"si\">$s</span><span class=\"s\"> is not a field of type </span><span class=\"si\">$T</span><span class=\"s\">\"</span><span class=\"p\">)))</span>\n<span class=\"k\">end</span>\n</code></pre></div>",
+        "id": 514127716,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1745501673
+    },
+    {
+        "content": "<p>Oy! I got halfway through writing that <span aria-label=\"stuck out tongue closed eyes\" class=\"emoji emoji-1f61d\" role=\"img\" title=\"stuck out tongue closed eyes\">:stuck_out_tongue_closed_eyes:</span></p>",
+        "id": 514127941,
+        "sender_full_name": "Timothy",
+        "timestamp": 1745501728
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">unsafe_loadfield</span><span class=\"p\">(</span><span class=\"n\">p</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"ss\">:x</span><span class=\"p\">)</span>\n<span class=\"go\">1</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">unsafe_loadfield</span><span class=\"p\">(</span><span class=\"n\">p</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"ss\">:y</span><span class=\"p\">)</span>\n<span class=\"go\">2.0</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@btime</span><span class=\"w\"> </span><span class=\"n\">unsafe_loadfield</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">p</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"ss\">:y</span><span class=\"p\">)</span>\n<span class=\"go\">  1.187 ns (0 allocations: 0 bytes)</span>\n<span class=\"go\">2.0</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">unsafe_loadfield</span><span class=\"p\">(</span><span class=\"n\">p</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"ss\">:z</span><span class=\"p\">)</span>\n<span class=\"gr\">ERROR: Symbol z is not a field of type Foo</span>\n<span class=\"gr\">Stacktrace:</span>\n<span class=\"gr\"> [1] error(s::String)</span>\n<span class=\"gr\">   @ Base ./error.jl:35</span>\n<span class=\"gr\"> [2] macro expansion</span>\n<span class=\"gr\">   @ ./REPL[25]:6 [inlined]</span>\n<span class=\"gr\"> [3] unsafe_loadfield(p::Ptr{Foo}, s::Symbol)</span>\n<span class=\"gr\">   @ Main ./REPL[25]:1</span>\n<span class=\"gr\"> [4] top-level scope</span>\n<span class=\"gr\">   @ REPL[29]:1</span>\n</code></pre></div>",
+        "id": 514128161,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1745501774
+    },
+    {
+        "content": "<p>Nice! Thanks!</p>",
+        "id": 514128518,
+        "sender_full_name": "Rasmus Henningsson",
+        "timestamp": 1745501869
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"285705\">Rasmus Henningsson</span> has marked this topic as resolved.</p>",
+        "id": 514128596,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1745501883
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"285705\">Rasmus Henningsson</span> <a href=\"#narrow/stream/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Access.20field.20of.20Ptr.20to.20struct/near/514119398\">said</a>:</p>\n<blockquote>\n<p>If I have a <code>Ptr</code> to an immutable struct, is there an easy way to access a single field?</p>\n</blockquote>\n<p>How do you have a pointer to an immutable struct, which isn't possible? What you showed is a pointer to a vector whose elements are instances of an immutable struct.</p>",
+        "id": 514231069,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1745529738
+    },
+    {
+        "content": "<p>No, it's the pointer <strong>of</strong> a vector. The pointer he showed points <strong>to</strong> an immutable struct.</p>",
+        "id": 514269340,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1745553610
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">foo</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">fill</span><span class=\"p\">(</span><span class=\"n\">Foo</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"p\">,</span><span class=\"mi\">2</span><span class=\"p\">))</span>\n<span class=\"n\">p</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">pointer</span><span class=\"p\">(</span><span class=\"n\">foo</span><span class=\"p\">)</span>\n</code></pre></div>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"w\">  </span><span class=\"n\">pointer</span><span class=\"p\">(</span><span class=\"n\">array</span><span class=\"w\"> </span><span class=\"p\">[,</span><span class=\"w\"> </span><span class=\"n\">index</span><span class=\"p\">])</span>\n\n<span class=\"w\">  </span><span class=\"n\">Get</span><span class=\"w\"> </span><span class=\"n\">the</span><span class=\"w\"> </span><span class=\"n\">native</span><span class=\"w\"> </span><span class=\"n\">address</span><span class=\"w\"> </span><span class=\"n\">of</span><span class=\"w\"> </span><span class=\"n\">an</span><span class=\"w\"> </span><span class=\"n\">array</span><span class=\"w\"> </span><span class=\"n\">or</span><span class=\"w\"> </span><span class=\"n\">string</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">optionally</span><span class=\"w\"> </span><span class=\"n\">at</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"w\"> </span><span class=\"n\">given</span><span class=\"w\"> </span><span class=\"n\">location</span>\n<span class=\"w\">  </span><span class=\"n\">index</span><span class=\"o\">.</span>\n</code></pre></div>\n<p>It's a pointer to the \"native address of\" the vector, which happens to point to the immutable struct here. Does the language guarantee that this will be the case - that pointers to zero dimensional arrays will always be pointers to their element? One could imagine that not being the case (though in practice this might not ever happen).</p>",
+        "id": 514273294,
+        "sender_full_name": "Sundar R",
+        "timestamp": 1745554421
+    },
+    {
+        "content": "<p>The docs don't explicitly say it, but the \"optionally at a given index\" part seems to imply that it will get the address of the element at that index - so maybe it's slightly less hacky if we get the pointer as <code>pointer(foo, 1)</code> instead.</p>",
+        "id": 514273377,
+        "sender_full_name": "Sundar R",
+        "timestamp": 1745554472
+    },
+    {
+        "content": "<p>My actual use case is that I get the pointer to the struct in a callback from C. So it's a C struct which has a Julia struct equivalent (which is defined in a package, not by me).</p>",
+        "id": 514302207,
+        "sender_full_name": "Rasmus Henningsson",
+        "timestamp": 1745564542
+    },
+    {
+        "content": "<p>structs allocated from C should be a <code>mutable</code> struct in Julia, to preserve object identity based on the memory address</p>",
+        "id": 514337041,
+        "sender_full_name": "Sukera",
+        "timestamp": 1745574067
+    },
+    {
+        "content": "<p>so if you want to write changes back so that C can see them, you're going to have to keep the <code>Ptr</code> around and only work with that object through that <code>Ptr</code></p>",
+        "id": 514337295,
+        "sender_full_name": "Sukera",
+        "timestamp": 1745574143
+    },
+    {
+        "content": "<p>The two things you say there are kinda in conflict with eachother though. You can't wrap an external pointer with a <code>mutable struct</code>, so even if you do load the pointer, and convert its contents to a mutable struct, you still need to separately keep the pointer around the whole time and synchronize any changes you made to it</p>",
+        "id": 514341983,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1745575553
+    },
+    {
+        "content": "<p>In these situations I find it's usually best to not use a mutable struct and just work on the pointer directly instead.</p>",
+        "id": 514342160,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1745575596
+    },
+    {
+        "content": "<p>right, the second message is referring to the situation where the struct is immutable</p>",
+        "id": 514342651,
+        "sender_full_name": "Sukera",
+        "timestamp": 1745575744
+    },
+    {
+        "content": "<p>you're right that you need to keep the pointer around in either situation though, this kind of interop is a bit messy</p>",
+        "id": 514342871,
+        "sender_full_name": "Sukera",
+        "timestamp": 1745575815
+    },
+    {
+        "content": "<p>I have some utils laying around for basically wrapping a pointer and treating it as a mutable struct, turning <code>getproperty</code>/<code>setproperty!</code> calls into <code>unsafe_load</code>/ <code>unsafe_store!</code>s. I should maybe publish that at some point</p>",
+        "id": 514343440,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1745575978
+    },
+    {
+        "content": "<p>@Sukera Yes I agree that the interop is messy. I don't think there's any great solution here, since C and Julia do some things differently. But I'm fine with that and can keep my interaction with the pointers to a minimum in isolated code, so it doesn't get very ugly.</p>\n<p><span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/.E2.9C.94.20Access.20field.20of.20Ptr.20to.20struct/near/514343440\">said</a>:</p>\n<blockquote>\n<p>I have some utils laying around for basically wrapping a pointer and treating it as a mutable struct, turning <code>getproperty</code>/<code>setproperty!</code> calls into <code>unsafe_load</code>/ <code>unsafe_store!</code>s. I should maybe publish that at some point</p>\n</blockquote>\n<p>That might be the solution for my use case, and seems very nice in general. The solution you posted above (together with a corresponding <code>unsafe_storefield!</code>) works very well for me at the moment though.</p>",
+        "id": 514364081,
+        "sender_full_name": "Rasmus Henningsson",
+        "timestamp": 1745582776
+    },
+    {
+        "content": "<p>I just found out there actually <em>is</em> a <code>Base.fieldindex</code> function, so the <code>@generated function</code> I wrote is a bit unnecessary. It can just be</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">function</span><span class=\"w\"> </span><span class=\"n\">unsafe_loadfield</span><span class=\"p\">(</span><span class=\"n\">p</span><span class=\"o\">::</span><span class=\"kt\">Ptr</span><span class=\"p\">{</span><span class=\"kt\">T</span><span class=\"p\">},</span><span class=\"w\"> </span><span class=\"n\">s</span><span class=\"o\">::</span><span class=\"kt\">Symbol</span><span class=\"p\">)</span><span class=\"w\"> </span><span class=\"k\">where</span><span class=\"w\"> </span><span class=\"p\">{</span><span class=\"kt\">T</span><span class=\"p\">}</span>\n<span class=\"w\">    </span><span class=\"n\">i</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">Base</span><span class=\"o\">.</span><span class=\"n\">fieldindex</span><span class=\"p\">(</span><span class=\"n\">T</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">s</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"nb\">true</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">unsafe_loadfield</span><span class=\"p\">(</span><span class=\"n\">p</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">i</span><span class=\"p\">)</span>\n<span class=\"k\">end</span>\n</code></pre></div>",
+        "id": 514377790,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1745586874
+    },
+    {
+        "content": "<p>(opened a PR to mark it <code>public</code> here: <a href=\"https://github.com/JuliaLang/julia/pull/58228\">https://github.com/JuliaLang/julia/pull/58228</a>)</p>",
+        "id": 514379925,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1745587524
+    },
+    {
+        "content": "<p>ugh, sorry, no you should <em>not</em> use <code>fieldindex</code> here as it seems to block constant propagation somehow here and make the function very slow</p>",
+        "id": 514382494,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1745588289
+    },
+    {
+        "content": "<p>It's weird because <code>fieldindex</code> is fast, but putting it in the body of <code>unsafe_loadfield</code> is slow somehow.</p>",
+        "id": 514382617,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1745588332
+    },
+    {
+        "content": "<p>so yeah, you're better off with the <code>@generated </code>function.</p>",
+        "id": 514382651,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1745588348
+    },
+    {
+        "content": "<p>Thanks for figuring all these things out!</p>",
+        "id": 514385445,
+        "sender_full_name": "Rasmus Henningsson",
+        "timestamp": 1745589208
+    }
+]

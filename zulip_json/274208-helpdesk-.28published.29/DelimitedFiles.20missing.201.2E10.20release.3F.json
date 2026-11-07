@@ -1,0 +1,92 @@
+[
+    {
+        "content": "<p>Isn't that a big issue? <a href=\"https://github.com/JuliaData/DelimitedFiles.jl/issues/32\">https://github.com/JuliaData/DelimitedFiles.jl/issues/32</a></p>\n<p>I discovered it today updating some of my compat entries.</p>",
+        "id": 536418862,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1756300807
+    },
+    {
+        "content": "<p>Related question: is it good practice to add compat entries for stdlibs in packages?</p>",
+        "id": 536420489,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1756301243
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/DelimitedFiles.20missing.201.2E10.20release.3F/near/536420489\">said</a>:</p>\n<blockquote>\n<p>Related question: is it good practice to add compat entries for stdlibs in packages?</p>\n</blockquote>\n<p>Yes, see <a href=\"https://discourse.julialang.org/t/psa-compat-requirements-in-the-general-registry-are-changing/104958\">https://discourse.julialang.org/t/psa-compat-requirements-in-the-general-registry-are-changing/104958</a>.</p>",
+        "id": 536421089,
+        "sender_full_name": "Joshua Lampert",
+        "timestamp": 1756301422
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/DelimitedFiles.20missing.201.2E10.20release.3F/near/536418862\">said</a>:</p>\n<blockquote>\n<p>Isn't that a big issue? <a href=\"https://github.com/JuliaData/DelimitedFiles.jl/issues/32\">https://github.com/JuliaData/DelimitedFiles.jl/issues/32</a></p>\n</blockquote>\n<p>What's the issue? Stdlibs need not to have a version matching Julia's version.</p>",
+        "id": 536423053,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1756301983
+    },
+    {
+        "content": "<p>I assumed that was the case. How can I specify the minimum version of the stdlib that is compatible with Julia v1.10?</p>",
+        "id": 536425869,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1756302809
+    },
+    {
+        "content": "<p>My assumption was that every stdlib had a matching version for that purpose. Specially when stdlibs are not available yet, like <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/StyledStrings\">StyledStrings.jl</a></p>",
+        "id": 536425991,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1756302842
+    },
+    {
+        "content": "<p>I added StyledStrings = \"1.10\" in my compat because it is available as a package in v1.10 and as a stdlib in v1.11</p>",
+        "id": 536426101,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1756302877
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/DelimitedFiles.20missing.201.2E10.20release.3F/near/536425869\">said</a>:</p>\n<blockquote>\n<p>I assumed that was the case.</p>\n</blockquote>\n<p>Wrong assumption.</p>\n<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/DelimitedFiles.20missing.201.2E10.20release.3F/near/536425869\">said</a>:</p>\n<blockquote>\n<p>How can I specify the minimum version of the stdlib that is compatible with Julia v1.10?</p>\n</blockquote>\n<p>Use whatever version of the stdlib is in Julia v1.10?</p>",
+        "id": 536452626,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1756310401
+    },
+    {
+        "content": "<p>Isn't that more complicated than just releasing 1.10 for consistency? This is the only single case I encountered so far where 1.10 doesn't exist</p>",
+        "id": 536453843,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1756310815
+    },
+    {
+        "content": "<p>StyledStrings, LinearAlgebra, SparseArrays, Random, Statistics, ... all have 1.10</p>",
+        "id": 536453962,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1756310851
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"273172\">Júlio Hoffimann</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/DelimitedFiles.20missing.201.2E10.20release.3F/near/536453843\">said</a>:</p>\n<blockquote>\n<p>This is the only single case I encountered so far where 1.10 doesn't exist</p>\n</blockquote>\n<p>Look harder. <a href=\"https://github.com/JuliaLang/Downloads.jl\">https://github.com/JuliaLang/Downloads.jl</a> doesn't follow Julia's versioning, nor does any of the jlls (which are numerically the majority, probably)</p>",
+        "id": 536455993,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1756311542
+    },
+    {
+        "content": "<p>I asked in the issue what is the harm of releasing 1.10 for consistency. I really don't understand it.</p>",
+        "id": 536457147,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1756311934
+    },
+    {
+        "content": "<p>There's no need for consistency to start with. They are regular packages which happen to be shipped by default but can _<strong>and do</strong>_ have their own versioning.</p>",
+        "id": 536459727,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1756312834
+    },
+    {
+        "content": "<p>probably a lot of stdlibs release alongside Base versions because they are hoping to pick up bugfixes (or otherwise changes) in Base that affect the stdlib internals</p>",
+        "id": 536474577,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1756318474
+    },
+    {
+        "content": "<p>but if something is very robust to issues in Base then it would be less necessary. it's probably a <em>good</em> sign that a 1.10 release was not needed</p>",
+        "id": 536474624,
+        "sender_full_name": "Andy Dienes",
+        "timestamp": 1756318500
+    }
+]

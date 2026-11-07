@@ -1,0 +1,32 @@
+[
+    {
+        "content": "<p>Anyone else seeing this message all the time in  Julia  v1.12.7?</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"mi\">31</span><span class=\"w\"> </span><span class=\"n\">dependencies</span><span class=\"w\"> </span><span class=\"n\">precompiled</span><span class=\"w\"> </span><span class=\"n\">but</span><span class=\"w\"> </span><span class=\"n\">different</span><span class=\"w\"> </span><span class=\"n\">versions</span><span class=\"w\"> </span><span class=\"n\">are</span><span class=\"w\"> </span><span class=\"n\">currently</span><span class=\"w\"> </span><span class=\"n\">loaded</span><span class=\"w\"> </span><span class=\"p\">(</span><span class=\"n\">ArgTools</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Base64</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Dates</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Downloads</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">InteractiveUtils</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">JuliaSyntaxHighlighting</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">LibCURL</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">LibCURL_jll</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">LibGit2</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">LibGit2_jll</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">LibSSH2_jll</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Logging</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Markdown</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Mmap</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">MozillaCACerts_jll</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">NetworkOptions</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">OpenSSL_jll</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">OrderedCollections</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Pkg</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Pkg</span><span class=\"w\"> </span><span class=\"o\">→</span><span class=\"w\"> </span><span class=\"n\">REPLExt</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Preferences</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Printf</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">REPL</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">StyledStrings</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">TOML</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Tar</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">UUIDs</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Unicode</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">Zlib_jll</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">nghttp2_jll</span><span class=\"w\"> </span><span class=\"n\">and</span><span class=\"w\"> </span><span class=\"n\">p7zip_jll</span><span class=\"p\">)</span><span class=\"o\">.</span><span class=\"w\"> </span><span class=\"n\">Restart</span><span class=\"w\"> </span><span class=\"n\">julia</span><span class=\"w\"> </span><span class=\"n\">to</span><span class=\"w\"> </span><span class=\"n\">access</span><span class=\"w\"> </span><span class=\"n\">the</span><span class=\"w\"> </span><span class=\"n\">new</span><span class=\"w\"> </span><span class=\"n\">versions</span><span class=\"o\">.</span><span class=\"w\"> </span><span class=\"n\">Otherwise</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"mi\">165</span><span class=\"w\"> </span><span class=\"n\">dependents</span><span class=\"w\"> </span><span class=\"n\">of</span><span class=\"w\"> </span><span class=\"n\">these</span><span class=\"w\"> </span><span class=\"n\">packages</span><span class=\"w\"> </span><span class=\"n\">may</span><span class=\"w\"> </span><span class=\"n\">trigger</span><span class=\"w\"> </span><span class=\"n\">further</span><span class=\"w\"> </span><span class=\"n\">precompilation</span><span class=\"w\"> </span><span class=\"n\">to</span><span class=\"w\"> </span><span class=\"n\">work</span><span class=\"w\"> </span><span class=\"n\">with</span><span class=\"w\"> </span><span class=\"n\">the</span><span class=\"w\"> </span><span class=\"n\">unexpected</span><span class=\"w\"> </span><span class=\"n\">versions</span><span class=\"o\">.</span>\n</code></pre></div>",
+        "id": 619623181,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1787856042
+    },
+    {
+        "content": "<p>Probably caused by you having a bunch of junk in your <code>startup.jl</code> file, or a stale manifest somewhere.</p>",
+        "id": 619635506,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1787859528
+    },
+    {
+        "content": "<p>Try re-resolving / updating your global manifest, and whatever local manifest you might be using</p>",
+        "id": 619636119,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1787859722
+    },
+    {
+        "content": "<p>These is happening in every folder. I will try to update the OS and VSCode + Julia plugin before I try to update the envs again.</p>",
+        "id": 619650540,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1787864414
+    },
+    {
+        "content": "<p>I've updated everything from OS to VSCode extension. These warnings are still showing up. Is there a method to clean things up other than <a href=\"https://github.com/giordano/PkgCleanup.jl\">https://github.com/giordano/PkgCleanup.jl</a> ?</p>",
+        "id": 620621092,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1788261401
+    }
+]
