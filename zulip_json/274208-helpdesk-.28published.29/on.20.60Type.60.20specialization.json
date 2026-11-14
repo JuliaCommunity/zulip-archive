@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p>I've long thought that <code>f(x::Type)</code> would not specialize on <code>x</code>, whereas <code>g(::Type{x}) where x</code> would. And indeed, <code>methods(g)[1].specializations</code> shows specializations on the few types that I called <code>g</code> on, unlike for <code>f</code>. But in <a href=\"https://github.com/JuliaLang/julia/pull/61156/changes\">https://github.com/JuliaLang/julia/pull/61156/changes</a>, <code>x::Type</code> is changed to <code>@nospecialize(x::Type)</code>, with clear results. Why is <code>@nospecialize</code> useful on <code>x::Type</code> ?</p>",
+        "id": 583446587,
+        "sender_full_name": "Rafael Fourquet",
+        "timestamp": 1775219478
+    }
+]

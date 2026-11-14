@@ -1,0 +1,170 @@
+[
+    {
+        "content": "<p>Yaay another funny one ^ ^\" Can someone explain what's happening to variable <code>a</code> in there? ^ ^\"</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">m</span><span class=\"p\">()</span>\n<span class=\"w\">    </span><span class=\"n\">a</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">__source__</span>\n<span class=\"w\">    </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"s\">\"during expansion: \"</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"n\">xp</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"k\">quote</span>\n<span class=\"w\">        </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"s\">\"during execution: \"</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"o\">$</span><span class=\"n\">a</span><span class=\"p\">)</span>\n<span class=\"w\">    </span><span class=\"k\">end</span>\n<span class=\"w\">    </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"s\">\"in the generated xp: \"</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">xp</span><span class=\"o\">.</span><span class=\"n\">args</span><span class=\"p\">[</span><span class=\"mi\">2</span><span class=\"p\">]</span><span class=\"o\">.</span><span class=\"n\">args</span><span class=\"p\">[</span><span class=\"mi\">3</span><span class=\"p\">])</span>\n<span class=\"w\">    </span><span class=\"n\">xp</span>\n<span class=\"k\">end</span>\n<span class=\"nd\">@m</span><span class=\"w\"> </span><span class=\"c\"># (line 10)</span>\n</code></pre></div>\n<div class=\"codehilite\" data-code-language=\"Text only\"><pre><span></span><code>during expansion: #= ./test.jl:10 =#\nin the generated xp: #= ./test.jl:10 =# still there: so it's not \"killed\" by the `$`-injection\nduring execution: nothing               .. !? where did it go?\n</code></pre></div>",
+        "id": 613691439,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785430121
+    },
+    {
+        "content": "<p>(tried <code>a = deepcopy(__source__)</code> with no success)</p>",
+        "id": 613691702,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785430194
+    },
+    {
+        "content": "<p>(ended up just collecting the desired <code>(; file, line) = __source__</code> instead with no problem, just curious why this happens)</p>",
+        "id": 613692888,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785430529
+    },
+    {
+        "content": "<p>I think it's that lowering strips line number nodes out of code.</p>",
+        "id": 613693113,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785430598
+    },
+    {
+        "content": "<p>Oh, by replacing them with <code>nothing</code> :)</p>",
+        "id": 613693173,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785430616
+    },
+    {
+        "content": "<p>That makes sense. I just need to protect it from stripping somehow then.</p>",
+        "id": 613693261,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785430645
+    },
+    {
+        "content": "<p>Yup: <code>a = Ref(__source__)</code> does the trick :)</p>",
+        "id": 613693323,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785430673
+    },
+    {
+        "content": "<p>Thanks &lt;3</p>",
+        "id": 613693419,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785430705
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">quote</span>\n<span class=\"w\">           </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">+</span><span class=\"w\"> </span><span class=\"mi\">1</span>\n<span class=\"w\">           </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">+</span><span class=\"w\"> </span><span class=\"mi\">2</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">quote</span>\n<span class=\"go\">    #= REPL[15]:2 =#</span>\n<span class=\"go\">    x + 1</span>\n<span class=\"go\">    #= REPL[15]:3 =#</span>\n<span class=\"go\">    x + 2</span>\n<span class=\"go\">end</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"n\">Meta</span><span class=\"o\">.</span><span class=\"n\">lower</span><span class=\"p\">(</span><span class=\"n\">Main</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">ans</span><span class=\"p\">)</span>\n<span class=\"go\">:($(Expr(:thunk, CodeInfo(</span>\n<span class=\"go\">    @ REPL[15]:2 within `unknown scope`</span>\n<span class=\"go\">1 ─ %1 = Main.:+</span>\n<span class=\"go\">│   %2 = Main.x</span>\n<span class=\"go\">│          dynamic (%1)(%2, 1)</span>\n<span class=\"go\">│   @ REPL[15]:3 within `unknown scope`</span>\n<span class=\"go\">│   %4 = Main.:+</span>\n<span class=\"go\">│   %5 = Main.x</span>\n<span class=\"go\">│   %6 =   dynamic (%4)(%5, 2)</span>\n<span class=\"go\">└──      return %6</span>\n<span class=\"go\">))))</span>\n</code></pre></div>",
+        "id": 613693459,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785430719
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"590870\">iago-lito</span> <a href=\"#narrow/channel/137791-general/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F/near/613693323\">said</a>:</p>\n<blockquote>\n<p>Yup: <code>a = Ref(__source__)</code> does the trick <span aria-label=\"slight smile\" class=\"emoji emoji-1f642\" role=\"img\" title=\"slight smile\">:slight_smile:</span></p>\n</blockquote>\n<p>You can use <code>QuoteNode</code> for this too</p>",
+        "id": 613693528,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785430740
+    },
+    {
+        "content": "<p>Or just <code>(__source__,)</code>.. really anything.</p>",
+        "id": 613693663,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785430783
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">m</span><span class=\"p\">()</span>\n<span class=\"w\">           </span><span class=\"n\">a</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">__source__</span>\n<span class=\"w\">           </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"s\">\"during expansion: \"</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">a</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"n\">xp</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"k\">quote</span>\n<span class=\"w\">               </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"s\">\"during execution: \"</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"kt\">QuoteNode</span><span class=\"p\">(</span><span class=\"n\">a</span><span class=\"p\">)))</span>\n<span class=\"w\">           </span><span class=\"k\">end</span>\n<span class=\"w\">           </span><span class=\"n\">println</span><span class=\"p\">(</span><span class=\"s\">\"in the generated xp: \"</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">xp</span><span class=\"o\">.</span><span class=\"n\">args</span><span class=\"p\">[</span><span class=\"mi\">2</span><span class=\"p\">]</span><span class=\"o\">.</span><span class=\"n\">args</span><span class=\"p\">[</span><span class=\"mi\">3</span><span class=\"p\">])</span>\n<span class=\"w\">               </span><span class=\"n\">xp</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">@m (macro with 1 method)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@m</span>\n<span class=\"go\">during expansion: #= REPL[18]:1 =#</span>\n<span class=\"go\">in the generated xp: $(QuoteNode(:(#= REPL[18]:1 =#)))</span>\n<span class=\"go\">during execution: #= REPL[18]:1 =#</span>\n</code></pre></div>",
+        "id": 613693664,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785430783
+    },
+    {
+        "content": "<p><code>QuoteNode</code> IMO is the preferred mechanism, because it's like how you'd put a literal symbol in generated code</p>",
+        "id": 613693861,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785430828
+    },
+    {
+        "content": "<p>Ok. What's the difference with <code>Meta.quot</code>?</p>",
+        "id": 613693916,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785430843
+    },
+    {
+        "content": "<div class=\"codehilite\" data-code-language=\"Julia console\"><pre><span></span><code><span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">foo</span><span class=\"p\">()</span>\n<span class=\"w\">           </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"ss\">:blah</span>\n<span class=\"w\">           </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"n\">show</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">x</span><span class=\"p\">))</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">@foo (macro with 1 method)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@foo</span>\n<span class=\"gr\">ERROR: UndefVarError: `blah` not defined in `Main`</span>\n<span class=\"gr\">Suggestion: check for spelling errors or missing imports.</span>\n<span class=\"gr\">Stacktrace:</span>\n<span class=\"gr\"> [1] top-level scope</span>\n<span class=\"gr\">   @ REPL[20]:1</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"k\">macro</span><span class=\"w\"> </span><span class=\"n\">foo</span><span class=\"p\">()</span>\n<span class=\"w\">           </span><span class=\"n\">x</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"kt\">QuoteNode</span><span class=\"p\">(</span><span class=\"ss\">:blah</span><span class=\"p\">)</span>\n<span class=\"w\">           </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"n\">show</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"n\">x</span><span class=\"p\">))</span>\n<span class=\"w\">       </span><span class=\"k\">end</span>\n<span class=\"go\">@foo (macro with 1 method)</span>\n\n<span class=\"gp\">julia&gt;</span><span class=\"w\"> </span><span class=\"nd\">@foo</span>\n<span class=\"go\">:blah</span>\n</code></pre></div>",
+        "id": 613694056,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785430883
+    },
+    {
+        "content": "<p>Oh I see: <a href=\"https://docs.julialang.org/en/v1/manual/metaprogramming/#man-quote-node\">https://docs.julialang.org/en/v1/manual/metaprogramming/#man-quote-node</a>.</p>",
+        "id": 613694349,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785430974
+    },
+    {
+        "content": "<p>I never really got the difference tbh. Never needed <code>Meta.quot</code></p>",
+        "id": 613694595,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785431043
+    },
+    {
+        "content": "<p>The difference is that <code>Meta.quot</code> still does interpolation, while <code>QuoteNode</code> doesn't even. As per the example in the docs:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">eval</span><span class=\"p\">(</span><span class=\"n\">Meta</span><span class=\"o\">.</span><span class=\"n\">quot</span><span class=\"p\">(</span><span class=\"kt\">Expr</span><span class=\"p\">(</span><span class=\"o\">:$</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"o\">+</span><span class=\"mi\">2</span><span class=\"p\">))))</span>\n<span class=\"mi\">3</span>\n\n<span class=\"n\">julia</span><span class=\"o\">&gt;</span><span class=\"w\"> </span><span class=\"n\">eval</span><span class=\"p\">(</span><span class=\"kt\">QuoteNode</span><span class=\"p\">(</span><span class=\"kt\">Expr</span><span class=\"p\">(</span><span class=\"o\">:$</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"o\">+</span><span class=\"mi\">2</span><span class=\"p\">))))</span>\n<span class=\"o\">:</span><span class=\"p\">(</span><span class=\"o\">$</span><span class=\"p\">(</span><span class=\"kt\">Expr</span><span class=\"p\">(</span><span class=\"o\">:$</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"o\">:</span><span class=\"p\">(</span><span class=\"mi\">1</span><span class=\"w\"> </span><span class=\"o\">+</span><span class=\"w\"> </span><span class=\"mi\">2</span><span class=\"p\">))))</span>\n</code></pre></div>",
+        "id": 613694742,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785431093
+    },
+    {
+        "content": "<p>It is <em>even more litteral</em> :P</p>",
+        "id": 613694856,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785431128
+    },
+    {
+        "content": "<p>Honestly I am finding that julia macro system is by far the most ergonomic and sophisticated I know.</p>",
+        "id": 613695054,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785431186
+    },
+    {
+        "content": "<p>It's quirky and complex for sure, but I think this is inherent to codegen. I think that is just the irreducible complexity part of metaprogramming. I love it &lt;3</p>",
+        "id": 613695175,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785431227
+    },
+    {
+        "content": "<p>(or maybe I should move that to <a class=\"stream\" data-stream-id=\"225583\" href=\"/#narrow/channel/225583-appreciation\">#appreciation</a>? ;)</p>",
+        "id": 613695301,
+        "sender_full_name": "iago-lito",
+        "timestamp": 1785431269
+    },
+    {
+        "content": "<p>yeah it's quite good</p>",
+        "id": 613697368,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785431969
+    },
+    {
+        "content": "<p>the new macro system being developed seems quite neat too</p>",
+        "id": 613697413,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785431981
+    },
+    {
+        "content": "<p><a href=\"https://github.com/JuliaLang/julia/tree/master/JuliaLowering#problems-with-hygiene-in-julias-exiting-macro-system\">https://github.com/JuliaLang/julia/tree/master/JuliaLowering#problems-with-hygiene-in-julias-exiting-macro-system</a></p>",
+        "id": 613697928,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1785432147
+    },
+    {
+        "content": "<p>This topic was moved here from <a class=\"stream-topic\" data-stream-id=\"137791\" href=\"/#narrow/channel/137791-general/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F\">#general &gt; __source__ decaying to 'nothing' after macro expansion?</a> by <span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span>.</p>",
+        "id": 613753848,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1785451861
+    },
+    {
+        "content": "<p>This topic was moved here from <a class=\"stream-topic\" data-stream-id=\"225542\" href=\"/#narrow/channel/225542-helpdesk/topic/__source__.20decaying.20to.20.27nothing.27.20after.20macro.20expansion.3F\">#helpdesk &gt; __source__ decaying to 'nothing' after macro expansion?</a> by <span class=\"user-mention silent\" data-user-id=\"269150\">Mason Protter</span>.</p>",
+        "id": 613819223,
+        "sender_full_name": "Notification Bot",
+        "timestamp": 1785489111
+    },
+    {
+        "content": "<p>Recently updated at <a href=\"https://github.com/JuliaLang/julia/pull/62587\">https://github.com/JuliaLang/julia/pull/62587</a> if either of you want to try examples (feel free to leave comments if anything is unclear).  Many things were changed or figured out in <a href=\"https://github.com/JuliaLang/julia/pull/62221\">https://github.com/JuliaLang/julia/pull/62221</a>.  I still need a good (ergonomic) way of constructing the new syntax type.</p>",
+        "id": 614245861,
+        "sender_full_name": "Em",
+        "timestamp": 1785738735
+    }
+]

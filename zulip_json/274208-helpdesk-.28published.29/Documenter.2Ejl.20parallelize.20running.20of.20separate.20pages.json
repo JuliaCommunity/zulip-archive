@@ -1,0 +1,62 @@
+[
+    {
+        "content": "<p>I have a <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Documenter\">Documenter.jl</a> workflow that needs to expand a bunch of <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Literate\">Literate.jl</a> tutorial scripts, expand them (i.e. run all the code inside), and then generate the docs from that, and do this in Github Actions CI. </p>\n<p>Running all the code in these tutorials is very time consuming, but each one should be independent. Is there a way to have multiple Github Actions processes, and then have each one work on a subset of the <code>.md</code>, and the collect them all together at the end?</p>",
+        "id": 504636006,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1741624245
+    },
+    {
+        "content": "<p>Have you considered using multithreading to process the <code>.jl</code> files, or is that not an option?</p>",
+        "id": 504637295,
+        "sender_full_name": "Cédric Belmant",
+        "timestamp": 1741624617
+    },
+    {
+        "content": "<p>I have been doing it here for example: <a href=\"https://github.com/JuliaGPU/Vulkan.jl/blob/53fad947e1c5bab36cc5f6d4e1945227bede4b3e/docs/make.jl#L21-L31\">https://github.com/JuliaGPU/Vulkan.jl/blob/53fad947e1c5bab36cc5f6d4e1945227bede4b3e/docs/make.jl#L21-L31</a> and never ran into any issues.</p>",
+        "id": 504637495,
+        "sender_full_name": "Cédric Belmant",
+        "timestamp": 1741624678
+    },
+    {
+        "content": "<p>Although I don't think code runs at this stage, so were you talking about processing the generated <code>.md</code> files during <code>makedocs</code>?</p>",
+        "id": 504637966,
+        "sender_full_name": "Cédric Belmant",
+        "timestamp": 1741624798
+    },
+    {
+        "content": "<p>So I thought <code>Literate.markdown</code> there was just generating a markdown file from the <code>.jl</code> file, but not actually running the code inside of it. It seemed to me that it was <code>makedocs</code> that actually ran the code, and I don't see how to parallelize that</p>",
+        "id": 504638055,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1741624812
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"329431\">Cédric Belmant</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/Documenter.2Ejl.20parallelize.20running.20of.20separate.20pages/near/504637966\">said</a>:</p>\n<blockquote>\n<p>Although I don't think code runs at this stage, so were you talking about processing the generated <code>.md</code> files during <code>makedocs</code>?</p>\n</blockquote>\n<p>yeah exactly</p>",
+        "id": 504638140,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1741624837
+    },
+    {
+        "content": "<p>Right, I read <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Literate\">Literate.jl</a> and thought it would be the previous stage (because I think once processed from <code>.jl</code> into <code>.md</code> it doesn't have anything to do with Literate anymore)</p>",
+        "id": 504638298,
+        "sender_full_name": "Cédric Belmant",
+        "timestamp": 1741624880
+    },
+    {
+        "content": "<p>Hm, so looking at the <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Literate\">Literate.jl</a> docs though, it looks like there is a <code>execute</code> kwarg you can set to tell <a href=\"https://juliaregistries.github.io/General/packages/redirect_to_repo/Literate\">Literate.jl</a> to execute the code. Interesting, I wonder if it'll get re-run by <code>makedocs</code> after that if I set it to true</p>",
+        "id": 504638725,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1741624997
+    },
+    {
+        "content": "<p>Otherwise, having Documenter allow executing a subset of files then merging the results seems fairly involved, unless it already has the infrastructure to selectively run stages and has appropriate data structures to hold &amp; merge the results of evaluation.</p>",
+        "id": 504639284,
+        "sender_full_name": "Cédric Belmant",
+        "timestamp": 1741625164
+    },
+    {
+        "content": "<p>That would be pretty neat to have though, if it doesn't make it overly complex</p>",
+        "id": 504639393,
+        "sender_full_name": "Cédric Belmant",
+        "timestamp": 1741625200
+    }
+]
