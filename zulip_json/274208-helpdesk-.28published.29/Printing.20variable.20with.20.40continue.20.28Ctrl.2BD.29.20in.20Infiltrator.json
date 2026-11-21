@@ -1,0 +1,26 @@
+[
+    {
+        "content": "<p>I am trying to troubleshoot some complex/deep code and would like to be able to keep hitting Ctrl+D (<code>@continue</code>) and have a variable (e.g. call it <code>p</code> print for each time I hit Ctrl+D. Is there anyway to do this or do I have to enter <code>p</code> into the REPL each time?</p>",
+        "id": 532822380,
+        "sender_full_name": "Alec",
+        "timestamp": 1754360599
+    },
+    {
+        "content": "<p>Not an ideal solution, but in vs code, you could use the Keyboard Macro Beta extension to record and play back a sequence of keystrokes.</p>",
+        "id": 537283474,
+        "sender_full_name": "Toby Driscoll",
+        "timestamp": 1756818641
+    },
+    {
+        "content": "<p>Might be a bit of a hack, but did you try printing the variable and then returning true inside a @cond point?</p>",
+        "id": 537298517,
+        "sender_full_name": "cschen",
+        "timestamp": 1756823084
+    },
+    {
+        "content": "<p>It takes an expression which I believe is evaluated for that particular iteration, to decide if triggering an infiltration or not. So you could just ask it to print a value and then tell it to infiltrate. I.e. @cond( @show p;  true)</p>",
+        "id": 537298890,
+        "sender_full_name": "cschen",
+        "timestamp": 1756823210
+    }
+]

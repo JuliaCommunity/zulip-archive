@@ -1,0 +1,50 @@
+[
+    {
+        "content": "<p>What is the recommended way to comply with the requirements for redistributing and/or modifying third-party source code, like including a copy of these licenses right in the source file or in say a license folder? Or something like the julia repo's THIRDPARTY.md. Additionally, is it ok to just include a hyperlink to the repo's license?</p>",
+        "id": 531088558,
+        "sender_full_name": "wheeheee",
+        "timestamp": 1753602523
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"670625\">wheeheee</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/Third-party.20license.20inclusion/near/531088558\">said</a>:</p>\n<blockquote>\n<p>What is the recommended way to comply with the requirements for redistributing and/or modifying third-party source code, like including a copy of these licenses right in the source file or in say a license folder? Or something like the julia repo's THIRDPARTY.md. Additionally, is it ok to just include a hyperlink to the repo's license?</p>\n</blockquote>\n<p>I usually use a <code>THIRD_PARTY_NOTICE.md</code> file like this: <a href=\"https://github.com/julia-actions/setup-julia/blob/master/THIRD_PARTY_NOTICE.md\">https://github.com/julia-actions/setup-julia/blob/master/THIRD_PARTY_NOTICE.md</a></p>\n<p>Not a lawyer but I don't think a link would be sufficient if the license requires that you include a copy of the license or a copy of the copyright notice.</p>\n<p>For the MIT License in particular, this is worth a read: <a href=\"https://writing.kemitchell.com/2016/09/21/MIT-License-Line-by-Line.html\">https://writing.kemitchell.com/2016/09/21/MIT-License-Line-by-Line.html</a></p>",
+        "id": 531149099,
+        "sender_full_name": "Sascha Mann",
+        "timestamp": 1753626193
+    },
+    {
+        "content": "<p>Wait so does the Julia repo do this properly here? Or they don’t need to because it downloads those repos in their entirety during <code>make</code> or something</p>",
+        "id": 531150180,
+        "sender_full_name": "wheeheee",
+        "timestamp": 1753626559
+    },
+    {
+        "content": "<p>So I guess I might have to open a PR in a repo I was contributing to, to fix the licensing situation because of a very old commit…but only from the most recent release onwards. Hopefully (and probably) no one cares after that because that third party license is pretty permissive otherwise…</p>",
+        "id": 531151111,
+        "sender_full_name": "wheeheee",
+        "timestamp": 1753626875
+    },
+    {
+        "content": "<p>I found a bit of a discussion here but not the resolution…</p>",
+        "id": 531154685,
+        "sender_full_name": "wheeheee",
+        "timestamp": 1753628117
+    },
+    {
+        "content": "<p><a href=\"https://github.com/JuliaLang/julia/pull/42102\">https://github.com/JuliaLang/julia/pull/42102</a></p>",
+        "id": 531154690,
+        "sender_full_name": "wheeheee",
+        "timestamp": 1753628119
+    },
+    {
+        "content": "<p><span class=\"user-mention silent\" data-user-id=\"670625\">wheeheee</span> <a href=\"#narrow/channel/274208-helpdesk-.28published.29/topic/Third-party.20license.20inclusion/near/531150180\">said</a>:</p>\n<blockquote>\n<p>Wait so does the Julia repo do this properly here? Or they don’t need to because it downloads those repos in their entirety during <code>make</code> or something</p>\n</blockquote>\n<p>I don't know enough to say that with confidence. It's also worth keeping in mind that as long as you show some good effort and intentions, most people are unlikely to go after you, especially in the context of open source software</p>",
+        "id": 531217883,
+        "sender_full_name": "Sascha Mann",
+        "timestamp": 1753652540
+    },
+    {
+        "content": "<p>That sounds reasonable, but I guess I just expected that at least a project as big as Julia would have lawyers make sure they’re legally bulletproof (hence they must have done everything by the book)</p>",
+        "id": 531294974,
+        "sender_full_name": "wheeheee",
+        "timestamp": 1753687793
+    }
+]

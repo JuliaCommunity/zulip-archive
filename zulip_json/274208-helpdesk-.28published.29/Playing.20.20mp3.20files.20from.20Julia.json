@@ -1,0 +1,44 @@
+[
+    {
+        "content": "<p>Hi everyone,<br>\nI am trying to interface some music with my scientific computing and I am trying the simplest thngs first, i.e. playing an mp3 file from some Julia code. <br>\nThis is what I typed in the Repl :<br>\njulia&gt; using FFplay_jll<br>\njulia&gt; path = \"Donkey Town.mp3\"<br>\n\"Donkey Town.mp3</p>\n<p>and then:<br>\njulia&gt; ffplay() do exe<br>\n           run(<code>$exe $path</code>)<br>\n       end<br>\nwhich got me the following error message:<br>\ndyld[61353]: Library not loaded: @rpath/liblzma.5.dylib<br>\n  Referenced from: &lt;739FF00D-84BF-34E4-BE7A-E6EC303F24A3&gt; /Users/faugeras/.julia/artifacts/bc2a737f0f512f85e39d6f52e3d167e05753c145/bin/ffplay<br>\n  Reason: tried: '/Users/faugeras/.julia/artifacts/bc2a737f0f512f85e39d6f52e3d167e05753c145/bin/../lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/bc2a737f0f512f85e39d6f52e3d167e05753c145/bin/../lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/af971d6ddd0bfb74c9495b3e93700b7cc190dc63/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/juliaup/julia-1.11.4+0.x64.apple.darwin14/lib/julia/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/fc33b35014f9750cfebbddb4dea9897b2662b734/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/4ff0ff3cf1619ba54a152bc29c0af38b57bb196f/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/61a31a8cb25f2f12a38608c4200900dccf715bfb/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/605b2aba6b93b6f961cc454658dd7587ca3779e0/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/84c68905698ee9a91eda1f679158122ae95899cf/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/397fee52d94fc3404c3e466a6a8277ad9fdde715/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/9c7e76291dd2dfcf8d0432d4adbabb6b8c4378bb/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/ec272ef47d175247b2546006c8c62d2b0df42311/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/7f1bcfe9c7d158dbcd03ddf5436853a3d243ba31/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/b54b9086f31c9c7b598c7109f2a9840fc9e4f5e2/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/cf0f09ce1e838823335bd604cb7e2d9338247058/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/cb9d415aa403da5036fa48ccdcbfcfeef6d2154c/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/6d4e6d2693185e805a4859e538ee257fead4c216/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/b028a188a4a35bc0a87f25b940dcaca4921b26fd/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/6cab5e185202b25c46f96e9faba2a1f9fbb9ed55/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/096f050117a5d911291a7a3d322547214e4ba8d4/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/581ff6ab4dc643b0b8cd38bf534858ea64ac3813/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/28fdb61e5a3f030b889e7d2a0f490c28fdca6edb/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/13d72f9c10469b24ae6ed7dd1a3b2ab5338ae2ab/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/590bd733de60f0daac1c69aae07a92c98d5919ca/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/bc60923fe09b94ff96a663e72bfdacc08500fa9c/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/daf1c441a86e07de29d8db5cda6306296262aa5a/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/1adf0a7e4c842ab9addef6fd022d726db58cb7a2/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/b40bda893530e83556779ee6238b37372fbc575d/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/a92f4b258395c4541e7553f9846342807185d78d/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/f637fec116832403f6e634c6b92cf6203c65ea54/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/artifacts/530296c876e99cbbe83480e978dd5740f3522f11/lib/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/juliaup/julia-1.11.4+0.x64.apple.darwin14/bin/../lib/julia/liblzma.5.dylib' (no such file), '/Users/faugeras/.julia/juliaup/julia-1.11.4+0.x64.apple.darwin14/bin/../lib/liblzma.5.dylib' (no such file)<br>\nERROR: failed process: Process(<code>/Users/faugeras/.julia/artifacts/bc2a737f0f512f85e39d6f52e3d167e05753c145/bin/ffplay 'Donkey Town.mp3'</code>, ProcessSignaled(6)) [0]</p>\n<p>Does anyone know how to fix this?</p>",
+        "id": 509031163,
+        "sender_full_name": "Olivier Faugeras",
+        "timestamp": 1743345334
+    },
+    {
+        "content": "<p>It seems like there are others on Macs that have also experienced this, though not in any Julia-related context: <br>\n<a href=\"https://stackoverflow.com/questions/31612086/cannot-get-ffmpeg-to-work-after-installing-from-homebrew\">https://stackoverflow.com/questions/31612086/cannot-get-ffmpeg-to-work-after-installing-from-homebrew</a> <br>\n<a href=\"https://macports-users.macosforge.narkive.com/jT1UlnQm/liblzma-and-ffmpeg\">https://macports-users.macosforge.narkive.com/jT1UlnQm/liblzma-and-ffmpeg</a></p>\n<p>And the solution suggested there is to install <code>xz</code>. In your case, a <code>brew install</code> is probably not gonna help given that it seems to be only searching under <code>.julia</code>, but maybe adding <code>XZ_jll</code> also to your project might help?</p>",
+        "id": 509034432,
+        "sender_full_name": "Sundar R",
+        "timestamp": 1743347340
+    },
+    {
+        "content": "<p>If that doesn't fix it, FFplay's readme <a href=\"https://github.com/JuliaBinaryWrappers/FFplay_jll.jl?tab=readme-ov-file#bug-reports\">asks</a> to report any bugs in FFplay_jll to the Yggdrasil <a href=\"https://github.com/JuliaPackaging/Yggdrasil/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen\">bug tracker</a>.</p>",
+        "id": 509034661,
+        "sender_full_name": "Sundar R",
+        "timestamp": 1743347431
+    },
+    {
+        "content": "<p>I don't really have the time to look into this now, but I could in 3-4 weeks, ping me if I don't come back in a month time. In any case open an issue in Yggdrasil as suggested above and hope someone else will look at it before me</p>",
+        "id": 509053076,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1743359265
+    },
+    {
+        "content": "<p>It'd be most helpful to know the output</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">versioninfo</span><span class=\"p\">()</span>\n</code></pre></div>\n<p>and</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"p\">]</span><span class=\"n\">status</span><span class=\"w\"> </span><span class=\"o\">-</span><span class=\"n\">m</span>\n</code></pre></div>\n<p>and what version of macos are you using</p>",
+        "id": 509053211,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1743359393
+    },
+    {
+        "content": "<p>Please, post all this information in the issue you'll open in Yggdrasil</p>",
+        "id": 509053293,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1743359417
+    },
+    {
+        "content": "<p>Thanks Sundar and Mosè for the tips. I am unfamiliar with the Ygg stuff, I guess I will have to learn.</p>",
+        "id": 509173195,
+        "sender_full_name": "Olivier Faugeras",
+        "timestamp": 1743420823
+    }
+]
