@@ -1,0 +1,158 @@
+<html>
+<head><meta charset="utf-8"><title>New resolver errors · helpdesk (published) · Zulip Chat Archive</title></head>
+<h2>Stream: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/index.html">helpdesk (published)</a></h2>
+<h3>Topic: <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/New.20resolver.20errors.html">New resolver errors</a></h3>
+
+<hr>
+
+<base href="https://julialang.zulipchat.com">
+
+<head><link href="https://juliacommunity.github.io/zulip-archive/style.css" rel="stylesheet"></head>
+
+<a name="640710322"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/New%20resolver%20errors/near/640710322" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> James Wrigley <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/New.20resolver.20errors.html#640710322">(Nov 16 2026 at 11:17)</a>:</h4>
+<p>I'm a bit confused about this error I'm getting with the new resolver in 1.14 in a project with both <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/CUDA">CUDA.jl</a> and <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/DifferentialEquations">DifferentialEquations.jl</a>:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="go">pkg&gt; add CUDA@6.5.1</span>
+<span class="go">   Resolving package versions...</span>
+<span class="gr">ERROR: Unsatisfiable requirements detected — 1 conflict:</span>
+
+<span class="gr">Conflict 1: CUDA and DifferentialEquations</span>
+<span class="gr">  • DifferentialEquations constrains CUDA to ≤6.5.0 (through CUDACore,</span>
+<span class="gr">    OrdinaryDiffEq, Reexport, KernelAbstractions, LinearSolve, NonlinearSolve</span>
+<span class="gr">    and OrdinaryDiffEqRosenbrock)</span>
+<span class="gr">  • your compat restricts CUDA to 6.5.1</span>
+<span class="gr">  Fix it by any one of:</span>
+<span class="gr">    1. relax your compat on CUDA</span>
+<span class="gr">       → allows: CUDA 6.4.2, DifferentialEquations 8.1.1</span>
+<span class="gr">    2. drop dependency CUDA</span>
+<span class="gr">       → allows: DifferentialEquations 8.1.1</span>
+<span class="gr">  Note: dropping dependency DifferentialEquations would not help unless you</span>
+<span class="gr">    also dropped dependency OrdinaryDiffEq.</span>
+</code></pre></div>
+<p>In this project the only compat lines I have are:</p>
+<div class="codehilite" data-code-language="TOML"><pre><span></span><code><span class="k">[compat]</span>
+<span class="n">CUDA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"6"</span>
+<span class="n">Revise</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"3"</span>
+</code></pre></div>
+<p>And I went through the packages listed in the conflict error message, but unless I'm missing something none of them declare any compat with CUDA at all <span aria-label="thinking" class="emoji emoji-1f914" role="img" title="thinking">:thinking:</span> Sooo I'm a bit confused. Does anyone know how to find the offending package?</p>
+<p>This is the output of <code>st --outdated</code>:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="go">pkg&gt; st --outdated</span>
+<span class="go">Status `/path/to/Project.toml`</span>
+<span class="go">⌃ [052768ef] CUDA v6.4.2 (&lt;v6.5.1)</span>
+<span class="go">⌅ [bd0ed864] CUDACore v6.4.2 (&lt;v6.5.1): CUDA, CUDATools, CUPTI, NVML, cuBLAS, cuFFT, cuRAND, cuSOLVER, cuSPARSE</span>
+<span class="go">⌅ [9ec180c6] CUDATools v6.4.2 (&lt;v6.5.1): CUDA</span>
+<span class="go">⌅ [63c18a36] KernelAbstractions v0.9.47 (&lt;v0.10.7): CUDACore, cuSPARSE</span>
+<span class="go">⌃ [b20c7882] LinearInterpolations v0.1.4 (&lt;v0.1.6)</span>
+<span class="go">⌅ [bac558e1] OrderedCollections v1.8.2 (&lt;v2.0.3): DataFramesMeta, PProf, Parameters</span>
+<span class="go">⌅ [182d3088] cuBLAS v6.4.2 (&lt;v6.5.1): CUDA, cuSOLVER</span>
+<span class="go">⌅ [533571aa] cuFFT v6.4.2 (&lt;v6.5.1): CUDA</span>
+<span class="go">⌅ [20fd9a0b] cuRAND v6.4.2 (&lt;v6.5.1): CUDA</span>
+<span class="go">⌅ [887afef0] cuSOLVER v6.4.2 (&lt;v6.5.1): CUDA</span>
+<span class="go">⌅ [b26da814] cuSPARSE v6.4.2 (&lt;v6.5.1): CUDA, cuSOLVER</span>
+</code></pre></div>
+
+
+
+<a name="640735628"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/New%20resolver%20errors/near/640735628" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/New.20resolver.20errors.html#640735628">(Nov 16 2026 at 13:05)</a>:</h4>
+<p>For example LinearSolve has a weak dependency on CUDA, although not restricted in the way indicated here.</p>
+<p>I think the real problem is that CUDACore 6.5.1 has KernelAbstractions compat of 0.10 but some other of your indirect dependencies holds it back to 0.9.</p>
+
+
+
+<a name="640736172"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/New%20resolver%20errors/near/640736172" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/New.20resolver.20errors.html#640736172">(Nov 16 2026 at 13:08)</a>:</h4>
+<p>Then there's also something that's not completely right with the error messages:</p>
+<div class="codehilite" data-code-language="Julia"><pre><span></span><code><span class="p">(</span><span class="n">jl_Adq52L</span><span class="p">)</span><span class="w"> </span><span class="n">pkg</span><span class="o">&gt;</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="n">OrdinaryDiffEqRosenbrock</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="err">@</span><span class="mf">0.10.7</span>
+<span class="w">   </span><span class="n">Resolving</span><span class="w"> </span><span class="n">package</span><span class="w"> </span><span class="n">versions</span><span class="o">...</span>
+<span class="n">ERROR</span><span class="o">:</span><span class="w"> </span><span class="n">Unsatisfiable</span><span class="w"> </span><span class="n">requirements</span><span class="w"> </span><span class="n">detected</span><span class="w"> </span><span class="n">—</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">conflict</span><span class="o">:</span>
+
+<span class="n">Conflict</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">OrdinaryDiffEqRosenbrock</span>
+<span class="w">  </span><span class="n">•</span><span class="w"> </span><span class="n">OrdinaryDiffEqRosenbrock</span><span class="w"> </span><span class="n">requires</span><span class="w"> </span><span class="n">LinearSolve</span><span class="w"> </span><span class="o">≥</span><span class="mf">2.30.2</span>
+<span class="w">  </span><span class="n">•</span><span class="w"> </span><span class="n">LinearSolve</span><span class="w"> </span><span class="o">≥</span><span class="mf">2.30.2</span><span class="w"> </span><span class="n">constrains</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="o">≤</span><span class="mf">0.10.6</span>
+<span class="w">  </span><span class="n">•</span><span class="w"> </span><span class="n">your</span><span class="w"> </span><span class="n">compat</span><span class="w"> </span><span class="n">restricts</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="mf">0.10.7</span>
+
+<span class="p">(</span><span class="n">jl_Adq52L</span><span class="p">)</span><span class="w"> </span><span class="n">pkg</span><span class="o">&gt;</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="n">OrdinaryDiffEqRosenbrock</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="err">@</span><span class="mf">0.10.6</span>
+<span class="w">   </span><span class="n">Resolving</span><span class="w"> </span><span class="n">package</span><span class="w"> </span><span class="n">versions</span><span class="o">...</span>
+<span class="n">ERROR</span><span class="o">:</span><span class="w"> </span><span class="n">Unsatisfiable</span><span class="w"> </span><span class="n">requirements</span><span class="w"> </span><span class="n">detected</span><span class="w"> </span><span class="n">—</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">conflict</span><span class="o">:</span>
+
+<span class="n">Conflict</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">OrdinaryDiffEqRosenbrock</span>
+<span class="w">  </span><span class="n">•</span><span class="w"> </span><span class="n">OrdinaryDiffEqRosenbrock</span><span class="w"> </span><span class="n">requires</span><span class="w"> </span><span class="n">LinearSolve</span><span class="w"> </span><span class="o">≥</span><span class="mf">2.30.2</span>
+<span class="w">  </span><span class="n">•</span><span class="w"> </span><span class="n">LinearSolve</span><span class="w"> </span><span class="o">≥</span><span class="mf">2.30.2</span><span class="w"> </span><span class="n">constrains</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="o">≤</span><span class="mf">0.10.5</span><span class="p">,</span><span class="w"> </span><span class="mf">0.10.7</span>
+<span class="w">  </span><span class="n">•</span><span class="w"> </span><span class="n">your</span><span class="w"> </span><span class="n">compat</span><span class="w"> </span><span class="n">restricts</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="mf">0.10.6</span>
+
+<span class="p">(</span><span class="n">jl_Adq52L</span><span class="p">)</span><span class="w"> </span><span class="n">pkg</span><span class="o">&gt;</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="n">OrdinaryDiffEqRosenbrock</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="err">@</span><span class="mf">0.10.5</span>
+<span class="w">   </span><span class="n">Resolving</span><span class="w"> </span><span class="n">package</span><span class="w"> </span><span class="n">versions</span><span class="o">...</span>
+<span class="n">ERROR</span><span class="o">:</span><span class="w"> </span><span class="n">Unsatisfiable</span><span class="w"> </span><span class="n">requirements</span><span class="w"> </span><span class="n">detected</span><span class="w"> </span><span class="n">—</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">conflict</span><span class="o">:</span>
+
+<span class="n">Conflict</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">OrdinaryDiffEqRosenbrock</span>
+<span class="w">  </span><span class="n">•</span><span class="w"> </span><span class="n">OrdinaryDiffEqRosenbrock</span><span class="w"> </span><span class="n">requires</span><span class="w"> </span><span class="n">LinearSolve</span><span class="w"> </span><span class="o">≥</span><span class="mf">2.30.2</span>
+<span class="w">  </span><span class="n">•</span><span class="w"> </span><span class="n">LinearSolve</span><span class="w"> </span><span class="o">≥</span><span class="mf">2.30.2</span><span class="w"> </span><span class="n">constrains</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="o">≤</span><span class="mf">0.10.4</span><span class="p">,</span><span class="w"> </span><span class="o">≥</span><span class="mf">0.10.6</span>
+<span class="w">  </span><span class="n">•</span><span class="w"> </span><span class="n">your</span><span class="w"> </span><span class="n">compat</span><span class="w"> </span><span class="n">restricts</span><span class="w"> </span><span class="n">KernelAbstractions</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="mf">0.10.5</span>
+</code></pre></div>
+
+
+
+<a name="640740785"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/New%20resolver%20errors/near/640740785" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> James Wrigley <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/New.20resolver.20errors.html#640740785">(Nov 16 2026 at 13:27)</a>:</h4>
+<p>I'm having a look through the downstream packages of KA, but nothing's jumping out at me so far:</p>
+<div class="codehilite" data-code-language="Julia console"><pre><span></span><code><span class="go">pkg&gt; why KernelAbstractions</span>
+<span class="go">  KernelAbstractions</span>
+<span class="go">  ├─← CUDACore</span>
+<span class="go">  │   ├─← CUDA</span>
+<span class="go">  │   ├─← CUDATools</span>
+<span class="go">  │   │   └─← CUDA</span>
+<span class="go">  │   ├─← CUPTI</span>
+<span class="go">  │   │   └─← CUDATools (*)</span>
+<span class="go">  │   ├─← NVML</span>
+<span class="go">  │   │   └─← CUDATools (*)</span>
+<span class="go">  │   ├─← cuBLAS</span>
+<span class="go">  │   │   ├─← CUDA</span>
+<span class="go">  │   │   └─← cuSOLVER</span>
+<span class="go">  │   │       └─← CUDA</span>
+<span class="go">  │   ├─← cuFFT</span>
+<span class="go">  │   │   └─← CUDA</span>
+<span class="go">  │   ├─← cuRAND</span>
+<span class="go">  │   │   └─← CUDA</span>
+<span class="go">  │   ├─← cuSOLVER (*)</span>
+<span class="go">  │   └─← cuSPARSE</span>
+<span class="go">  │       ├─← CUDA</span>
+<span class="go">  │       └─← cuSOLVER (*)</span>
+<span class="go">  ├─← GPUArrays</span>
+<span class="go">  │   ├─← CUDACore (*)</span>
+<span class="go">  │   ├─← cuBLAS (*)</span>
+<span class="go">  │   └─← cuSPARSE (*)</span>
+<span class="go">  └─← cuSPARSE (*)</span>
+</code></pre></div>
+
+
+
+<a name="640741414"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/New%20resolver%20errors/near/640741414" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> James Wrigley <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/New.20resolver.20errors.html#640741414">(Nov 16 2026 at 13:29)</a>:</h4>
+<p>But I agree that KA is suspect since <a href="https://juliaregistries.github.io/General/packages/redirect_to_repo/CUDA">CUDA.jl</a> 6.5 was the first version that required v0.10.</p>
+
+
+
+<a name="640743168"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/New%20resolver%20errors/near/640743168" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> James Wrigley <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/New.20resolver.20errors.html#640743168">(Nov 16 2026 at 13:35)</a>:</h4>
+<p>Ah it probably is LinearSolve, this PR didn't make it into a release yet: <a href="https://github.com/SciML/LinearSolve.jl/pull/1404">https://github.com/SciML/LinearSolve.jl/pull/1404</a></p>
+
+
+
+<a name="640743740"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/New%20resolver%20errors/near/640743740" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> James Wrigley <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/New.20resolver.20errors.html#640743740">(Nov 16 2026 at 13:37)</a>:</h4>
+<p>Maybe there should be a <code>why --include-indirect</code> option.</p>
+
+
+
+<a name="640748023"></a>
+<h4><a href="https://julialang.zulipchat.com#narrow/stream/274208-helpdesk%20%28published%29/topic/New%20resolver%20errors/near/640748023" class="zl"><img src="https://juliacommunity.github.io/zulip-archive/assets/img/zulip.svg" alt="view this post on Zulip" style="width:20px;height:20px;"></a> Gunnar Farnebäck <a href="https://juliacommunity.github.io/zulip-archive/stream/274208-helpdesk-.28published.29/topic/New.20resolver.20errors.html#640748023">(Nov 16 2026 at 13:51)</a>:</h4>
+<blockquote>
+<p>Then there's also something that's not completely right with the error messages:</p>
+</blockquote>
+<p><a href="https://github.com/JuliaLang/Resolver.jl/issues/136">https://github.com/JuliaLang/Resolver.jl/issues/136</a></p>
+
+
+
+<hr><p>Last updated: Nov 27 2026 at 14:06 UTC</p>
+</html>

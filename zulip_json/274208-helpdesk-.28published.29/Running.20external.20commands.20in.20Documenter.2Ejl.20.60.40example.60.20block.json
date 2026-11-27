@@ -1,0 +1,50 @@
+[
+    {
+        "content": "<p>Hello, I am trying to run the following <code>@example</code> block in a Documenter page:</p>\n<div class=\"codehilite\" data-code-language=\"Julia\"><pre><span></span><code><span class=\"n\">pinocchio</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">PipeBuffer</span><span class=\"p\">()</span>\n<span class=\"n\">listener</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"n\">run</span><span class=\"p\">(</span><span class=\"sb\">`go-sendxmpp -n -p plopiplop -u pinocchio@localhost -l`</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"nb\">devnull</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">pinocchio</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"nb\">stderr</span><span class=\"p\">,</span><span class=\"w\"> </span><span class=\"n\">wait</span><span class=\"w\"> </span><span class=\"o\">=</span><span class=\"w\"> </span><span class=\"nb\">false</span><span class=\"p\">)</span>\n</code></pre></div>\n<p>But the Documenter process hangs when generating the example (the last Documenter Debug output is this block). Everything runs smoothly when I just execute the code manually. Are there any limitations on running external programs asynchronously in Documenter?</p>\n<p>Thanks!</p>",
+        "id": 568090355,
+        "sender_full_name": "Hugo Levy-Falk",
+        "timestamp": 1768429098
+    },
+    {
+        "content": "<p>Does the command depend on where you run it? I seem to remember Documenter changes the working directory under your feet</p>",
+        "id": 568114973,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1768443950
+    },
+    {
+        "content": "<p>Hi, unfortunately, no the command does not depend on the current directory</p>",
+        "id": 568145102,
+        "sender_full_name": "Hugo Levy-Falk",
+        "timestamp": 1768465061
+    },
+    {
+        "content": "<p>Ok, I finally have something working using <code>pipeline</code>: <a href=\"https://discourse.julialang.org/t/documenter-jl-running-external-commands-asynchronously-in-example-blocks/135085/2?u=klafyvel\">https://discourse.julialang.org/t/documenter-jl-running-external-commands-asynchronously-in-example-blocks/135085/2?u=klafyvel</a> (not entirely sure why this works)</p>",
+        "id": 568676136,
+        "sender_full_name": "Hugo Levy-Falk",
+        "timestamp": 1768753036
+    },
+    {
+        "content": "<p>Ah, maybe Documenter tries to capture the output?</p>",
+        "id": 568696664,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1768773189
+    },
+    {
+        "content": "<p>Yes, I think it is something along this line now that you mention it, probably the <code>stderr</code> in the original <code>run</code>!</p>",
+        "id": 568697100,
+        "sender_full_name": "Hugo Levy-Falk",
+        "timestamp": 1768773713
+    },
+    {
+        "content": "<p>Looks like it: <a href=\"https://github.com/JuliaDocs/Documenter.jl/blob/3b85898481e8f32f3f14a775c3aba22d1c12fde8/src/expander_pipeline.jl#L861\">https://github.com/JuliaDocs/Documenter.jl/blob/3b85898481e8f32f3f14a775c3aba22d1c12fde8/src/expander_pipeline.jl#L861</a></p>",
+        "id": 568697451,
+        "sender_full_name": "Mosè Giordano",
+        "timestamp": 1768774091
+    },
+    {
+        "content": "<p>Indeed!</p>",
+        "id": 568697484,
+        "sender_full_name": "Hugo Levy-Falk",
+        "timestamp": 1768774120
+    }
+]

@@ -1,0 +1,8 @@
+[
+    {
+        "content": "<p>Hello all,</p>\n<p>I am wrapping up edits to the open-access book (<a class=\"stream-topic\" data-stream-id=\"137791\" href=\"/#narrow/channel/137791-general/topic/Modern.20Financial.20Modeling.20Book/with/542815148\">#general &gt; Modern Financial Modeling Book</a> )  I've been working on and would appreciate (amongst any other comments!) someone to take a look at this small Distributed code example. I can usually get it to work after a couple of attempts, but it never renders when I use the QuartoNotebookRunner engine and sometimes hangs when I use the Jupyter kernel to render the chapter. This makes me think that I have not correctly implemented the code example? Would someone mind taking a look at a the example beginning <code>using Distributed</code> in this section and tell me if I have any correctness issues?</p>\n<p><a href=\"https://modernfinancialmodeling.com/parallelization#sec-multi-device\">https://modernfinancialmodeling.com/parallelization#sec-multi-device</a></p>",
+        "id": 569832758,
+        "sender_full_name": "Alec",
+        "timestamp": 1769226410
+    }
+]

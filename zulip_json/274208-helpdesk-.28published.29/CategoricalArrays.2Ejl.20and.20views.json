@@ -1,0 +1,14 @@
+[
+    {
+        "content": "<p>Do you also think this is a bug?</p>\n<p><a href=\"https://github.com/JuliaData/CategoricalArrays.jl/issues/444\">https://github.com/JuliaData/CategoricalArrays.jl/issues/444</a></p>",
+        "id": 632093757,
+        "sender_full_name": "Júlio Hoffimann",
+        "timestamp": 1792100470
+    },
+    {
+        "content": "<p>I'd say it's less a bug and more a missing feature. Views are hard to support</p>",
+        "id": 632194614,
+        "sender_full_name": "Mason Protter",
+        "timestamp": 1792139612
+    }
+]
